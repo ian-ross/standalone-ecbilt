@@ -1,0 +1,7 @@
+Dear Hugues,
+
+To produce the inputfiles for the LWR parameterisation,
+compile write.f: f77 write.f -o write.x and
+execute write.x . 
+
+Cheers, Frank.
