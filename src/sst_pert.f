@@ -28,19 +28,14 @@ C     Parameters and variables, the same as for nudging
       real*8 relaxcoefNoise,relaxcoef,sigmaEPF, nudgemax
       integer nudgeperiod, nudgeFileStartY, nudgeFileStartD
       integer xpStartY, xpStartD, wrtstnoise
-      integer inudge
 
 
 C     Parameters for netcdf reading
-      integer fileID, tsID, recID, Nerror, status, tdim, ntime
       parameter (ndims=3) ! number of dimensions of the netcdf file
-      integer start(ndims), count(ndims)
       integer NCStartTime
       real*8  stnoiseSST(nlat,nlon)
 
 C     Parameters for perturbations
-      real*8 rnum
-      integer idum, ryear, dumy
 
       common / tsurfn_nudgingParam / dimnudge, Clioarea, Cliogrid,
      &                           eoffile,resfile,alphafile,relaxcoefNoise,sigmaEPF,
@@ -55,31 +50,31 @@ C     Parameters for perturbations
       write(iuo+66,*) 'ensemble',iens,numens
       if (iens.eq.1) then
 c--- Reading of the parameters, the same as for the nudging
-	call read_tsurfnParam('nudging.param')
+        call read_tsurfnParam('nudging.param')
 
 c--- STOCHASTIC NOISE >>>
-	if((eoffile.ne.'none').and.(resfile.ne.'none').and.(alphafile.ne.'none').and.(relaxcoefNoise.ne.0)) then
+        if((eoffile.ne.'none').and.(resfile.ne.'none').and.(alphafile.ne.'none').and.(relaxcoefNoise.ne.0)) then
 c--- Calculation of the proper time step for the time series st_noise, in months
-	  NCStartTime=(((irunlabel+iyear)*360+(imonth-1)*30+iday-1)-
+          NCStartTime=(((irunlabel+iyear)*360+(imonth-1)*30+iday-1)-
      &                 (nudgefileStartY*360+nudgeFileStartD-1))/30+1
 
-	  call def_stnoiseSST(NCStartTime)
-	else
-	  do i=1,nlat
-	    do j=1,nlon
+          call def_stnoiseSST(NCStartTime)
+        else
+          do i=1,nlat
+            do j=1,nlon
               stnoiseSST(i,j)=0.
-	    enddo
-	  enddo
-	endif
-!	write(*,*)'stnoiseSST(10,10) =',stnoiseSST(10,10)
+            enddo
+          enddo
+        endif
+!  write(*,*)'stnoiseSST(10,10) =',stnoiseSST(10,10)
 c--- <<< STOCHASTIC NOISE
 
 c--- Adding perturbation to tsurfn according to a land/ocean/sea ice fraction of a grid cell
         do j=1,nlon
           do i=1,nlat
-	    do nn=1,ntyps
+            do nn=1,ntyps
               tsurfn(i,j,nn)=tsurfn(i,j,nn)+stnoiseSST(i,j)*fractn(i,j,nn)
-	    enddo
+            enddo
           enddo
         enddo
       endif
@@ -88,6 +83,8 @@ c--- Adding perturbation to tsurfn according to a land/ocean/sea ice fraction of
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine read_tsurfnParam(nudgingParamFile)
+
+      include 'comunit.h'
 c----------------------------------------------------
 c *** Reads the parameters, the same as for the nudging
 c----------------------------------------------------
@@ -179,11 +176,11 @@ C     Parameters and variables, the same as for the nudging
       close(iuo+60)
 
 !       if((eoffile.eq.'none').or.(resfile.eq.'none').or.(alphafile.eq.'none').or.(relaxcoefNoise.eq.0)) then
-! 	write(*,*) "No sst stochastic noise"
+!       write(*,*) "No sst stochastic noise"
 !       else
-! 	write(*,*) " "
-! 	write(*,*) "Adding noise to the surface temperature (sst)"
-! 	write(*,*) "Relaxation coefficient = ",relaxcoefNoise
+!       write(*,*) " "
+!       write(*,*) "Adding noise to the surface temperature (sst)"
+!       write(*,*) "Relaxation coefficient = ",relaxcoefNoise
 !         write(*,*) "Surface stochastic noise files are "
 !         write(*,*) trim(eoffile)
 !         write(*,*) trim(resfile)
@@ -234,7 +231,7 @@ c------------------------------
       real*8  scal_relaxcoef
       integer fileObsID,tempObsID,Nerror
       integer start(4), count(4)
-      integer i,j,k,ii,jj,idum,ntmax
+      integer i,j,ii,idum,ntmax
       integer*4 timeArray(3)
 
       real*4 temp_resNC(nlon,nlat,1,1)
@@ -273,19 +270,19 @@ c--- Reading the residual file
       start(3)=1
       start(4)=NCStartTime
       if(NCStartTime.gt.ntmax) then
-	start(4)=mod(NCStartTime,ntmax)
-! 	write(*,*) "THIS SIMULATION MIGHT BE WRONG, since"
-! 	write(*,*) "current time step exceeds the time dimension of the st.noise."
-! 	write(*,*) "Therefore st.noise will be periodic with a period",ntmax
-!         write(*,*) 'NCStartTime for noise is',start(4),'instead of',NCStartTime
+        start(4)=mod(NCStartTime,ntmax)
+!       write(*,*) "THIS SIMULATION MIGHT BE WRONG, since"
+!       write(*,*) "current time step exceeds the time dimension of the st.noise."
+!       write(*,*) "Therefore st.noise will be periodic with a period",ntmax
+!       write(*,*) 'NCStartTime for noise is',start(4),'instead of',NCStartTime
 !         write(*,*) " "
 !         write(*,*) " "
       endif
       if(NCStartTime.le.0) then
-	start(4)=mod(NCStartTime,ntmax)+ntmax
-! 	write(*,*) "THIS SIMULATION MIGHT BE WRONG, since"
-! 	write(*,*) "current time step exceeds the time dimension of the st.noise."
-! 	write(*,*) "Therefore st.noise will be periodic with a period",ntmax
+        start(4)=mod(NCStartTime,ntmax)+ntmax
+!       write(*,*) "THIS SIMULATION MIGHT BE WRONG, since"
+!       write(*,*) "current time step exceeds the time dimension of the st.noise."
+!       write(*,*) "Therefore st.noise will be periodic with a period",ntmax
 !         write(*,*) 'NCStartTime for noise is',start(4),'instead of',NCStartTime
 !         write(*,*) " "
 !         write(*,*) " "
@@ -329,9 +326,9 @@ c--- Reading the EOF file
       CALL NCCLOS(fileObsID, NCtest)
 
       if (wrtstnoise.ge.360) then
-	scal_relaxcoef=1.0
+        scal_relaxcoef=1.0
       else
-	scal_relaxcoef=360.0/wrtstnoise
+        scal_relaxcoef=360.0/wrtstnoise
       endif
 
       do i=1,nlat
@@ -355,7 +352,7 @@ c   double precision version
 c
       implicit double precision (a-h,o-z)
       parameter(da=16807.d0,db=2147483647.d0,dc=2147483648.d0)
-      ir=abs(mod(da*ir,db)+0.5d0)
+      ir=nint(abs(mod(da*ir,db)+0.5d0))
       usran2DSST=dfloat(ir)/dc
       return
       end

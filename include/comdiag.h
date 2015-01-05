@@ -1,6 +1,6 @@
 c23456789012345678901234567890123456789012345678901234567890123456789012
 c-----------------------------------------------------------------------
-c *** File:     comdiag.h                                                    
+c *** File:     comdiag.h
 c *** Contents: Common declarations for diagnostics of ECbilt
 c-----------------------------------------------------------------------
 c *** COMMON  /writectl/ixout,ioutdaily,ioutyearly,itel,minterv,
@@ -19,11 +19,11 @@ c     ifrendat: frequency of writing restart data in days.
 c     instcount: counter used for output instantaneous fields.
 c     irad =1 if calculation of radiative forcings
 c-----------------------------------------------------------------------
-      integer     ixout,ioutdaily,ioutyearly,itel,minterv,ntotdays,
-     *            meantype,meantot,meanyl,ifrendat,instcount,irad 
+      integer     ixout,ioutdaily,ioutyearly,itel,minterv,
+     *            meantype,meantot,meanyl,ifrendat,instcount,irad
 
       common /ec_writectl/ixout,ioutdaily,ioutyearly,itel,minterv,
-     *                 meantype,meantot,meanyl,ifrendat,instcount,irad               
+     *                 meantype,meantot,meanyl,ifrendat,instcount,irad
 
       integer numtotvar,thirdd(4)
       real*8  fill_value,missing_value,newtotvar(80,20)
@@ -179,7 +179,7 @@ c-----------------------------------------------------------------------
      *        arocbasa(nbasa),hfmeanan(nlat,nbasa)
       integer iocbasa(nlat,nlon)
       common /ec_outan/precan,evapan,runoan,arocbasa,iocbasa,hfmeanan
-      
+
       common /ec_outxx/ s1u200,s2u200,s1u500,s2u500,s1u800,s2u800,
      *        s1omeg,s2omeg,
      *        s1temp4g,s2temp4g,s1temp2g,s2temp2g,s1tempsg,s2tempsg,
@@ -252,5 +252,3 @@ c-----------------------------------------------------------------------
      *        sxdt23,sydt23,sxdt22,sydt22,sxdt21,sydt21,
      *        sxdu13,sydu13,sxdu12,sydu12,sxdu11,sydu11,
      *        sxdu23,sydu23,sxdu22,sydu22,sxdu21,sydu21
-
-

@@ -18,7 +18,7 @@ C     Module Interface Specification
       PUBLIC :: ncid
       PUBLIC :: status
       PUBLIC :: output
-      
+
 C     Codes for output file types
       PUBLIC :: Instantaneous_Data
       PUBLIC :: Monthly_Means
@@ -29,7 +29,7 @@ C     Codes for output file types
 
 C     Codes for one dimensional fields
       REAL*8, ALLOCATABLE, DIMENSION(:) :: lon_bounds, lat_bounds, time_bounds
-      
+
 C     Codes for one dimensional fields
       PUBLIC :: lon
       PUBLIC :: lat
@@ -89,12 +89,12 @@ C     Codes for three dimensional fields
       PUBLIC :: User_Assigned_T2
       PUBLIC :: User_Assigned_U1
       PUBLIC :: User_Assigned_U2
-      
+
 C      INTERFACE write
 C      MODULE PROCEDURE writeField
 C      MODULE PROCEDURE writeField3D
 C      END INTERFACE
-      
+
 C     ----------------------------------------------------------------------------
 C     Type Declarations
 
@@ -195,9 +195,9 @@ C     Two dimensional fields
       INTEGER, PARAMETER :: Drag_Coefficient_W        = 29
       INTEGER, PARAMETER :: Drag_Coefficient_V        = 30
       INTEGER, PARAMETER :: Total_Snow_Fall           = 31
-      
+
       INTEGER, PARAMETER :: Number_of_2D_Fields       = 31
-      
+
 C     Three dimensional fields
       INTEGER, PARAMETER :: Temperature                 =  32
       INTEGER, PARAMETER :: Wind_U                      =  33
@@ -222,7 +222,7 @@ C     Three dimensional fields
       INTEGER, PARAMETER :: Compute_Time_in_Years_Months = 3
       INTEGER, PARAMETER :: Compute_Time_in_Months_Only  = 2
       INTEGER, PARAMETER :: Compute_Time_in_Years_Only   = 4
-      
+
 C     ----------------------------------------------------------------------------
 C     Module Variables
 
@@ -241,10 +241,10 @@ C     open
 
       SUBROUTINE open(file)
       INTEGER, INTENT(in) :: file
-      
+
       CHARACTER(len=256) :: output_filename
       LOGICAL            :: existe
-      
+
       SELECT CASE (file)
       CASE (Instantaneous_Data)
          output_filename = "outputdata/atmos/atminst"//fini//".nc"
@@ -267,7 +267,7 @@ C     open
       CASE DEFAULT
          call ec_error(123)
       END SELECT
-      
+
       INQUIRE(file=output_filename,exist=existe)
       IF (existe) THEN
          initialize_module = .FALSE.
@@ -284,7 +284,7 @@ C     open
          write(iuo+29,*) nf_strerror(status)
          call ec_error(123)
       END IF
-      
+
       IF (initialize_module) CALL initializeModule
 
       RETURN
@@ -294,18 +294,18 @@ C     --------------------------------------------------------------------------
 C     close
 
       SUBROUTINE close()
-      
+
       IF (initialize_module) CALL initializeModule
-      
+
       status=NF_CLOSE(ncid)
       IF (status/=nf_noerr) THEN
          write(iuo+29,*) nf_strerror(status)
          call ec_error(123)
       END IF
-      
+
       RETURN
       END SUBROUTINE close
-      
+
       SUBROUTINE incretime(N_num)
 
       INTEGER             :: varid,i
@@ -419,10 +419,10 @@ C     Output data for Variable
 
       RETURN
       END SUBROUTINE write
-      
+
 C     ----------------------------------------------------------------------------
 C     output
-C     
+C
 C     This function checks whether the output flags of a field indicate that
 C     the field should be written to any of the output files.
 
@@ -435,22 +435,6 @@ C     the field should be written to any of the output files.
 
       RETURN
       END FUNCTION output
-      
-C     ----------------------------------------------------------------------------
-C     outputStdDev
-C     
-C     This function checks whether the output flags of a field indicate that
-C     the standard deviation should be written to any of the output files.
-
-      FUNCTION outputStdDev(flag) RESULT(result)
-      LOGICAL :: result
-      INTEGER, INTENT(in) :: flag
-
-      result = ( flag == 2 )
-
-      RETURN
-      END FUNCTION outputStdDev
-
 
 C     ----------------------------------------------------------------------------
 C     PRIVATE FUNCTIONS AND SUBROUTINES
@@ -469,10 +453,10 @@ C     initialize
 
       integer tab_dimid(5)
       integer tab_dim(5)
-      
+
       INTEGER :: i,l,dimid,varid
       LOGICAL :: write_test = .FALSE.
-      
+
       character(len=120):: longdata
       integer,dimension(8) :: cvalues
       REAL*8 :: realmonth
@@ -484,10 +468,10 @@ C     initialize
 C     -----------------------------------------------------------------------
 C     1. Setup two- and three-dimensional grids.
 
-	     allocate(templon(nlon))
-	     templon = (/ ((360.0d0*l)/nlon,l=0,nlon-1) /)
-	     allocate(templat(nlat))
-	     templat = phi(1:nlat)*radian_to_degree
+             allocate(templon(nlon))
+             templon = (/ ((360.0d0*l)/nlon,l=0,nlon-1) /)
+             allocate(templat(nlat))
+             templat = phi(1:nlat)*radian_to_degree
 
          allocate(lat_bounds(nlat+1))
          DO i = 2, nlat
@@ -509,18 +493,18 @@ C     1. Setup two- and three-dimensional grids.
 
          CALL initdim(I_longitude,nlon,.FALSE.,.FALSE.,templon)
 
-	     status=NF_DEF_DIM(ncid,"bnds",2,dimid)
-	     tab_dimid(1)=dimid
+             status=NF_DEF_DIM(ncid,"bnds",2,dimid)
+             tab_dimid(1)=dimid
 
-	     allocate(temp(2,nlon))
-	     DO i = 1, nlon
-	        temp(1,i) = lon_bounds(i)
-	        temp(2,i) = lon_bounds(i+1)
-	     ENDDO
-	     status=NF_INQ_DIMID(ncid,I_longitude%short,dimid)
+             allocate(temp(2,nlon))
+             DO i = 1, nlon
+                temp(1,i) = lon_bounds(i)
+                temp(2,i) = lon_bounds(i+1)
+             ENDDO
+             status=NF_INQ_DIMID(ncid,I_longitude%short,dimid)
          tab_dimid(2)=dimid
          longdata="lon_bounds"
-	     call initbnds(longdata,nlon,tab_dimid,temp)
+            call initbnds(longdata,nlon,tab_dimid,temp)
          deallocate(temp)
          deallocate(lon_bounds)
 
@@ -657,38 +641,38 @@ C     Write the global attributes
          globalatt(22,2)=trim(longdata)
          globalatt(24,1)="frequency"
          SELECT CASE (how_to_compute_time)
-	      CASE (Compute_Time_in_Days)
-	         globalatt(24,2)="day"
-	      CASE (Compute_Time_in_Years_Months)
-	         globalatt(24,2)="mon"
-	      CASE (Compute_Time_in_Months_Only)
-	         globalatt(24,2)="mon"
-	      CASE (Compute_Time_in_Years_Only)
-	         globalatt(24,2)="yr"
-	     END SELECT
-	     call date_and_time(VALUES=cvalues)
-	     longdata=''
-	     write(longdata,999) cvalues(1), cvalues(2), cvalues(3), cvalues(5), cvalues(6), cvalues(7)
+              CASE (Compute_Time_in_Days)
+                 globalatt(24,2)="day"
+              CASE (Compute_Time_in_Years_Months)
+                 globalatt(24,2)="mon"
+              CASE (Compute_Time_in_Months_Only)
+                 globalatt(24,2)="mon"
+              CASE (Compute_Time_in_Years_Only)
+                 globalatt(24,2)="yr"
+             END SELECT
+             call date_and_time(VALUES=cvalues)
+             longdata=''
+             write(longdata,999) cvalues(1), cvalues(2), cvalues(3), cvalues(5), cvalues(6), cvalues(7)
  999     format(i4.4,'-',i2.2,'-',i2.2,'T',i2.2,':',i2.2,':',i2.2,'Z')
          globalatt(25,1)="creation_date"
          globalatt(25,2)=trim(longdata)
          globalatt(26,1)="modeling_realm"
          globalatt(26,2)="atmos"
-	     do i=1,26
-	        status=NF_PUT_ATT_TEXT(ncid,NF_GLOBAL,globalatt(i,1),len_trim(globalatt(i,2)),trim(globalatt(i,2)))
-	     enddo
+         do i=1,26
+            status=NF_PUT_ATT_TEXT(ncid,NF_GLOBAL,globalatt(i,1),len_trim(globalatt(i,2)),trim(globalatt(i,2)))
+         enddo
          status=NF_ENDDEF(ncid)
 
 C     -----------------------------------------------------------------------
 C     6. Indicate that initialization has been done.
 
          initialize_module = .FALSE.
-         
+
       END IF
       RETURN
-      
+
       CONTAINS
-      
+
       SUBROUTINE initdim(I_num,N_num,Is_time,Is_pressure,D_data)
 
       TYPE(info), INTENT(in)  :: I_num
@@ -816,12 +800,12 @@ C     Define the attributes
 
       RETURN
       END SUBROUTINE initvar
-      
+
       END SUBROUTINE initializeModule
 
 C     ----------------------------------------------------------------------------
 C     computeTime
-C     
+C
 C     This function computes the current time in days or in months depending
 C     on the type of data that is being written to the output file.
 
@@ -836,9 +820,9 @@ C     on the type of data that is being written to the output file.
 
       SELECT CASE (how_to_compute_time)
       CASE (Compute_Time_in_Days)
-         result = realyear*360.0 + (imonth-1)*30.0 + iday
+         result = nint(realyear*360.0 + (imonth-1)*30.0 + iday)
       CASE (Compute_Time_in_Months_Only)
-         result = realyear*12.0 + imonth - realmonth
+         result = nint(realyear*12.0 + imonth - realmonth)
       CASE (Compute_Time_in_Years_Months)
          result = imonth
       CASE (Compute_Time_in_Years_Only)

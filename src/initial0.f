@@ -46,7 +46,7 @@ c23456789012345678901234567890123456789012345678901234567890123456789012
       real*8  ari(nlat/2)
       real*8  rj,rw,dumwei
 
-      integer ilat,k,ird,i,j
+      integer ilat,ird,i,j
 
 c *** constants
 c *** rlatvap: latent heat of condensation in J/kg
@@ -170,11 +170,11 @@ c *** land/sea/sea-ice fraction
 
       do j=1,nlon
         do i=1,nlat
-	  fractoc(i,j)=fracto(i,j)
+          fractoc(i,j)=fracto(i,j)
           fractn(i,j,noc)=fractoc(i,j)
           fractn(i,j,nld)=1-fractoc(i,j)
           fractn(i,j,nse)=0.0
-	enddo
+        enddo
       enddo
 
 c      do j=nlat,1,-1
@@ -219,7 +219,7 @@ c-----------------------------------------------------------------------
      *                     albocef,facttsi,bup,AMPWIR,EXPIR,HPROFTROP,
      *                     HPROFEQ,HPROFW,AMPEQIR,HPROFAN,AMPANIR,
      *                     eccf,oblf,omwebf,AMPANIR2,HPROFAN2
-      NAMELIST /satfor/   isatfor,nbsatfor,nafyear,iclimflux
+      NAMELIST /satfor/   nbsatfor,nafyear,iclimflux
       NAMELIST /fluxpar/ cdrag,cwdrag,dragan,dragla,uv10rfx,uv10m,
      *                   uv10rws,ndayws
       NAMELIST /fluxcorw/ corAN,corPN,corAC,corID,corAS,corPS,
@@ -304,8 +304,6 @@ C tcont parameter:                                                     C
 C solarc:     solar constant.                                          C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C satfor parameter:                                                    C
-C isatfor:    if (1) saves nafyear of atmospheric data to disk to be   C
-C             used to drive the ocean in uncoupled mode                C
 C nbsatfor:   first year in the integrations to start saving nafyears  C
 C             of data                                                  C
 C nafyear:    number of years of data to save                          C
@@ -407,7 +405,6 @@ C     solarc = 1353
       AMPANIR2  = 1.0
 
 
-      isatfor = 0
       nbsatfor= 0
       nafyear = 0
       iclimflux = 0
@@ -491,7 +488,6 @@ C     solarc = 1353
       write(iuo+30, 900) 'iscensul =', iscensul
       write(iuo+30, 910) 'bup      =', bup
 
-      write(iuo+30, 900) 'isatfor  =', isatfor
       write(iuo+30, 900) 'nbsatfor =', nbsatfor
       write(iuo+30, 900) 'nafyear  =', nafyear
       write(iuo+30, 900) 'iclimflux=', iclimflux
@@ -521,7 +517,6 @@ c-----------------------------------------------------------------------
       include 'comunit.h'
 
       character*60 part1
-      integer      totvar(80,20)
       integer      i,l
 
 
@@ -529,12 +524,12 @@ c-----------------------------------------------------------------------
       NAMELIST /flgout/irad
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C ixout:        output frequency for instantanous field in days        C
-c meantype      output monthly mean fields.			       C
-c meantype      output seasonal mean fields.			       C
+c meantype      output monthly mean fields.                            C
+c meantype      output seasonal mean fields.                           C
 c meantot       computes whole period monthly or seasonal mean fields. C
 c meanyl        computes yearly monthly or seansonal mean fields.      C
-c ioutdaily     output instantanous fields.			       C
-c ioutyearly    output yearly mean fields.			       C
+c ioutdaily     output instantanous fields.                            C
+c ioutyearly    output yearly mean fields.                             C
 C ts:           output surface temperature.                            C
 C t:            output temperature.                                    C
 C u             output wind component U.                               C
@@ -551,11 +546,11 @@ C ageu:         output ageostrophic wind component U.                  C
 C agev:         output ageostrophic wind component V.                  C
 C ssr:          output surface solar radiation (downward).             C
 C tsr:          output top solar radiation (downward).                 C
-C ttr:          output top thermal radiation (upward).		       C
+C ttr:          output top thermal radiation (upward).                 C
 C str:          output surface thermal radiation (upward).             C
-C pp:		output total percipitation.			       C
-C evap:		output evaporation.				       C
-C eminp:	output evaporation minus precipitation.                C
+C pp:           output total percipitation.                            C
+C evap:         output evaporation.                                    C
+C eminp:        output evaporation minus precipitation.                C
 c albs:         output surface albedo.                                 C
 c albp:         output planetary albedo.                               C
 c ustress:      output u wind stress.                                  C
@@ -615,21 +610,21 @@ C** These parameters can be updated in the namelist.
 
          IF ((newtotvar(i,2)==1).OR.(newtotvar(i,3)==1)
      &                          .OR.(newtotvar(i,4)==1) ) THEN
-	         SELECT CASE ( nametotvar(i,5) )
-	         CASE ("T2")
-	            thirdd(1)=1
-	         CASE ("T3")
-	            thirdd(2)=1
-	         CASE ("T4")
-	            thirdd(3)=1
-	         CASE ("U3")
-	            thirdd(4)=1
-	         CASE ("N")
-	            l=0
-	         CASE DEFAULT
-	            call ec_error(123)
-	         END SELECT
-	      END IF
+                 SELECT CASE ( nametotvar(i,5) )
+                 CASE ("T2")
+                    thirdd(1)=1
+                 CASE ("T3")
+                    thirdd(2)=1
+                 CASE ("T4")
+                    thirdd(3)=1
+                 CASE ("U3")
+                    thirdd(4)=1
+                 CASE ("N")
+                    l=0
+                 CASE DEFAULT
+                    call ec_error(123)
+                 END SELECT
+              END IF
 
       enddo
 

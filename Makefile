@@ -2,7 +2,7 @@ NETCDFINC=-I/usr/local/netcdf-cxx-4.1.3/include
 NETCDFLIB=-L/usr/local/netcdf-cxx-4.1.3/lib -lnetcdf -lnetcdff
 FC=gfortran
 FINCS=-I./include $(NETCDFINC)
-FFLAGS=-cpp -ffixed-line-length-none -fno-align-commons $(FINCS)
+FFLAGS=-Wall -cpp -ffixed-line-length-none -fno-align-commons $(FINCS)
 LD=gfortran
 LDFLAGS=$(NETCDFLIB)
 

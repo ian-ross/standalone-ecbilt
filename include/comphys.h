@@ -1,13 +1,13 @@
 c23456789012345678901234567890123456789012345678901234567890123456789012
 c-----------------------------------------------------------------------
-c *** File:     comphys.h                                                    
-c *** Contents: Common declarations for physical part of atmospheric 
+c *** File:     comphys.h
+c *** Contents: Common declarations for physical part of atmospheric
 c ***           model of ECbilt
 c      common /ec_cgamma/ gamgr,gamean,gamvar,gamsq
 c      solarc:      solar constant.
 c      common /ec_ctemag/ tempsg,temp2g,temp4g,tempsgn
 c      tempsg:      mean temperature at 10 meters height.
-c      tempsgn:     temperature at 10 meters height for each surface 
+c      tempsgn:     temperature at 10 meters height for each surface
 c                   type.
 c      temp2g:      temperature at 350 mb.
 c      temp4g:      temperature at 650 mb.
@@ -15,7 +15,7 @@ c
 c      common /ec_ctempm/ tempm,thform,temp2gm,temp4gm,
 c                     tempsgm,tsurfm
 c      tempm:       global mean temperature.
-c      thform:      global mean 
+c      thform:      global mean
 c      temp2gm:     global mean temperature at 350 mb.
 c      temp4gm:     global mean temperature at 650 mb.
 c      tempsgm:     global mean temperature at 10 meters height.
@@ -73,12 +73,12 @@ c      sboltz:      stefan-boltzmann constant.
 c      rlatsub:     latent heat of sublimation.
 c      rlatfus:     latent heat of fusion.
 c      cwater:      4180
-c      gamma:       cpair/cvair       
+c      gamma:       cpair/cvair
 c      rkappa:      =(gamma-1)/gamma
 c      ps:          surface pressure.
 c      aa:          =(350/1000)**rkappa.
 c      bb:          =(650/1000)**rkappa
-c      gamad:       
+c      gamad:
 c      tzero:       =273.15
 c      epss :       = treshold for surface computation
 c      alphad:      =roair*cdrag*cpair
@@ -92,11 +92,11 @@ c      cdragvn:     drag coefficeint for each surface type (see cdragv)
 c      common/ fluxcore/ corAN,corPN,corAC,corID,corAS,corPS,corAA
 c      corAN       flux correction in the North Atlantic
 c      corPN       flux correction in the North Pacific
-c      corAC       flux correction in the Arctic      
-c      corID       flux correction in the Indian     
-c      corAS       flux correction in the South Atlantic  
-c      corPS       flux correction in the South Pacific 
-c      corAA       flux correction in the Southern Ocean 
+c      corAC       flux correction in the Arctic
+c      corID       flux correction in the Indian
+c      corAS       flux correction in the South Atlantic
+c      corPS       flux correction in the South Pacific
+c      corAA       flux correction in the Southern Ocean
 
 
 c      common /ec_clwrad/ ulrad1,ulrad2,ulrads,dlrads,dlradsn,ulradsn
@@ -106,7 +106,7 @@ c      ulrads:      mean upwards long wave radiation at the surface.
 c      ulradsn:     upwards long wave radiation at the surface.
 c                   for each surface type
 c      dlrads:      mean downwards long wave radiation at the surface.
-c      dlradsn:     downwards long wave radiation at the surface 
+c      dlradsn:     downwards long wave radiation at the surface
 c                   for each surface type
 c
 c      common /ec_csflux/  Hflux(nlat,nlon),Eflux(nlat,nlon),dEflux(nlat,nlon),
@@ -169,12 +169,12 @@ c      evfac:       maximum evaporation factor over land.
 c      ecfaca:      actual evaporation factor over land.
 c
 c      common /ec_calbedo/ albice,albsea,albsnow,albland,albseaw,albseas,
-c     *                abstow,abstos 
+c     *                abstow,abstos
 c      albice:      albedo of ice.
 c      albsea:      albedo of sea.
 c      albsnow:     albedo of snow.
 c      albland:     albedo of land.
-c      
+c
 c      common /ec_cstype/ noc,nse,nld
 c      noc:       type number of the ocean
 c      nse:       type number of the sea ice
@@ -217,7 +217,7 @@ c-----------------------------------------------------------------------
       real*8  cc1,cc2,cc3,tqmimin,tqmi(0:iqmtab),dtqmi,rdtqmi,
      *        tqmjmin,tqmj(0:jqmtab),dtqmj,rdtqmj,
      *        tqmkmin,tqmk(0:kqmtab),dtqmk,rdtqmk
-      real*4  qmtabel(0:iqmtab,0:jqmtab,0:kqmtab)
+      real*8  qmtabel(0:iqmtab,0:jqmtab,0:kqmtab)
       real*8  tcc(nlat,nlon),tccd(nlat,nlon)
       integer ndayws,iradcloud,iscenghg,iscenghg2s,iscentsi,iscenvol,
      *        iscensul,issulstrt,isceno3,
@@ -230,14 +230,14 @@ c-----------------------------------------------------------------------
       real*8  dumu1(nlat,nlon,nvl),dumu2(nlat,nlon,nvl)
       real*8  dragan,dragla,uv10rfx,uv10m,uv10rws
       real*8  uv10(nlat,nlon),uvw10(nlat,nlon)
-      
+
 
 c***  common /ec_swrscheme/costref,salbref,swrref,swrcost,swrsalb,dayfr(nlat),
 c***          kosz(nlat),solarf(nlat)
 c***  costref contains regional averaged cosine of the zenith angle
 c***  salbref contains regional averaged surface albedo from ????????
-c***  swrref  contains reference short wave radiation fluxes from 
-c***          radiation calculated using KRCM with NCEP humidity, ipcc95 
+c***  swrref  contains reference short wave radiation fluxes from
+c***          radiation calculated using KRCM with NCEP humidity, ipcc95
 c***          greenhousegascontrations, isccpd2 cloud climatology and
 c***          ECHAM4 ozone climatology
 c***  swrcost linear sensitivity coefficient for SWR changes due to anomalies
@@ -248,23 +248,23 @@ c***          for unity overcast fluxes.
 c*** index 1: flux levels
 c*** index 2: regions
 c*** index 3: month's
-c*** index 4: 0 clear sky, 1 cloudy sky, except for surface albedo: 1, 2,3 
+c*** index 4: 0 clear sky, 1 cloudy sky, except for surface albedo: 1, 2,3
 c***          correspond to coefficients of 3rd order polynomial fit
 c*** region classification and flux level definition same as LWR
-     
-      real*4 costref(27,12), salbref(27,12)
-      real*4 swrref(8,27,12,0:1)
-      real*4 swrcost(8,27,12,0:1)
-      real*4 swrsalb(8,27,12,0:3)
+
+      real*8 costref(27,12), salbref(27,12)
+      real*8 swrref(8,27,12,0:1)
+      real*8 swrcost(8,27,12,0:1)
+      real*8 swrsalb(8,27,12,0:3)
       real*8 dayfr(nlat),dso4(nlat,nlon)
       real*8 kosz(nlat)
       real*8 solarf(nlat)
       real*8 tas1(nlat,nlon)
-      real*4 sulopt(nlon,nlat,6000)
+      real*8 sulopt(nlon,nlat,6000)
       double precision :: suloptTime(6000)
       integer :: oldmonth
 
-c***  common lwrscheme/tncep,qancep,ghgipcc,lwrref,lwrt,lwrts,lwrqa,lwrghg,irn      
+c***  common lwrscheme/tncep,qancep,ghgipcc,lwrref,lwrt,lwrts,lwrqa,lwrghg,irn
 
 C***  tncep contains reference vertical temperature profiles from the
 c***  ncep reanalysis (1982-1994) for 12 month's, 27 regions and 19 levels:
@@ -275,7 +275,7 @@ c***  at the appropriate position as given by ipl (see below)
 c***  qancep:total precipitable water content below 500 mb from ncep, reduced
 c***  in order to tune the LW fluxes (minus 15 %)
 
-c***  ghgref: green house gas concentrations 1990 from ipcc '92: 
+c***  ghgref: green house gas concentrations 1990 from ipcc '92:
 C           1: pCO2-CO2 conc. (ppmv)
 C           2: pCH4-methane conc. (ppbv)
 C           3: pN2O-nitrous-oxide (ppbv)
@@ -304,15 +304,15 @@ C          19: pMCF-concentration Methyl Chloroform (CH3CCl3) (pptv)
 c***  O3echam4(kg/kg): based on ECHAM4 climatology; pressure levels in file
 c***  for each season: djf-mam-jja-son
 c***  ccisccp: total cloud cover monthly climatology: derived from isccp, used
-c***  in the linearisation procedure of KRCM, tuned 
+c***  in the linearisation procedure of KRCM, tuned
 c***  (middle and high clouds -15%) for KRCM to give 'observed'  LWR fluxes.
 
 c***  lwrref: reference long wave radiation fluxes, for four month's, jan,
 c***  apr, july, oct, calculated with KRCM with
 c***  data from several sources: temperature and humidity from ncep, ground
 c***  pressure and cloud cover climatology from ISCCP, ozone from ECHAM4:
-c***  values of the first index represent:  1: OLR,  2: upward at 200 mb, 
-c***  3: upward at 500 hPa, 4: upward at surface, 5: downward at 200 mb, 
+c***  values of the first index represent:  1: OLR,  2: upward at 200 mb,
+c***  3: upward at 500 hPa, 4: upward at surface, 5: downward at 200 mb,
 c***  6: downward at 500 mb, 7: downward at surface
 c***  and fourth index corresponds to clearsky (0) and unity overcast (1).
 c***  lwrrefc: same as lwrref but corrected for systematic difference of
@@ -321,14 +321,14 @@ c***  lwrt: first partial derivative of lwr fluxes wrt temperature at different
 c***  levels (see tncep and lwrref)
 c***  lwrts: 4th order polynomial fit of lwr flux dependence on surface temperature
 c***  lwrqa: first partial derivative of lwr fluxes wrt total precipitable water
-c***  content, distributed according to  ncep mean vertical profiles 
+c***  content, distributed according to  ncep mean vertical profiles
 c***  lwrghg: fits of lwr flux dependence on several ghg concentrations
 c***  irn: index of regions used for definition of the reference profiles and fits
 c***  27: Green Land area
 c***  26: Rocky Mountain area
 c***  25: Himalaya area
 c***  24: Andes area
-c***  23: Antarctica area 
+c***  23: Antarctica area
 c***  22: zonal mean 75N-90N land
 c***  21: zonal mean 75N-90N sea
 c***  20: zonal mean 60N-75N land
@@ -354,19 +354,19 @@ c***   1: zonal mean 90S-75S sea
 c***  ipl: index of pressure level in tncep containing 2mtr
 c***       temperature
 c***  pisccp: surface pressure anual mean, region averaged
-  
-      real*4  tncep(19,27,12),qancep(27,12)
-      real*4  ghgipcc(19),tsiscen(2,0:12000), ghgscen(20,0:12000), o3scen(2,0:12000)
+
+      real*8  tncep(19,27,12),qancep(27,12)
+      real*8  ghgipcc(19),tsiscen(2,0:12000), ghgscen(20,0:12000), o3scen(2,0:12000)
       integer y1scenghg,nyscenmaxghg,y1scentsi,nyscenmaxtsi,y1sceno3,nyscenmaxo3
       integer y1scenvol,m1scenvol,nyscenmaxvol,nyscenmaxsul
       real*8  dtemp(18,nlat,nlon,2),ghg(19),o3, rlogtl(17),rlogts(27)
-      real*4  pisccp(27),pncep(17),z500ncep(27,12)
-c     real*4  o3echam4(20,27,12)
-      real*4  ccisccp(32,64,12),tncep12(2,27,12)
-      real*4  lwrref(7,27,4,0:1),lwrflux(7,27,4,0:1,2)
-      real*4  lwrt(7,18,27,4,0:1),lwrts(7,4,27,4,0:1)
-      real*4  lwrqa(7,27,4,0:1),lwrqts(7,4,27,4,0:1)
-      real*4  lwrghg(7,19,27,4,0:1)
+      real*8  pisccp(27),pncep(17),z500ncep(27,12)
+c     real*8  o3echam4(20,27,12)
+      real*8  ccisccp(32,64,12),tncep12(2,27,12)
+      real*8  lwrref(7,27,4,0:1),lwrflux(7,27,4,0:1,2)
+      real*8  lwrt(7,18,27,4,0:1),lwrts(7,4,27,4,0:1)
+      real*8  lwrqa(7,27,4,0:1),lwrqts(7,4,27,4,0:1)
+      real*8  lwrghg(7,19,27,4,0:1)
       integer irn(nlat,nlon,2),ipl(27)
       real*8  AMPWIR,AMPEQIR,EXPIR,HPROFTROP,HPROFEQ,HPROFW
       real*8  HPROFAN,AMPANIR,HPROFAN2,AMPANIR2
@@ -410,7 +410,7 @@ c     real*4  o3echam4(20,27,12)
 
       common /ec_ccloud/ tcc, relhcrit, relhfac, tccd
       common /ec_dumout/ dumt1,dumt2,dumu1,dumu2
-      
+
       common /ec_swrscheme/costref,salbref,swrref,swrcost,swrsalb
      *          ,dayfr,kosz,solarf,dso4,sulopt,suloptTime,tas1,oldmonth
       common /ec_lwrscheme/tncep,qancep,ghgipcc,ghgscen,o3scen,tsiscen,ccisccp,lwrref,lwrflux
@@ -419,7 +419,6 @@ c     real*4  o3echam4(20,27,12)
      *        ,y1scenvol,m1scenvol,nyscenmaxvol,nyscenmaxsul
       common /ec_modlwr/AMPWIR,AMPEQIR,EXPIR,HPROFTROP,HPROFEQ,HPROFW,
      *                  HPROFAN,AMPANIR,HPROFAN2,AMPANIR2
-     
+
       common /ec_cvertint1 /dtemp,ghg,o3
       common /ec_cvertint2 /pisccp,tncep12,pncep,rlogtl,rlogts,z500ncep
-

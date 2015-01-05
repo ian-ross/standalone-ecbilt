@@ -7,9 +7,6 @@ c-----------------------------------------------------------------------
 
       implicit none
 
-#define LGM 0
-#define CLOUD 0
-#define LOCH 0
 #define ISM 0
 
       include 'comatm.h'
@@ -18,23 +15,18 @@ c-----------------------------------------------------------------------
       include 'comsurf.h'
       include 'comemic.h'
       include 'comunit.h'
-#if ISM == 1
-      include 'ismecv.com'
-#endif
       include 'comrunlabel.h'
       include 'netcdf.inc'
 
-      real*8 fvolcan
       integer ios
 
-      integer i,j,k,l,ireg,im,nn,is,j1,i1,ii,jj,ism
-      real*8  beta,draganr,draglar,dum(2),asum,spv
-      integer jyear,kyear,ilat,jmonth,m,indxvol,indxtsi,status
-      real*8 tsi,ksw,valVolc1,valVolc2,valVolc3,valVolc4
+      integer i,j,k,ireg,im,nn,j1,i1,ii,jj,ism
+      real*8  beta,draganr,draglar,asum
+      integer jyear,jmonth,indxvol,indxtsi,status
+      real*8 ksw,valVolc1,valVolc2,valVolc3,valVolc4
       character*6 numyear
       character*3 numday
       integer tmp_imonth
-      real*8 ec_globalmean
 
       !write(numyear,'(i6.6)') irunlabel+int((irunlabeld)/360)
       !write(numday,'(i3.3)') mod(irunlabeld,360)
@@ -80,16 +72,12 @@ c
         enddo
         call ec_atmphyszero
       else
-	ios=0
-        open(iuo+95,file='startdata/inatphy'//numyear//'_'//numday//'.dat',
+        ios=0
+        open(iuo+95, file='startdata/inatphy' // numyear //'_'//numday//'.dat',
      *        form='unformatted')
         read(iuo+95) tsurfn,tempm,temp0g
         read(iuo+95) rmoisg,torain,tosnow
-#if LOCH == 1
-        read(iuo+95,end=99,iostat=ios) PGACO2,PCO2ref
-#endif
-   99   if((ios.ne.0).and.((iscenghg.ne.3).and.(iscenghg.ne.0)))
-     &              print *,'CO2 ref from value in emic.f:',PCO2ref
+        print *,'CO2 ref from value in emic.f:',PCO2ref
         close(iuo+95)
       endif
 
@@ -142,9 +130,6 @@ c***  variables (greenhousegases)
       read(iuo+16) lwrref
 
 c *** UPDATE land surface each year
-#if LGM == 1
-      if (mod(nint(day*real(iatm)),nstpyear).eq.0) CALL ec_irn
-#endif
 
       read(iuo+17) lwrt,lwrts,lwrqts,lwrqa,lwrghg
 
@@ -211,7 +196,7 @@ c***  mean IR flux in the model without affecting sensitivity
         if(k.lt.0) exit
         i=i+1
       enddo
-      y1scenghg=ghgscen(1,1)
+      y1scenghg=nint(ghgscen(1,1))
       nyscenmaxghg=i-1
       if (nyscenmaxghg.eq.0) nyscenmaxghg=1
 
@@ -248,7 +233,7 @@ c***  mean IR flux in the model without affecting sensitivity
           if(k.lt.0) exit
           i=i+1
         enddo
-        y1sceno3=o3scen(1,1)
+        y1sceno3=nint(o3scen(1,1))
         nyscenmaxo3=i-1
         if (nyscenmaxo3.eq.0) nyscenmaxo3=1
         write(iuo+99,*) 'scen O3 start=',y1sceno3, "AD nbline=",nyscenmaxo3
@@ -280,9 +265,9 @@ c***  read 0-2000 TSI anomalies
          if(k.lt.0) exit
          i=i+1
         enddo
-        y1scentsi=tsiscen(1,1)
+        y1scentsi=nint(tsiscen(1,1))
         nyscenmaxtsi=i-1
-	if (nyscenmaxtsi.eq.0) nyscenmaxtsi=1
+        if (nyscenmaxtsi.eq.0) nyscenmaxtsi=1
         write(iuo+99,*) 'scen TSI start=',y1scentsi, "AD nbline=",nyscenmaxtsi
       else
         tsiscen(:,:)=0.0
@@ -309,19 +294,14 @@ c       d'un fichier de forçage volcanique évolutif au cours d'une assimilatio
           if(jmonth.eq.12) i=i+1
         enddo
         nyscenmaxvol=i-1
-	if (nyscenmaxvol.eq.0) nyscenmaxvol=1
+        if (nyscenmaxvol.eq.0) nyscenmaxvol=1
         write(iuo+99,*) 'scen VOLC starty=',y1scenvol,"AD startm=",m1scenvol, "nbline=",nyscenmaxvol
       endif
-100   FORMAT(5X,3(X,F7.2),9(2X,F6.2),X,F7.2,6(2X,F6.2))
-
 
       i=1
-      call ec_ghgupdate(i)
+      call ec_ghgupdate
 
 c* set reference value for CO2 concentration
-#if LOCH == 1
-      if((iscenghg.eq.0).or.(iscenghg.eq.3)) PCO2ref=PGACO2
-#endif
 
       do ireg=1,27
         do im=1,12
@@ -355,11 +335,6 @@ c
 
 
       call ec_detqmtabel
-
-
-310   format(9f7.2)
-330   format(2f5.2)
-340   format(f5.2)
 
 
 c *** computation of the effective turning angle
@@ -403,17 +378,17 @@ c
       endif
 
       if (iscenvol.eq.1) then
-	tmp_imonth=imonth
+        tmp_imonth=imonth
         !indxvol=irunlabelf
         indxvol=irunlabelf+iyear-y1scenvol+1
         if (initialization.eqv..true.) then
-	  if (irunlabeld.eq.360) then
-	    indxvol=indxvol+1
-	    imonth=1
-	  else
-	    if ((mod(irunlabeld,30)).eq.0) imonth=imonth+1
-	  endif
-	endif
+          if (irunlabeld.eq.360) then
+            indxvol=indxvol+1
+            imonth=1
+          else
+            if ((mod(irunlabeld,30)).eq.0) imonth=imonth+1
+          endif
+        endif
 
         if (indxvol.gt.nyscenmaxvol) indxvol=nyscenmaxvol
         if (indxvol.lt.1) indxvol=1
@@ -429,7 +404,7 @@ c
         do i=23,32
           solarcl(i)=solarcl(i)+solarvol(indxvol,imonth,4)
         enddo
-	imonth=tmp_imonth
+        imonth=tmp_imonth
       endif
 
       if (isceno3.eq.1) then
@@ -445,7 +420,7 @@ c
       end
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine ec_ghgupdate(istep)
+      subroutine ec_ghgupdate
 c-----------------------------------------------------------------------
 c *** updates ghg concentrations: indxghg 1 corresponds to y1scenghg AD
 c-----------------------------------------------------------------------
@@ -459,7 +434,7 @@ c-----------------------------------------------------------------------
       include 'comrunlabel.h'
 
 
-      integer i,istep,indxghg,s,r,k,l,m,indxo3,h
+      integer indxghg,s,r,k,l,m,indxo3,h
       real*8  logco2,sqrch4,sqrn2o
       real*8 alpho3lw(2)
 
@@ -485,11 +460,7 @@ c-----------------------------------------------------------------------
 
       ghg(1:19)=ghgscen(2:20,indxghg)
 
-#if LOCH == 1
-        ghg(1)=PGACO2
-#else
         PGACO2=ghg(1)
-#endif
 
       indxo3=1
       if (isceno3.eq.1) then
@@ -653,7 +624,7 @@ c
 
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine ec_solar(istep)
+      subroutine ec_solar
 c-----------------------------------------------------------------------
 c Calculates incoming solar radiation as a function of latitude
 c for each day of the year, given the orbital parameters (see PMIP)
@@ -669,18 +640,18 @@ c-----------------------------------------------------------------------
       include 'comunit.h'
       include 'comrunlabel.h'
 
-      integer i,j,l,NVE
+      integer i,l,NVE
 
 
       real*8 beta,alam,alam0,ala,ala0
-      real*8 fac1,fac2,fac3,ro,roref
+      real*8 fac1,fac2,fac3,ro
       real*8 deltal, sindl, cosdl, tandl
       real*8 rkosz, rkosha1, ha1
       real*8 deg2rad, day2rad
       real*8 solard, solarcf(nlat)
-      real*8 tsi,ksw
+      real*8 ksw
       real*8 alpho3sw(2)
-      integer indxvol,istep,indxtsi
+      integer indxvol,indxtsi
 
       deg2rad=pi/180.d0
       day2rad=pi/180.d0
@@ -884,7 +855,7 @@ c-----------------------------------------------------------------------
       call ec_surfmois(nn)
       call ec_sensibheat(nn)
       call ec_latentheat(nn)
-      if (nn.eq.noc) call ec_momentflux(nn)
+      if (nn.eq.noc) call ec_momentflux
 
       return
       end
@@ -914,13 +885,12 @@ c-----------------------------------------------------------------------
 
 
       integer i,j,k,l,ireg
-      integer m, d, r, nn , nol
+      integer nn, nol
 
 
       real*8 f0,f1,ftot(8),fn(8,0:1)
       real*8 drs, drs2, drs3
       real*8 dcost, df,sk,sr,x,y,dfs,smsc
-      real*8 fswdtoa,fswutoa,fswdsfc(nlat,nlon),fswusfc
       real*8 fswutoa2(nlat,nlon),fswutoa0(nlat,nlon)
       real*8 fswdtoa0(nlat,nlon)
       real*8 ec_globalmean
@@ -1130,12 +1100,9 @@ c-----------------------------------------------------------------------
       integer i,j,l,k,m,is,ism,nol,nn,ireg,h
       real*8  lwr(7,0:1),dumts
       real*8  dqa,dqreg(27)
-      real*8  ulrad0nm,ulrad1nm,ulrad2nm,ulradsnm,dlradsnm
       real*8  ec_globalmean
       real*8  ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
-      real*8  ulrad0nz(nlat,nlon),ulrad1nz(nlat,nlon)
-      real*8  ulrad2nz(nlat,nlon),ulradsnz(nlat,nlon)
-      real*8  dlradsnz(nlat,nlon), ulrad0nUz(nlat,nlon)
+      real*8  ulrad0nUz(nlat,nlon)
       real*8  ulrad1nUz(nlat,nlon)
       common / radO3 / ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
       common / radO32 / ulrad0nUz,ulrad1nUz
@@ -1206,7 +1173,7 @@ Cdqa &      dqreg(ireg),dqa,lwrmois(i,j)**0.333-dqreg(ireg)**0.33333
           ulrad2n(i,j,nn)=(lwr(3,0)+lwr(6,0))*(1-tcc(i,j)) +
      *             (lwr(3,1)+lwr(6,1))*tcc(i,j)
 
-	  ulradsn(i,j,nn)=emisn(nn)*sboltz*tsurfn(i,j,nn)**4
+          ulradsn(i,j,nn)=emisn(nn)*sboltz*tsurfn(i,j,nn)**4
           dlradsn(i,j,nn)=-lwr(7,0)*(1-tcc(i,j))-lwr(7,1)*tcc(i,j)
 
 
@@ -1343,7 +1310,7 @@ c-----------------------------------------------------------------------
 
 
       integer i,j,nn,n,NSTAT
-      real*8  ec_qsat,db,emois,esubf,evapf,esnow,sfrac,edum,psilai
+      real*8  ec_qsat,emois,esubf,evapf,esnow,sfrac,edum,psilai
 
       real*8    bmoisg(nlat,nlon),resist(3),lai(2),k0(2)
       real*8    bmoism(nlat,nlon),rs
@@ -1441,7 +1408,7 @@ c *** moisture: Eflux = (1-sfrac)*Esub + sfrac*Evap
                 enddo
                 resist(3)=1/(cdragvn(i,j,nld)*uv10(i,j))
                 resist(3)=1/resist(3)
-c	write(*,*)cdragvn(i,j,nld)*uv10(i,j), rs(i,j)
+c       write(*,*)cdragvn(i,j,nld)*uv10(i,j), rs(i,j)
 
 c               efluxn(i,j,nld)=alphav*(qsurfn(i,j,nld)-q10n(i,j,nld))*
 c    &              ((st(i,j)*resist(1))+(sg(i,j)*resist(2))+
@@ -1474,7 +1441,7 @@ c    &              (sd(i,j)*resist(3)))
 
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine ec_momentflux(nn)
+      subroutine ec_momentflux
 c-----------------------------------------------------------------------
 c *** computation of windstress
 c-----------------------------------------------------------------------
@@ -1488,8 +1455,8 @@ c-----------------------------------------------------------------------
       include 'comrunlabel.h'
 
 
-      integer i,j,nn
-      real*8  uv,costt,sintt,facstr
+      integer i,j
+      real*8  costt,sintt,facstr
 
       facstr=roair * uv10rws
 
@@ -1527,7 +1494,7 @@ c-----------------------------------------------------------------------
       include 'comrunlabel.h'
 
 
-      integer i,j,k
+      integer i,j
       real*8  uv
 
 c *** bug fix 27 march 97: uv was declared integer
@@ -1610,13 +1577,13 @@ c-----------------------------------------------------------------------
 
 
       integer i,j,nn
-      real*8  ec_qsat,pmount,tmount,qmax,dqmdt
+      real*8  ec_qsat,tmount,qmax,dqmdt
 
       do j=1,nlon
         do i=1,nlat
 
 
-          call ec_ptmoisgp(pmount,tmount,qmax,i,j,dqmdt)
+          call ec_ptmoisgp(tmount,qmax,i,j,dqmdt)
 
 
           if (qmax.gt.0d0) then
@@ -1709,47 +1676,13 @@ c-----------------------------------------------------------------------
 
       integer i,j
       real*8 rhc, rhfac
-#if CLOUD == 1
-      real*8 cc,om1,ts1,ppl,rh,cgace1,cgace2,cgace3,cgace4,cgace0
-      real*8 cgacea,cgace
-#else
       real*8 cc
-#endif
-
 
       do j=1,nlon
         do i=1,nlat
 
            rhc = relhcrit
            rhfac=relhfac
-#if CLOUD == 1
-c ***** Modif 11/04/2011 Axel Timmermann *****
-
-c *** TS in Kelvin
-           ts1 = tsurf(i,j)+4.5
-c *** omega in Pa/s
-           om1 = omegg(i,j,2)
-c *** Precipitation in m/6 hours (torain is in m/s) !!edit comments by M. Chikamoto
-           ppl = (torain(i,j)*3600.*6.)*3.5
-c *** Relative humidity from 0 to 1
-           rh = relhum(i,j)-0.02
-
-           cgace1 = 1.9218318e+02*om1**3+1.1051020e+00*om1**2
-     &    -8.0649978e-01*om1+6.8342844e-01
-
-           cgace2 = -3.7521436e-06*ts1**3+2.8280026e-03*ts1**2
-     &     -7.0227780e-01*ts1+5.7377912e+01
-
-          cgace3 = 8.5521895e+06*ppl**3-6.9721346e+04*ppl**2
-     &    +1.7135532e+02*ppl-6.4918327e-02
-
-          cgace4 = -3.0272406e+00*rh**3+6.1050774e+00*rh**2
-     &    -3.3284685e+00*rh+3.2277703e-01
-
-c   Revised from Axel September 12, 2012 by M Chikamoto
-c           cc = cgace1+cgace2+cgace3+cgace4+0.15
-          cc = cgace1+cgace2+cgace3+cgace4+0.019
-#else
 c enhance clouds in case of vertical motion
            if (omegg(i,j,2) .lt.  0.0 )  rhfac=0.95d0
            if (omegg(i,j,2) .lt. -0.04)  rhfac=0.90d0
@@ -1759,7 +1692,6 @@ c enhance clouds in areas of subsidence inversions
      &         rhfac=0.7d0
 
            cc=(relhum(i,j)/rhfac - rhc)/(1.0d0 - rhc)
-#endif
            cc=max(cc,0.0d0)
            cc=min(cc,1.0d0)
 
@@ -1799,9 +1731,6 @@ c-----------------------------------------------------------------------
       integer i,j,k
       real*8  tmount,t500,b,qmax,ec_expint,z1,z2,bz1,bz2,hulpx
       real*8  t350,t650,rlogp500,alpha
-      real*8  ec_detqmax,ec_detqmaxexact
-      real*4  hulp(0:iqmtab,0:jqmtab,0:kqmtab)
-
 
       rlogp500=log(500d0/650d0)
       b=cc2*cc3-cc2*tzero
@@ -1888,7 +1817,6 @@ c      enddo
 
 
 
- 111  format(4F14.7)
 c      close(88)
 c      close(89)
 c      stop
@@ -2139,9 +2067,9 @@ c-----------------------------------------------------------------------
 
 
       integer i,j
-      real*8  hdmoisg(nlat,nlon),d1(nlat,nlon),d3(nlat,nlon)
-      real*8  d2(nlat,nlon),qstar,hdivmg(nlat,nlon),ec_globalmean
-      real*8  ec_levtempgp,factemv,factems,omegg500,t500,ec_qsat,gm1,gm2
+      real*8  hdmoisg(nlat,nlon)
+      real*8  qstar,hdivmg(nlat,nlon)
+      real*8  ec_levtempgp,factemv,factems,omegg500,t500,ec_qsat
 
       factemv=rlatvap*grav*rowat/cpair
       factems=rlatsub*grav*rowat/cpair
@@ -2262,8 +2190,8 @@ c-----------------------------------------------------------------------
       include 'comrunlabel.h'
 
 
-      integer i,j,k
-      real*8  ctrasp(nsh2),vv(nsh2),ww(nsh2)
+      integer i,j
+      real*8  ctrasp(nsh2),vv(nsh2)
       real*8  dcdl(nlat,nlon),dcdm(nlat,nlon)
       real*8  tfdiv(nlat,nlon),ctra(nlat,nlon)
 
@@ -2324,7 +2252,6 @@ c-----------------------------------------------------------------------
       real*8  hduvg(nlat,nlon),ug(nlat,nlon),vg(nlat,nlon)
       real*8  dugdl(nlat,nlon),dvgdm(nlat,nlon)
       real*8  usp(nsh2),vv(nsh2),vsp(nsh2)
-      real*8  dx,dy(nlat)
 
 
       do j=1,nlon
@@ -2366,9 +2293,9 @@ c-----------------------------------------------------------------------
       include 'comrunlabel.h'
 
 
-      integer idifq,k
+      integer k
       real*8  hdmoiss(nsh2),hdmg(nlat,nlon)
-      real*8  difq,rll
+      real*8  difq
 
       difq=max(0.d0,1.d0/(tdifq*24d0*3600d0))
 
@@ -2411,11 +2338,11 @@ c-----------------------------------------------------------------------
 
 
       integer ncmax,iconvn,i,j
-      real*8  qsatcr,tsatcr,pref,t500,qsat500,pot2g,pot4g,dcmoisg
-      real*8  fachulp,facteta,factemv,factems,pmount,tmount
+      real*8  t500,qsat500,pot2g,pot4g,dcmoisg
+      real*8  fachulp,facteta,factemv,factems,tmount
       real*8  qmax,ec_qsat,hulp,redrain
-      real*8  temp2go,temp4go,ec_levtempgp
-      real*8  ec_detqmax,drainm,crainm,dqmdt
+      real*8  temp2go,temp4go
+      real*8  drainm,crainm,dqmdt
 
 
       fachulp=0.622d0*(rlatvap**2)/(cpair*rgas)
@@ -2438,7 +2365,7 @@ c ***     calculate pressure and temperature at the ground
 c ***     and the maximum water content
 
 
-            call ec_ptmoisgp(pmount,tmount,qmax,i,j,dqmdt)
+            call ec_ptmoisgp(tmount,qmax,i,j,dqmdt)
 
 
 c ***     relhmax defines the relative humidity at which oversaturation
@@ -2633,7 +2560,7 @@ c-----------------------------------------------------------------------
       include 'comrunlabel.h'
 
 
-      integer i,j,nn
+      integer i,j
       real*8  gmc,gmm,gfac
 
 
@@ -2791,7 +2718,7 @@ c-----------------------------------------------------------------------
 
 
       integer i,j,k,it,ipd
-      real*8  temp0sp(nsh2),tdifc,ec_globalmean,tstep,tdifday
+      real*8  temp0sp(nsh2),tdifc,tstep,tdifday
 
       tdifday=100d0
       tdifc=1.0d0/(tdifday*24.*3600.)
@@ -2846,14 +2773,9 @@ c-----------------------------------------------------------------------
       include 'comsurf.h'
       include 'comemic.h'
       include 'comrunlabel.h'
-#if ISM == 1
-      include 'ismecv.com'
-#endif
 
-      integer i,j,k,l,ireg(2),is,ism,nn,k1,k2,k2_tmp
+      integer i,j,k,l,ireg(2),is,ism,nn,k1,k2
       real*8 ro,ro1,ro2,z,z0,dt350,dt650(2),beta(2),tsref,dt100,z1,z2
-      real*8 dtemp_tmp, pground_tmp,tsref_tmp,z_tmp,ro_tmp,z0_tmp
-      real*8 beta_tmp
 
 c *** Example reference profile for
 c *** zonal band between 15s and 15n
@@ -2931,25 +2853,6 @@ c *** and ideal gas law.
           pgroundn(i,j,noc)=ro*grav*(z0-rmountn(i,j,noc))+pncep(k1-1)
           pgroundn(i,j,nse)=pgroundn(i,j,noc)
 
-#if ISM == 1
-c         rmount_ref(i,j)=rmountn(i,j,nld)
-          if(rmount_ref(i,j).lt.-900.) rmount_ref(i,j)=rmountn(i,j,nld)
-          if(rmount_ref(i,j).lt.0.) rmount_ref(i,j)=0.
-          z_tmp=z500ncep(ireg(2),imonth)
-          k2_tmp=12
-
-          DOWHILE ((z_tmp.GT.rmount_ref(i,j)).AND.(k2_tmp.LT.17))
-            z0_tmp=z_tmp
-            ro1=pncep(k2_tmp)/(rgas*(dtemp(k2_tmp,i,j,2)+
-     *                        tncep(k2_tmp,ireg(2),imonth)))
-            ro2=pncep(k2_tmp+1)/(rgas*(dtemp(k2_tmp+1,i,j,2)+
-     *         tncep(k2_tmp+1,ireg(2),imonth)))
-            ro_tmp=(ro1+ro2)*0.5
-            z_tmp=z_tmp-(pncep(k2_tmp+1)-pncep(k2_tmp))/(grav*ro_tmp)
-            k2_tmp=k2_tmp+1
-          ENDDO
-          pground_tmp=ro_tmp*grav*(z0_tmp-rmount_ref(i,j))+pncep(k2_tmp-1)
-#endif
 
           z=z500ncep(ireg(2),imonth)
           k2=12
@@ -2985,34 +2888,16 @@ c *** above.
      *          beta(1)*log(pgroundn(i,j,noc)/pncep(k1-1))
           tempsgn(i,j,noc)=tsref+dtemp(18,i,j,1)
           tempsgn(i,j,nse)=tempsgn(i,j,noc)
-#if ISM == 1
-          dtemp_tmp=dt650(2)+beta(2)*log(pground_tmp/65000.)
-          beta_tmp=(tncep(k2_tmp,ireg(2),imonth)-
-     &             tncep((k2_tmp-1),ireg(2),imonth))/
-     *         log(pncep(k2_tmp)/pncep(k2_tmp-1))
-#endif
           dtemp(18,i,j,2)=dt650(2)+beta(2)*log(pgroundn(i,j,nld)/65000.)
           beta(2)=(tncep(k2,ireg(2),imonth)-tncep((k2-1),ireg(2),imonth))/
      *         log(pncep(k2)/pncep(k2-1))
           tsref=tncep((k2-1),ireg(2),imonth)+
      *          beta(2)*log(pgroundn(i,j,nld)/pncep(k2-1))
-#if ISM == 1
-          tsref_tmp=tncep((k2_tmp-1),ireg(2),imonth)+
-     *          beta_tmp*log(pground_tmp/pncep(k2_tmp-1))
-#endif
           tempsgn(i,j,nld)=tsref+dtemp(18,i,j,2)
-#if ISM == 1
-          tempsg_ism(i,j)=(tsref_tmp+dtemp_tmp)*fractn(i,j,nld)+
-     *    (tempsgn(i,j,noc)*fractn(i,j,noc))+(tempsgn(i,j,nse)*
-     *    fractn(i,j,nse))
-#endif
           tempsg(i,j)=0.0
           do nn=1,ntyps
             tempsg(i,j)=tempsg(i,j)+fractn(i,j,nn)*tempsgn(i,j,nn)
           enddo
-#if ISM == 1
-          tempsg_ism(i,j)=tempsg(i,j)-tempsg_ism(i,j)
-#endif
 
 c *** Temperature of pressure levels between diagnosed surface pressure and
 c *** reference surface pressure are set equal to surface air temp.
@@ -3047,7 +2932,7 @@ c *** required:
       end
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
-       subroutine ec_ptmoisgp(pmount,tmount,qmax,i,j,dqmdt)
+       subroutine ec_ptmoisgp(tmount,qmax,i,j,dqmdt)
 c-----------------------------------------------------------------------
 c *** computation of ground pressure and temperature in order to
 c *** to calculate the maximum precipitable water content in latlon i,j
@@ -3065,8 +2950,8 @@ c-----------------------------------------------------------------------
 
 
       integer i,j
-      real*8  t500,ec_levtempgp,hmount,hred,z500,dqmdt
-      real*8  alpha,pfac,hfac,pmount,tmount,qmax,ec_detqmax
+      real*8  t500,hmount,hred,z500,dqmdt
+      real*8  alpha,pfac,hfac,tmount,qmax,ec_detqmax
 
 
       z500=gpm500*grav
@@ -3449,7 +3334,7 @@ c-----------------------------------------------------------------------
       include 'comrunlabel.h'
 
 
-      integer i,j,k,l
+      integer i,j,l
       real*8  vforg(nlat,nlon,nvl)
 
       do l=1,nvl
@@ -3481,7 +3366,7 @@ c-----------------------------------------------------------------------
       include 'comrunlabel.h'
 
 
-      integer i,j,k,l
+      integer i,j,l
       real*8  vforg(nlat,nlon,nvl),zetag(nlat,nlon,nvl)
 
 
@@ -3859,9 +3744,9 @@ c
       so = dsin(xob * pir)
       xeq = (datan(4.0d0 * pre / (pi1 * so))) / pir
 c
-      ipage = dabs(t / 1000.)
+      ipage = nint(dabs(t / 1000.))
 c
-      ikyr = t / 1000.
+      ikyr = nint(t / 1000.)
 c
 c     *** change by Hans Renssen, June 13 2001
       write(iuo+99,*) 'celest: annee, irunlabelf, iyear, ecc2(eccf), so(oblf), perh(omwebf)'
@@ -3871,12 +3756,6 @@ c     *** end change HR
 c
  9000 format(13x,f11.8,f20.7,f20.6)
  9005 format(7x,f13.7,2x,f10.6,2x,f10.4)
- 9010 format(//,1x,'long term daily insolation',/,1x,
-     1      'number of terms in:',1x,'eccentricity',i5,2x,
-     2      'obliquity',i5,2x,'general precession',i5,//)
- 9015 format('precession climatique= ',f8.5,5x,'page = ',i4)
- 9020 format(1x,'date = ',i6,3x,'eccen = ',f9.6,3x,'long per = ',
-     1   f7.2,3x,'obliq = ',f7.3,3x,'cal eq = ',f5.2,/)
 c
       return
       end
@@ -3922,18 +3801,16 @@ c-----------------------------------------------------------------------
       integer i,j,l,k,m,is,ism,nol,nn,ireg,h,r,s,igas
       real*8  lwrz(7,0:1),dumts
       real*8  dqa,dqreg(27)
-      real*8  ulrad0nm,ulrad1nm,ulrad2nm,ulradsnm,dlradsnm
-      real*8  ulrad0nmm,ulrad1nmm
+      real*8  ulrad1nm
+      real*8  ulrad1nmm
       real*8  ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
       real*8  ulrad0nz(nlat,nlon),ulrad1nz(nlat,nlon)
       real*8  ulrad1nzz(nlat,nlon,3)
-      real*8  ulrad2nz(nlat,nlon),ulradsnz(nlat,nlon)
-      real*8  dlradsnz(nlat,nlon)
-      real*8  ulrad0nT,ulrad1nT,ulrad2nT,ulradsnT,dlradsnT
+      real*8  ulrad0nT,ulrad1nT
       real*8  ec_globalmean
       real*8  logco2T,sqrch4T,sqrn2oT,ghgz(20)
       real*8  alpho3lw(2)
-      real*4  lwrfluxz(7,27,4,0:1,2)
+      real*8  lwrfluxz(7,27,4,0:1,2)
       real*8  moc,tmc,tmc0,tsurfmean,cland,thex
       common / radO3 / ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
       common /rad031/ulrad0nz,ulrad1nz,ulrad0nT,ulrad1nT
@@ -4077,23 +3954,19 @@ c-----------------------------------------------------------------------
       include 'comunit.h'
 
       integer i,j,k,l,ireg
-      integer m, d, r, nn , nol
-
+      integer nn, nol
 
       real*8 f0,f1,ftot(8),fn(8,0:1)
       real*8 drs, drs2, drs3
       real*8 dcost, df,sk,sr,x,y,dfs,smsc,df2
-      real*8 fswutoa(nlat,nlon),fswdsfc(nlat,nlon),fswusfc
+      real*8 fswutoa(nlat,nlon),fswdsfc(nlat,nlon)
       real*8 fswutoa2(nlat,nlon),fswdtoa(nlat,nlon)
       real*8 fswutoaG,fswdtoa2,fswdtoaG
 
 
-      integer nreg(2),indxsul
 !     real*8 zac(2),asup,bup
-      real*8 zac(2),asup
       real*8  ec_globalmean
-      real*8 fswutoaGA,fswutoaG0
-      real*8 fswutoa_diff,df_test
+      real*8 df_test
       common /rad_sul2 /fswutoa,fswdtoa
       common /rad_sul0 /fswutoaG,df_test,fswdtoaG
       common /pr_evap /fswdsfc
@@ -4207,12 +4080,7 @@ c
       include 'comsurf.h'
       include 'comemic.h'
       include 'comunit.h'
-#if ISM == 1
-      include 'ismecv.com'
-#endif
       include 'comrunlabel.h'
-*
-2000  format(/)
 *
       pi314=3.1415926535897932d0
       datzer=2451545.d0-500*365.25d0
@@ -4224,10 +4092,9 @@ c
         date=(dj-2451545.d0)/365.25d0+2000
         call subkhqp(dj,dkhqp)
         call subpsiom(dj,psiom)
-        call obliquity(dj,dkhqp,psiom,obliq)
+        call obliquity(dkhqp,psiom,obliq)
         call expi(dj,dkhqp,epi)
 c       write(iuo+66,4000) dj,date,epi,obliq
-4000    format(f10.2,f10.2,f11.8,f10.6,f11.8)
         ecc2=epi(1)
         perh=epi(2)*180.0D0/pi314
         obl=obliq*180.0D0/pi314
@@ -4236,7 +4103,7 @@ c       write(iuo+66,4000) dj,date,epi,obliq
       return
       end
 *
-      SUBROUTINE obliquity(dj,dkhqp,psiom,obliq)
+      SUBROUTINE obliquity(dkhqp,psiom,obliq)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       dimension dkhqp(4),psiom(2)
 *
@@ -4279,8 +4146,6 @@ calcul de e, pi, i, Omega rapportes a l'ecliptique J2000
       pi0=atan2(dkhqp(2),dkhqp(1))
       di=2*dasin(sqrt(dkhqp(3)**2+dkhqp(4)**2))
       omega0=atan2(dkhqp(4),dkhqp(3))
-*      write(iuo+66,3000) e,pi0,di,omega0
-3000  format('e =',f11.8,'  pi0 =',f10.6,'  di =',f11.8,'  Om0 =',f10.6)
 *
 calcul de pi_A, Pi_A, P_A
 *
@@ -4290,24 +4155,17 @@ calcul de pi_A, Pi_A, P_A
      .   -8.6d-9*t**5
       ppia=2*dasin(sqrt(dq**2+dp**2))
       gpia=atan2(dp,dq)
-*      write(iuo+66,4001) dq,dp,pa,ppia,gpia
-4001  format('dq,dp,pa,ppia,gpia',5d15.8)
 *
       z=cos(di)*cos(ppia)+sin(di)*sin(ppia)*cos(gpia-omega0)
       y1=sin(di)*sin(gpia-omega0)
       x1=-cos(di)*sin(ppia)+sin(di)*cos(ppia)*cos(gpia-omega0)
       y2=sin(ppia)*sin(gpia-omega0)
       x2=sin(di)*cos(ppia)-cos(di)*sin(ppia)*cos(gpia-omega0)
-*      write(iuo+66,4002) z,y1,x1,y2,x2
-4002  format('z,y1,x1,y2,x2',5d15.8)
-*
 *      did=dacos(z)
       omegad=pa+gpia-atan2(y1,x1)
       deltaomega=atan2(y2,x2)
       pid=pi0+omegad-omega0+deltaomega
       pid=mod(pid,2*pi314)
-*      write(iuo+66,3001) pid,did,omegad
-3001  format('pid =',f10.6,' did =',f11.8,'  Omd =',f10.6)
 *
       epi(1)=e
       epi(2)=pid
@@ -4837,9 +4695,6 @@ c *** =========================================================================
       include 'comsurf.h'
       include 'comemic.h'
       include 'comunit.h'
-#if ISM == 1
-      include 'ismecv.com'
-#endif
       include 'comrunlabel.h'
       include 'icemask.h'
 

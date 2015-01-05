@@ -6,8 +6,8 @@ c23456789012345678901234567890123456789012345678901234567890123456789012
 
 c-----------------------------------------------------------------------
 c *** this routine performs one timestep of ECBilt which is a
-c *** QG3L atmospheric model with simple physical parameterizations 
-c *** 
+c *** QG3L atmospheric model with simple physical parameterizations
+c ***
 c *** 6 april 1999 KNMI, De Bilt
 c ***
 c *** joint project Hugues Goosse
@@ -15,7 +15,7 @@ c ***               Rein Haarsma
 c ***               Theo Opsteegh
 c ***               Thijs van Reenen
 c ***               Michiel Schaeffer
-c ***               Frank Selten 
+c ***               Frank Selten
 c ***               Xueli Wang
 c ***               Nanne Weber
 c ***
@@ -32,22 +32,12 @@ c-----------------------------------------------------------------------
       include 'comsurf.h'
 
       integer ist,jst,istep
- 
+
 c *** atmospheric physics (in file atmphys.f)
- 
+
       istep=(ist-1)*iatm+jst
 
-c *** modif P.M.
-c *** Update topo when ism model is used (each year and for initialization)
-c *** Initialisation = .FALSE. every time step here, is not usefull 
-c      if(flgism.AND.((mod(nint(day*real(iatm)),nstpyear).eq.0).or.(initialization.eq..true.))) call ec_topo(.TRUE.)
-c *** Update top when ism model is not used
-c *** UPDATE topo each year (flag flgism is include in ec_topo
       if (mod(nint(day*real(iatm)),nstpyear).eq.0) call ec_topo
-c *** End modif P.M.
-c
-c      if(flgism.AND.((mod(nint(day*real(iatm)),nstpyear).eq.0).or.(initialization.eq..true.))) call ec_topo
-c      !if (flgism.AND.(mod(istep,nstpyear).eq.1)) call ec_topo
 
       call ec_atmout(istep)
       call ec_checks(istep)
@@ -57,19 +47,19 @@ c      !if (flgism.AND.(mod(istep,nstpyear).eq.1)) call ec_topo
         call ec_atmphyszero
         call ec_sensrad
 c        call ec_tracer
-        call ec_moisture 
+        call ec_moisture
         call ec_convec
         call ec_fortemp
         call ec_meantemp
       endif
 
-c *** atmospheric dynamics (in file atmdyn.f) 
- 
+c *** atmospheric dynamics (in file atmdyn.f)
+
       if (iadyn.eq.1) then
         if (iartif.eq.1) call ec_forcdaily
         call ec_forward
       endif
-      
+
       return
       end
 
@@ -83,18 +73,18 @@ c *** the atmospheric state and does outputting and checking
 C ***
 C-------------------------------------------------------------------------------
       implicit none
-      
+
       include 'comatm.h'
       include 'comemic.h'
       include 'comphys.h'
-      
+
       integer ist,jst,istep
-      
+
       istep=(ist-1)*iatm+jst
 
       call ec_mdldate(istep)
-      call ec_ghgupdate(istep) 
-      call ec_solar(istep)
+      call ec_ghgupdate
+      call ec_solar
       call ec_atmstate
       call ec_vortfor
 
@@ -104,7 +94,7 @@ c *** UPDATE irn (used by fluxes and vertical profile)
 #endif
 
       end
-      
+
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ec_checks(istep)
 c-----------------------------------------------------------------------
@@ -115,10 +105,10 @@ c-----------------------------------------------------------------------
       include 'comatm.h'
       include 'comemic.h'
 
-      integer i,j,istep
+      integer istep
 
       if ( mod(istep,iatm) .eq. 0) then
-        call ec_testecbilt(istep)
+        call ec_testecbilt
       endif
 
 c      call ec_moischeck(istep)
@@ -129,12 +119,12 @@ c      call ec_heatcheck(istep)
       end
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine ec_testecbilt(istep)
+      subroutine ec_testecbilt()
 c-----------------------------------------------------------------------
 c *** testing if model variables are inside prescribed ranges
 c-----------------------------------------------------------------------
       implicit none
-  
+
       include 'comatm.h'
       include 'comdyn.h'
       include 'comphys.h'
@@ -142,8 +132,8 @@ c-----------------------------------------------------------------------
       include 'comemic.h'
       include 'comunit.h'
 
-      integer i,j,istep
-      real*8  tsurfmean,ec_globalmean,dum1,dum2
+      integer i,j
+      real*8  tsurfmean,ec_globalmean
       character*12 chts
       real*8  moc,tmc,tmc0,cland,thex
       common/IPCC_out2/moc,tmc,tmc0,tsurfmean,cland,thex
@@ -186,7 +176,6 @@ c      write(*,*) istep,dum1,dum2
       endif
 
   110 format(i8,i8,f7.2)
-  100 format(f7.2)
 
       return
       end
@@ -200,11 +189,11 @@ c *** field, mean atmospheric temperatures and the moisture field
 c-----------------------------------------------------------------------
       implicit none
 
-      call ec_qtopsi 
+      call ec_qtopsi
       call ec_psitogeo
       call ec_dyntemp
       call ec_tempprofile
-      call ec_geowin  
+      call ec_geowin
       call ec_omega3
       call ec_diver
       call ec_divwin
@@ -221,7 +210,7 @@ c-----------------------------------------------------------------------
 c *** output atmosphere for start new run
 c-----------------------------------------------------------------------
       implicit none
-      
+
       include 'comatm.h'
       include 'comdyn.h'
       include 'comphys.h'
@@ -232,14 +221,14 @@ c-----------------------------------------------------------------------
 
       return
       end
-      
+
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ec_wrendphy
 c-----------------------------------------------------------------------
 c *** output atmosphere for start new run
 c-----------------------------------------------------------------------
       implicit none
-      
+
       include 'comatm.h'
       include 'comdyn.h'
       include 'comphys.h'
@@ -255,5 +244,3 @@ c-----------------------------------------------------------------------
 
       return
       end
-
- 

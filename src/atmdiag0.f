@@ -42,8 +42,7 @@ c-----------------------------------------------------------------------
       include 'comdiag.h'
       include 'comoutlocal.h'
 
-      integer i,j,k,l,istep
-      integer idmean,idstd
+      integer i,j,k,istep
       real*8  facstr,costt,sintt,pfac,psifac,qpfac
 
       ivlevel(1) = 200
@@ -72,14 +71,14 @@ c  *** compute the precipitation, evaporation and runoffs in cm/year
         costt=cos(dragane(i))
         sintt=sin(dragane(i))
         do j=1,nlon
-	  do k=1,3
+          do k=1,3
             qgpv(i,j,k) = qgpv(i,j,k)*qpfac
             psig(i,j,k) = psig(i,j,k)*psifac
-	  enddo
+          enddo
           dyrain1(i,j) = (dyrain(i,j)+dysnow(i,j))*pfac
           corain1(i,j) = (corain(i,j)+cosnow(i,j))*pfac
           torain1(i,j) = (torain(i,j)+tosnow(i,j))*pfac
-	  snow1(i,j)   = tosnow(i,j)*pfac
+          snow1(i,j)   = tosnow(i,j)*pfac
           evap1(i,j)   = evap(i,j)*pfac
           runofl1(i,j) = arunofl(i,j)*pfac
           runofo1(i,j) = arunofo(i,j)*pfac
@@ -1847,7 +1846,7 @@ c-----------------------------------------------------------------------
       include 'comcoup.h'
       include 'comunit.h'
 
-      integer i,j,k,l,istep,ibas
+      integer i,j,l,istep,ibas
       real*8  precmean(nbasa),evapmean(nbasa),runomean(nbasa)
       real*8 sum1(nlat,nbasa),sum2(nlat,nbasa),sum3(nlat,nbasa)
       real*8 ttest,unit
@@ -1950,10 +1949,10 @@ c-----------------------------------------------------------------------
       include 'comcoup.h'
       include 'comunit.h'
 
-      integer i,j,k,l,istep,ibas
+      integer i,j,istep,ibas
       real*8  hfmean(nlat,nbasa)
       real*8  hatl(nlat),hpac(nlat),hind(nlat),hall(nlat)
-      real*8  ttest,unit,dum
+      real*8  unit,dum
 
       unit=1e-15
       if (istep.eq.1) then

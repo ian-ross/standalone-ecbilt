@@ -6,39 +6,25 @@ c-----------------------------------------------------------------------
 
       USE NETCDF    ! netcdf module to read forcing data
 
-#define ABEL 0
-#define ISM 0
-
       implicit none
-      
+
       include 'comatm.h'
       include 'comdyn.h'
       include 'comemic.h'
       include 'comphys.h'
       include 'comcoup.h'
       include 'comunit.h'
-#if ISM == 1
-      include 'ismecv.com'
-#endif
       INCLUDE 'comrunlabel.h'  ! usefull to detect the right position in berg.nc file
 
-      integer i,j,k1,k2,k,l,m,n,ifail,ii,jj,i1,j1,nn
-      real*8  pigr4,dis,dif,rll,ininag(nlat,nlon),asum
-      real*8  r1,a,b,c,d,e,sqn,rsqn
-      real*8  rnorm,rh0,dd
-      real*8  agg(nlat,nlon), agg1(nlat,nlon), agg2(nlat,nlon) 
-      REAL(KIND=8), DIMENSION(:,:), ALLOCATABLE :: zagg1, zagg2
-      real*8  fw(nsh2),fs(nsh2),fors(nsh2,nvl), fmu(nlat,2)
-      real*8  forw(nsh2,nvl),wsx(nsh2),areafac
-      real*8  spv
+      integer i,j,k,l
+      real*8  sqn,rsqn
+      real*8  fw(nsh2),fs(nsh2),fors(nsh2,nvl)
+      real*8  forw(nsh2,nvl)
       character*6 numyear
       character*3 numday
 
-      ! netcdf file 
+      ! netcdf file
       !LGM variable
-      INTEGER :: idd_time, idf_berg, idv_time, idv_h, idv_sfric, istatus ! id netcdf file
-      INTEGER :: ntime_berg, itime_berg                                  ! time dimension
-      INTEGER, DIMENSION(:)  , ALLOCATABLE :: nvtime_berg                ! time of each
 
       read (iuo+1) nshm, ll
 
@@ -71,7 +57,7 @@ c *** Laplace/Helmoltz
 c *** Fft coefficients
 c *** Orography and dissipation term
 c *** Heigh orography in m
-c *** Surface dependent friction    
+c *** Surface dependent friction
       CALL ec_topo
 
 c *** forcing term
@@ -89,24 +75,24 @@ c *** forcing term
           forcggs1(i,j)=0d0
         enddo
       enddo
- 
+
       if (iartif.eq.1) then
 
 c ***   forcing data from liu, for is winter forcing, fors is summer
-       
+
         read(iuo+11,910)   ((forw(k,l),k=1,nsh2),l=1,nvl)
         read(iuo+12,910)   ((fors(k,l),k=1,nsh2),l=1,nvl)
 
-c ***   liu's forcing at 200mb  in grid point 
-               
+c ***   liu's forcing at 200mb  in grid point
+
         do k=1,nsh2
           fw(k)=forw(k,1)
           fs(k)=fors(k,1)
         enddo
 
         call ec_sptogg(fw,forcggw1,pp)
-        call ec_sptogg(fs,forcggs1,pp)     
-      
+        call ec_sptogg(fs,forcggs1,pp)
+
       endif
 
 c *** input initial qprime and for
@@ -137,7 +123,7 @@ c *** input initial qprime and for
           enddo
         enddo
       else
-      
+
       open(iuo+95,file='startdata/inatdyn'//numyear//'_'//numday//'.dat',
      *        form='unformatted')
         read(iuo+95) qprime,for
@@ -151,58 +137,58 @@ c *** input initial qprime and for
 !       write(iuo+66,*) 1-log(float(numens))/23
 !       qprime=qprime*(1-log(float(numens))/23)
 !      endif
-       
+
       ! This perturbation is NEVER activated
       if (ipert.ne.0) call ec_addperturb
 
   910 format(10e12.5)
-          
+
       return
       end
 
 c1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
       subroutine ec_addperturb
-      
+
       include 'comatm.h'
       include 'comdyn.h'
       include 'comphys.h'
       include 'comemic.h'
-      
+
       real*8 qpgg1(nlat,nlon),qpgg2(nlat,nlon),qpgg3(nlat,nlon)
 
       write(*,*)'ipert=',ipert
-      
+
       call ec_sptogg(qprime(1,1), qpgg1,pp)
       call ec_sptogg(qprime(1,2), qpgg2,pp)
       call ec_sptogg(qprime(1,3), qpgg3,pp)
 
 c *** ran1 initialization by calling it with a negative number
       qpgg1(1,1)=ran1(-1)
-    
+
       do i=1,nlat
         do j=1,nlon
           qpgg1(i,j)=qpgg1(i,j)*(1.025-0.05*ran1(ipert))
         enddo
       enddo
-      
+
       do i=1,nlat
         do j=1,nlon
           qpgg2(i,j)=qpgg2(i,j)*(1.025-0.05*ran1(ipert))
         enddo
       enddo
-      
+
       do i=1,nlat
         do j=1,nlon
           qpgg3(i,j)=qpgg3(i,j)*(1.025-0.05*ran1(ipert))
         enddo
       enddo
-      
+
       call ec_ggtosp(qpgg1,qprime(1,1))
       call ec_ggtosp(qpgg2,qprime(1,2))
       call ec_ggtosp(qpgg3,qprime(1,3))
-      
+
       end
-      
+
 c1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
 C  (C) Copr. 1986-92 Numerical Recipes Software +.-).
       function ran1(idum)
@@ -254,17 +240,17 @@ c----------------------------------------------------------------------
       real*8  dum1,dum2
 
 c *** advection of potential vorticity at upper level
- 
+
       call ec_jacob (psi(1,1),qprime(1,1),dqprdt(1,1))
- 
+
 c *** advection of potential vorticity at middle level
- 
+
       call ec_jacob (psi(1,2),qprime(1,2),dqprdt(1,2))
- 
+
 c *** advection of potential vorticity and dissipation at lower level
 
       call ec_jacobd (psi(1,3),qprime(1,3),dqprdt(1,3))
- 
+
 c *** relaxation of temperature and forcing
 
       do k=1,nsh2
@@ -274,9 +260,9 @@ c *** relaxation of temperature and forcing
         dqprdt(k,2)=dqprdt(k,2)-dum1+dum2         +for(k,2)
         dqprdt(k,3)=dqprdt(k,3)          -dum2    +for(k,3)
       enddo
- 
+
 c *** explicit horizontal diffusion
- 
+
       do l=1,3
         do k=1,nsh2
           dqprdt(k,l)=dqprdt(k,l)+diss(k,1)*qprime(k,l)
@@ -303,35 +289,35 @@ c----------------------------------------------------------------------
       real*8  psiloc(nsh2), pvor(nsh2), sjacob(nsh2),vv(nsh2)
       real*8  dpsidl(nlat,nlon), dpsidm(nlat,nlon), dvordl(nlat,nlon),
      *        dvordm(nlat,nlon), gjacob(nlat,nlon), dpsidls(nsh2)
- 
+
 c *** space derivatives of potential vorticity
- 
+
       call ec_ddl (pvor,vv)
       call ec_sptogg (vv,dvordl,pp)
       call ec_sptogg (pvor,dvordm,pd)
- 
+
 c *** space derivatives of streamfunction
- 
+
       call ec_ddl (psiloc,dpsidls)
       call ec_sptogg (dpsidls,dpsidl,pp)
       call ec_sptogg (psiloc,dpsidm,pd)
- 
+
 c *** jacobian term
- 
+
       do j=1,nlon
         do i=1,nlat
           gjacob(i,j)=dpsidm(i,j)*dvordl(i,j)-dpsidl(i,j)*dvordm(i,j)
         enddo
       enddo
- 
+
       call ec_ggtosp (gjacob,sjacob)
- 
+
 c *** planetary vorticity advection
- 
+
       do k=1,nsh2
         sjacob(k)=sjacob(k)-dpsidls(k)
       enddo
- 
+
       return
       end
 
@@ -352,21 +338,21 @@ c----------------------------------------------------------------------
       real*8  dpsidl(nlat,nlon), dpsidm(nlat,nlon), dvordl(nlat,nlon),
      *        dvordm(nlat,nlon), gjacob(nlat,nlon), vv(nsh2),
      *        azeta(nlat,nlon),dpsidls(nsh2)
- 
+
 c *** space derivatives of potential vorticity
- 
+
       call ec_ddl (pvor,vv)
       call ec_sptogg (vv,dvordl,pp)
       call ec_sptogg (pvor,dvordm,pd)
- 
+
 c *** space derivatives of streamfunction
- 
+
       call ec_ddl (psiloc,dpsidls)
       call ec_sptogg (dpsidls,dpsidl,pp)
       call ec_sptogg (psiloc,dpsidm,pd)
- 
+
 c *** jacobian term + orographic forcing
- 
+
       do j=1,nlon
         do i=1,nlat
           gjacob(i,j)=dpsidm(i,j)*(dvordl(i,j)+sinfi(i)*dorodl(i,j))-
@@ -374,25 +360,25 @@ c *** jacobian term + orographic forcing
         enddo
       enddo
 
-c *** dissipation 
- 
- 
+c *** dissipation
+
+
       if (lgdiss) then
 
-c ***   spatially varying dissipation 
+c ***   spatially varying dissipation
 
         do k=1,nsh2
           vv(k)=diss(k,2)*psiloc(k)
         enddo
- 
+
         call ec_sptogg (vv,azeta,pp)
- 
+
         do j=1,nlon
           do i=1,nlat
             gekdis(i,j)=-dpsidm(i,j)*ddisdy(i,j)
      *              -dpsidl(i,j)*ddisdx(i,j)
      *              +rdiss(i,j)*azeta(i,j)
-            gjacob(i,j)=gjacob(i,j) + gekdis(i,j)       
+            gjacob(i,j)=gjacob(i,j) + gekdis(i,j)
           enddo
         enddo
 
@@ -409,13 +395,13 @@ c ***   uniform dissipation
         enddo
 
       endif
-  
+
 c *** planetary vorticity advection
- 
+
       do k=1,nsh2
         sjacob(k)=sjacob(k)-dpsidls(k)
       enddo
- 
+
       return
       end
 
@@ -431,33 +417,33 @@ c-----------------------------------------------------------------------
       include 'comatm.h'
       include 'comdyn.h'
 
-      integer i,j,k
+      integer i,j
       real*8  psiloc(nsh2), pvor(nsh2), sjacob(nsh2),vv(nsh2)
       real*8  dpsidl(nlat,nlon), dpsidm(nlat,nlon), dvordl(nlat,nlon),
      *        dvordm(nlat,nlon), gjacob(nlat,nlon), dpsidls(nsh2)
- 
+
 c *** space derivatives of potential vorticity
- 
+
       call ec_ddl (pvor,vv)
       call ec_sptogg (vv,dvordl,pp)
       call ec_sptogg (pvor,dvordm,pd)
- 
+
 c *** space derivatives of streamfunction
- 
+
       call ec_ddl (psiloc,dpsidls)
       call ec_sptogg (dpsidls,dpsidl,pp)
       call ec_sptogg (psiloc,dpsidm,pd)
- 
+
 c *** jacobian term
- 
+
       do j=1,nlon
         do i=1,nlat
           gjacob(i,j)=dpsidm(i,j)*dvordl(i,j)-dpsidl(i,j)*dvordm(i,j)
         enddo
       enddo
- 
+
       call ec_ggtosp (gjacob,sjacob)
- 
+
 
       return
       end
@@ -474,28 +460,28 @@ c-----------------------------------------------------------------------
       include 'comatm.h'
       include 'comdyn.h'
 
-      integer i,j,k
-      real*8  psiloc(nsh2), sjacob(nsh2),vv(nsh2)
-      real*8  dpsidl(nlat,nlon), dpsidm(nlat,nlon), 
+      integer i,j
+      real*8  psiloc(nsh2), sjacob(nsh2)
+      real*8  dpsidl(nlat,nlon), dpsidm(nlat,nlon),
      *        gjacob(nlat,nlon), dpsidls(nsh2)
- 
+
 c *** space derivatives of streamfunction
- 
+
       call ec_ddl (psiloc,dpsidls)
       call ec_sptogg (dpsidls,dpsidl,pp)
       call ec_sptogg (psiloc,dpsidm,pd)
- 
+
 c *** jacobian term
- 
+
       do j=1,nlon
         do i=1,nlat
           gjacob(i,j)=dpsidm(i,j)*dorodl(i,j)-dpsidl(i,j)*dorodm(i,j)
           gjacob(i,j)=sinfi(i)*gjacob(i,j)
         enddo
       enddo
- 
+
       call ec_ggtosp (gjacob,sjacob)
- 
+
 
       return
       end
@@ -515,51 +501,51 @@ c-----------------------------------------------------------------------
 
       integer k
       real*8 as(nsh,2), dadl(nsh,2)
- 
+
       do k=1,nsh
         dadl(k,1)=-rm(k)*as(k,2)
         dadl(k,2)= rm(k)*as(k,1)
       enddo
- 
+
       return
       end
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ec_sptogg (as,agg,pploc)
- 
+
 c-----------------------------------------------------------------------
 c *** conversion from spectral coefficients to gaussian grid
-c *** input  spectral field as, legendre polynomials pploc (pp or pd) 
+c *** input  spectral field as, legendre polynomials pploc (pp or pd)
 c ***        where pp are legendre polynomials and pd derivatives with
 c ***        respect to sin(fi)
 c *** output gaussian grid agg
 c-----------------------------------------------------------------------
- 
+
       implicit none
 
       include 'comatm.h'
       include 'comdyn.h'
-      
+
       integer i,ifail,j,k,k1,k2,m,mi,mr,nlon1
       real*8  as(nsh,2), agg(nlat,nlon), pploc(nlat,nsh)
- 
+
 c *** inverse legendre transform
- 
+
       do j=1,nlon
         do i=1,nlat
           agg(i,j)=0.0d0
         enddo
       enddo
- 
+
       nlon1=nlon+1
       k2=nshm(0)
- 
+
       do k=1,k2
         do i=1,nlat
           agg(i,1)=agg(i,1)+as(k,1)*pploc(i,k)
         enddo
       enddo
- 
+
       do m=1,nm
         mr=m+1
         mi=nlon1-m
@@ -574,15 +560,15 @@ c *** inverse legendre transform
           enddo
         enddo
       enddo
- 
+
 c *** inverse fourier transform
- 
+
       ifail=0
       call c06fqf (nlat,nlon,agg,'r',trigi,wgg,ifail)
- 
+
       return
       end
- 
+
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ec_ggtosp (agg,as)
 c-----------------------------------------------------------------------
@@ -596,7 +582,7 @@ c-----------------------------------------------------------------------
       include 'comatm.h'
       include 'comdyn.h'
 
-      integer ir,ifail,j,k,k1,k2,m,mi,mr,nlon1,i
+      integer ir,ifail,k,k1,k2,m,mi,mr,nlon1,i
       real*8  as(nsh,2), agg(nlat,nlon)
 c
 c *** fourier transform
@@ -611,17 +597,17 @@ c
           as(k,ir)=0.0d0
         enddo
       enddo
- 
+
       nlon1=nlon+1
 
       k2=nshm(0)
- 
+
       do k=1,k2
         do i=1,nlat
           as(k,1)=as(k,1)+agg(i,1)*pw(i,k)
         enddo
       enddo
- 
+
       do m=1,nm
         mr=m+1
         mi=nlon1-m
@@ -634,10 +620,10 @@ c
           enddo
         enddo
       enddo
- 
+
       return
       end
- 
+
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ec_rggtosp (agg,as)
 c-----------------------------------------------------------------------
@@ -660,30 +646,30 @@ c-----------------------------------------------------------------------
           store(i,j)=agg(i,j)
         enddo
       enddo
- 
+
 c *** fourier transform
- 
+
       ifail=0
       call c06fpf (nlat,nlon,store,'r',trigd,wgg,ifail)
- 
+
 c *** legendre transform
- 
+
       do ir=1,2
         do k=1,nsh
           as(k,ir)=0.0d0
         enddo
       enddo
- 
+
       nlon1=nlon+1
 
       k2=nshm(0)
- 
+
       do k=1,k2
         do i=1,nlat
           as(k,1)=as(k,1)+store(i,1)*pw(i,k)
         enddo
       enddo
- 
+
       do m=1,nm
         mr=m+1
         mi=nlon1-m
@@ -696,7 +682,7 @@ c *** legendre transform
           enddo
         enddo
       enddo
- 
+
       return
       end
 
@@ -707,7 +693,7 @@ c *** computation of streamfunction from potential vorticity
 c *** input  qprime which is potential vorticity field
 c *** output psi, the streamfunction and psit, the layer thicknesses
 c-----------------------------------------------------------------------
- 
+
       implicit none
 
       include 'comatm.h'
@@ -722,24 +708,24 @@ c-----------------------------------------------------------------------
         psi(k,2)=ws(k)-2.d0*qprime(k,2)
         psi(k,3)=qprime(k,1)-qprime(k,3)
       enddo
- 
+
       do k=1,nsh2
         psit(k,1)=rinhel(k,2)*psi(k,2)+rinhel(k,3)*psi(k,3)
         psit(k,2)=rinhel(k,4)*psi(k,2)+rinhel(k,5)*psi(k,3)
       enddo
- 
+
       r3=1./3
       do k=1,nsh2
         psi(k,2)=r3*(psi(k,1)-psit(k,1)+psit(k,2))
         psi(k,1)=psi(k,2)+psit(k,1)
         psi(k,3)=psi(k,2)-psit(k,2)
       enddo
- 
+
       return
       end
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine ec_psitoq 
+      subroutine ec_psitoq
 c-----------------------------------------------------------------------
 c *** computation of potential vorticity from stream function
 c *** input psi streamfunction
@@ -751,7 +737,7 @@ c-----------------------------------------------------------------------
       include 'comdyn.h'
 
       integer k
-       
+
       do k=1,nsh2
         psit(k,1)=psi(k,1)-psi(k,2)
         psit(k,2)=psi(k,2)-psi(k,3)
@@ -806,7 +792,7 @@ c-----------------------------------------------------------------------
       implicit none
       include 'comatm.h'
       include 'comdyn.h'
-     
+
       real*8  qin(nsh2,nvl),sfout(nsh2,nvl), tus(nsh2,ntl), r3
       integer k
 
@@ -841,8 +827,8 @@ c-----------------------------------------------------------------------
       implicit none
       include 'comatm.h'
       include 'comdyn.h'
-     
-      real*8  qin(nsh2,nvl),tus(nsh2,ntl), r3,sfout(nsh2,nvl)
+
+      real*8  qin(nsh2,nvl),tus(nsh2,ntl),sfout(nsh2,nvl)
       integer k
 
       do k=1,nsh2
@@ -860,7 +846,7 @@ c-----------------------------------------------------------------------
       return
       end
 
- 
+
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ec_fmtofs (y,z)
 c-----------------------------------------------------------------------
@@ -1000,88 +986,51 @@ c-----------------------------------------------------------------------
       call ec_fstofm(y,qprime,nm)
       call ec_qtopsi
       call ec_ddt
-      call ec_fmtofs(dqprdt,dydt)      
+      call ec_fmtofs(dqprdt,dydt)
       return
       end
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ec_psitogeo
 c-----------------------------------------------------------------------
-c *** computes geopotential in [m2/s2] from the streamfunction 
-c *** by solving the linear balance equation: 
+c *** computes geopotential in [m2/s2] from the streamfunction
+c *** by solving the linear balance equation:
 c *** del phi = (1 - mu**2 ) d psi/dmu + mu del psi
 c *** the global mean value is not determined and set to zero
 c *** input:  psi
 c *** output: grpsi1,grpsi2,grpsi3,geopg(nlat,nlon,nvl)
 c-----------------------------------------------------------------------
       implicit none
-      
+
 
       include 'comatm.h'
       include 'comdyn.h'
       include 'comphys.h'
 
-      integer i,j,l,k
-      real*8  dmu(nlat),cdim,sdim,tempfac(ntl)
+      integer i,j,l
+      real*8  dmu(nlat),cdim
       real*8  delpsis(nsh2),delpsig(nlat,nlon)
       real*8  dmupsig(nlat,nlon),delgeog(nlat,nlon)
       real*8  delgeos(nsh2),geos(nsh2)
-
-#if ABEL == 1
-      real*8  x1d(nsh2)
-      real*8  chi_scaled(nsh2)
-c      real*8  chigtest(nlat,nlon,nvl)
-      real*8  dchidls(nsh2)
-      real*8  dchidlg(nlat,nlon)
-#endif
 
       do i=1,nlat
         dmu(i)=1-sinfi(i)**2
       enddo
 
       cdim=(om**2)*(radius**2)
-#if ABEL == 1
-      sdim=(om)*(radius**2)
 
       do l=1,nvl
-         do k=1,nsh2
-            x1d(k)=(radius**2)*divs(k,l)*rinhel(k,1)
-         enddo
-      enddo
 
-      do k=1,nsh2
-         chi_scaled(k)=x1d(k)/sdim
-      enddo
-
-c      do l=1,nvl
-c         call ec_sptogg(chi(1,l),chigtest(1,1,l),pp)
-c         do j=1,nlon
-c            do i=1,nlat
-c               write(980,*) chigtest(i,j,l)
-c            enddo
-c         enddo
-c      enddo
-#endif
-
-      do l=1,nvl
-        
 c *** solve linear balance equation
 
         call ec_lap(psi(1,l),delpsis)
         call ec_sptogg(delpsis,delpsig,pp)
         call ec_sptogg(psi(1,l),dmupsig,pd)
-#if ABEL == 1
-         call ec_ddl(chi_scaled,dchidls)
-         call ec_sptogg(dchidls,dchidlg,pp)
-#endif
 
         do j=1,nlon
           do i=1,nlat
             delgeog(i,j)=dmu(i)*dmupsig(i,j)+
      *                      sinfi(i)*delpsig(i,j)
-#if ABEL == 1
-     *              -1*dchidlg(i,j)
-#endif
           enddo
         enddo
         call ec_ggtosp(delgeog,delgeos)
@@ -1102,7 +1051,7 @@ c *** solve linear balance equation
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ec_omega3
 c-----------------------------------------------------------------------
-c *** computes the vertical velocity at the two temperature levels 
+c *** computes the vertical velocity at the two temperature levels
 c *** and the surface in pa/sec
 c *** input psi,psit
 c *** output omegs is vertical velocity at three levels in spectral form
@@ -1118,7 +1067,6 @@ c-----------------------------------------------------------------------
       real*8  adoro(nsh2),adpsit(nsh2,ntl),dpsitdt(nsh2,ntl)
       real*8  facom(nvl),facoc
       real*8  facd1,facd2
-      real*8  facekm
       real*8  omegsd(nsh2)
 
       facom(1)=(dp*om)/(rrdef1**2*fzero)
@@ -1151,21 +1099,21 @@ c          endif
       enddo
 
       call ec_ggtosp(gekdis,omegsd)
- 
+
 c *** first contributions that are odd in the equator
 
       do k=1,nsh2
 
 c ***   level1  (350 hpa)
 
-        omegs(k,1)= dpsitdt(k,1) - 
-     *              adpsit(k,1) + psit(k,1)/facoc 
+        omegs(k,1)= dpsitdt(k,1) -
+     *              adpsit(k,1) + psit(k,1)/facoc
 
-c ***   level2  (650 hpa) 
-           
+c ***   level2  (650 hpa)
+
         omegs(k,2)= dpsitdt(k,2) -
-     *              adpsit(k,2) + psit(k,2)/facoc 
-        
+     *              adpsit(k,2) + psit(k,2)/facoc
+
 c ***   level 3 (surface)
 
 c        omegs(k,3)= omegsd(k) + adoro(k)
@@ -1272,7 +1220,7 @@ c-----------------------------------------------------------------------
          do k=1,nsh2
            x(k)=r2*divs(k,l)*rinhel(k,1)
            chi(k,l)=x(k)
-	 enddo
+         enddo
 
          call ec_sptogg(x,chig(1,1,l),pp)
 
@@ -1288,7 +1236,7 @@ c-----------------------------------------------------------------------
          enddo
 
       enddo
- 
+
       return
       end
 
@@ -1300,7 +1248,7 @@ c *** input psi streamfunction in spectral form
 c *** output u200,v200 wind components at 200 hPa
 c ***        u500,v500 wind components at 500 hPa
 c ***        u800,v800 wind components at 800 hPa
-c  
+c
 c-----------------------------------------------------------------------
       implicit none
 
@@ -1312,7 +1260,7 @@ c-----------------------------------------------------------------------
       real*8  dpsdl(nlat,nlon),dpsdm(nlat,nlon),psik(nsh2),vv(nsh2)
 
 c *** space derivatives of streamfunction
- 
+
       facwin2=radius*om
 
       do l=1,nvl
@@ -1362,14 +1310,14 @@ c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ec_totwind
 c-----------------------------------------------------------------------
 c *** computation of total wind at all levels
-c  
+c
 c-----------------------------------------------------------------------
       implicit none
 
       include 'comatm.h'
       include 'comdyn.h'
 
-      integer i,j,k,l
+      integer i,j,l
 
       do l=1,nvl
 
@@ -1405,8 +1353,8 @@ c-----------------------------------------------------------------------
 
       return
       end
-      
-      
+
+
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ec_lap(xs,xsl)
 c-----------------------------------------------------------------------
@@ -1428,7 +1376,7 @@ c-----------------------------------------------------------------------
       return
       end
 
-      
+
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ec_lapinv(xsl,xs)
@@ -1468,7 +1416,7 @@ c-----------------------------------------------------------------------
 
       do i=1,nlat
         do j=1,nlon
-          forcgg1(i,j)=dabs(180.d0-day)*forcggw1(i,j)/180.d0 + 
+          forcgg1(i,j)=dabs(180.d0-day)*forcggw1(i,j)/180.d0 +
      *             forcggs1(i,j) - dabs(180.d0-day)*forcggs1(i,j)/180.d0
         enddo
       enddo
@@ -1491,97 +1439,36 @@ c-----------------------------------------------------------------------
       include'comsurf.h'
       include'comphys.h'
       include'comdyn.h'
-#if ISM == 1
-      include'ismecv.com'
-#endif
       include'comemic.h'
       include'comcoup.h'
       include'comunit.h'
       INCLUDE 'comrunlabel.h'  ! usefull to detect the right position in berg.nc file
 
-      real*8 asum,spv
-      integer i,j,i1,j1,ii,jj
+      integer i,j
 
-      integer k1,k2,k,l,m,n,ifail,nn
+      integer k1,k2,k,m,ifail
       real*8  pigr4,dis,dif,rll,ininag(nlat,nlon)
-      real*8  r1,a,b,c,d,e,sqn,rsqn
+      real*8  r1,a,b,c,d,e
       real*8  rnorm,rh0,dd
       real*8  agg(nlat,nlon), agg1(nlat,nlon), agg2(nlat,nlon)
       REAL(KIND=8), DIMENSION(:,:), ALLOCATABLE :: zagg1, zagg2
-      real*8  fw(nsh2),fs(nsh2),fors(nsh2,nvl), fmu(nlat,2)
-      real*8  forw(nsh2,nvl),wsx(nsh2),areafac
+      real*8  fmu(nlat,2)
+      real*8  wsx(nsh2)
 
       INTEGER :: idd_time, idf_berg, idv_time, idv_h, idv_sfric, istatus ! id netcdf file
       INTEGER :: ntime_berg, itime_berg                                  ! time dimension
       INTEGER, DIMENSION(:)  , ALLOCATABLE :: nvtime_berg                ! time of each
 
-c-pour changer topo (dyn+thermo), mettre le nouveau champ dans rmount_ism(verifier les flgism):
-#if ISM == 1
-        spv=0.
-        do i=1,nlat
-          do j=1,nlon
-c         rmount_ism(i,j)=
-          if ((flgisma.AND.(i.lt.15)).OR.(flgismg.AND.(i.gt.15))) then
-             if (rmount_ism(i,j).GE.spv) then
-              rmountn(i,j,nld)=rmount_ism(i,j)
-              rmount(i,j)=rmount_ism(i,j)
-             endif
-          endif
-          if (rmountn(i,j,nld).lt.0d0) rmountn(i,j,nld)=0d0
-          if (fractn(i,j,nld).lt.epss) then
-            rmountn(i,j,nld)=0d0
-            qmount(i,j)=0d0
-          else
-            qmount(i,j)=rmountn(i,j,nld)
-          endif
-          enddo
-        enddo
-
-        do j=1,nlon
-        do i=1,nlat
-          asum=0d0
-          do i1=-1,1
-            do j1=-1,1
-              ii=i+i1
-              jj=j+j1
-              if (ii.lt.1) then
-                ii=1
-                jj=jj+nlon/2
-              endif
-              if (ii.gt.nlat) then
-                ii=nlat
-                jj=jj+nlon/2
-              endif
-              if (jj.lt.1) jj=jj+nlon
-              if (jj.gt.nlon) jj=jj-nlon
-                asum=asum+rmountn(ii,jj,nld)
-              enddo
-            enddo
-            qmount(i,j)=asum/9d0
-          enddo
-        enddo
-
-        WRITE (6,*) "ec_topo : update topo in case of ism model used 
-     & (topographie file)"
-
-         open(2080,file='topographie',status='unknown')
-         do i=1,nlat
-           write(2080,'(1P64E10.3)') (rmountn(i,j,nld),j=1,nlon)
-         enddo
-         close(2080)
-
-c        read (iuo+1) nshm, ll
-#endif
 
 c *** real parameters
-	pigr4=4.d0*pi
-	rl1=1.0d0/rrdef1**2
-	rl2=1.0d0/rrdef2**2
-	relt1=max(0.0d0,rl1/(trel*pigr4))
-	relt2=max(0.0d0,rl2/(trel*pigr4))
-	dis=max(0.0d0,1.0d0/(tdis*pigr4))
-	rll=dble(ll(nsh))
-	dif=max(0.0d0,1.0d0/(tdif*pigr4*(rll*(rll+1))**idif))
+        pigr4=4.d0*pi
+        rl1=1.0d0/rrdef1**2
+        rl2=1.0d0/rrdef2**2
+        relt1=max(0.0d0,rl1/(trel*pigr4))
+        relt2=max(0.0d0,rl2/(trel*pigr4))
+        dis=max(0.0d0,1.0d0/(tdis*pigr4))
+        rll=dble(ll(nsh))
+        dif=max(0.0d0,1.0d0/(tdif*pigr4*(rll*(rll+1))**idif))
 
 c *** zonal derivative operator
       k2=0
@@ -1670,7 +1557,7 @@ c *** height of orography in meters
 
       ! READ time variable
       istatus=nf90_get_var(idf_berg, idv_time, nvtime_berg)
-      
+
       ! SELECT the right time
       itime_berg=0
       DO i=1,ntime_berg
@@ -1687,15 +1574,6 @@ c *** height of orography in meters
 
       ! UPDATE rmount
       rh0=max(0.0d0,0.001d0/h0)
-#if ISM == 1
-      do j=1,nlon
-        do i=1,nlat
-          if ((flgisma.AND.(i.lt.15)).OR.(flgismg.AND.(i.gt.15))) then
-          if (rmount_ism(i,j).GE.spv) agg1(i,j)=rmount_ism(i,j)
-          endif
-        enddo
-      enddo
-#endif
         do j=1,nlon
           do i=1,nlat
 c          agg(i,j)=fmu(i,1)*agg1(i,j)*rh0
@@ -1711,8 +1589,8 @@ c          agg(i,j)=fmu(i,1)*agg1(i,j)*rh0
       WRITE(iuo+99,*) "For year (AD) = ",irunlabelf+iyear
       WRITE(iuo+99,*) "selected time is ", nvtime_berg(itime_berg)," index is ",itime_berg,"/",ntime_berg
       WRITE(iuo+99,*) "================================================================="
-      CALL FLUSH(iuo+99) 
-     
+      CALL FLUSH(iuo+99)
+
       DEALLOCATE(zagg1, nvtime_berg)
 
 c *** surface dependent friction
@@ -1754,8 +1632,8 @@ c *** surface dependent friction
 
       endif
 
-       ! PRINT *, "ec_topo rmount = ",SUM(rmount) 
-       ! PRINT *, "ec_topo agg    = ",SUM(agg) 
+       ! PRINT *, "ec_topo rmount = ",SUM(rmount)
+       ! PRINT *, "ec_topo agg    = ",SUM(agg)
        ! Close the file
        istatus=nf90_close(idf_berg)
       end

@@ -1,37 +1,8 @@
 c23456789012345678901234567890123456789012345678901234567890123456789012
       program emic
 c-----------------------------------------------------------------------
-c *** coupled coupled atmosphere-ocean-seaice-land-carbon model
-c *** atmosphere      : ecbilt
-c *** ocean-seaice    : clio
-c *** land            : lbm (land bucket model)
-c *** carbon          - ocean & atmosphere : loch
-c                     - continents         : vecode
-c *** Ice-sheets      : agism
+! STANDALONE VERSION OF ECBILT ATMOSPHERE
 c-----------------------------------------------------------------------
-C
-C CO2 atmospheric concentration:
-C
-C ...... If flgloch=T:
-C  LOCH computes PGACO2 (But this one has no impact in LOCH);
-C  ECBilt takes PGACO2;
-C  Initialization of PGACO2:
-C         - if no run before this one then ECBilt reads PGACO2 in a forcing file
-C         - if the atmospheric CO2 concentration comes from a previous
-C             run, then PGACO2 is read in initecbilt:iatmphys;
-C
-C ...... If flgloch=F:
-C  ECBilt reads PGACO2 in a forcing file
-C
-C-----------------------------------------------------------------------
-C ... The reference value PCO2ref is read by EcBilt
-C                                 is modified only in case of equilibrium run
-C                                                            (iscenghg=0 or 3)
-C     It allows sensitivity runs with/without CO2 radiative and/or fertilisation effects
-C-----------------------------------------------------------------------
-C ...... Vecode takes patmCO2
-C
-C-----------------------------------------------------------------------
 
       implicit none
 
@@ -40,105 +11,33 @@ C-----------------------------------------------------------------------
       include 'comemic.h'
       include 'para.com'
 
-      integer ittt
-      double precision DTloch,patmCO2
-      integer i,j,k
+      double precision patmCO2
+      integer i, j
 
-      i=1
-      j=1
-      PCO2ref=277.4D0
-      PGACO2=PCO2ref
+      PCO2ref = 277.4D0
+      PGACO2 = PCO2ref
 
-      call ec_initemic
+      call ec_initdriver
       call ec_initecbilt
-!      call init_clio
-!      call ec_initlbm
       call ec_initcoup
 
-      initialization=.false.
-      patmCO2=PGACO2
+      initialization = .false.
+      patmCO2 = PGACO2
 
-      !C This call is now active in ec_initlbm <============
-      !     if (flgveg) then
-      !
-      ! Note: the value of patmCO2 has no impact during this call.
-      !              call veget(i,j,dtime,epss,patmCO2,fractn(1,1,nld),
-      !    &         darea,tempsgn(1,1,nld))
-      !
-      !     endif
-      !C                                       <============
-
-      ! Carbon in the ocean & atmosphere: Anne Mouchet
-
-      ! *** OCEAN-SEAICE >>
-
-      do i=1,ntotday
-!        call ec_oc2co(i)
-
-        !***   ATMOSPHERE >>
-        do j=1,iatm
-          call ec_update(i,j)
+      do i = 1, ntotday
+        do j = 1, iatm
+          call ec_update(i, j)
           call ec_co2at
-          call ec_at2co
           call ec_fluxes(noc)
           call ec_fluxes(nse)
-          ! *** integrate atmosphere
-          call ec_ecbilt(i,j)
+          call ec_ecbilt(i, j)
 
-          ! ***     LAND >>
-          do k=1,ilan
-!            call ec_la2co
-            call ec_fluxes(nld)
-!            call ec_co2la
-            ! *** integrate land
-!            call ec_lbm(i,j,k)
-!            call ec_lae2co
-            call ec_sumfluxland(k)
-          enddo
-          ! ***     << LAND
-
-          call ec_sumfluxocean(i,j)
-
-
-          !*** OCEAN-SEAICE >>
-          if (j.eq.iatm) then
-!            call ec_co2oc(i)
-            ! *** integrate ocean-seaice
-!            call clio(i)
-
-            !Fertilization:
-            IF(lferCO2) then
-             patmCO2=PGACO2
-            ELSE
-             patmCO2=PCO2ref
-            ENDIF
-
-            ! Radiative:
-            IF(.NOT.lradCO2) PGACO2=PCO2ref
-
+          if (j .eq. iatm) then
             call ec_writestate(i)
           endif
-          !*** << OCEAN-SEAICE
-
-          !***     >> VEGETATION
-!          if (flgveg) then
-!            call veget(i,j,dtime,epss,patmCO2,fractn(1,1,nld),
-!     &         darea,tempsgn(1,1,nld))
-!          endif
-          !***     << VEGETATION
-
-          !call ec_sumfluxocean(i,j)
-          call IPCC_output(i,j)
-
+          call IPCC_output(i, j)
         enddo
-        !***   << ATMOSPHERE
-
-        !*** OCEAN-SEAICE >>
-        !call ec_co2oc(i)
-        !*** integrate ocean-seaice
-        !call clio(i,flgicb)
       enddo
-      !*** << OCEAN-SEAICE
 
       call ec_writestate(ntotday)
       call ec_error(999)
@@ -148,7 +47,7 @@ c-AM
       end
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine ec_initemic
+      subroutine ec_initdriver
 c-----------------------------------------------------------------------
 c *** initialisation of climate model
 c-----------------------------------------------------------------------
@@ -158,63 +57,24 @@ c-----------------------------------------------------------------------
       include 'comemic.h'
       include 'comunit.h'
 
-      integer   ijatm,ija,i,j,k,ismfile
+      integer   ijatm,ija,i,j,ismfile
       parameter (ijatm=nlat*nlon)
       real*8    fractocn(ijatm)
       parameter (ismfile = 400)
       character*6 num_startyear
       character*3 num_startday
 
-      NAMELIST /tstepctl/nyears,ndays,irunlabel,irunlabeld,iatm,ilan,iice,iobtrop,
-     &                   iobclin,nwrskip,nwrskip_days
+      NAMELIST /tstepctl/ nyears,ndays,irunlabel,irunlabeld,iatm,ilan,iice,
+     &                    nwrskip,nwrskip_days
 
 
-      include 'openemicinfiles.h'
       include 'openatoutfiles.h'
 
       write(iuo+99,*) 'Initialize'
 
-c *** open emic.param
-
-      open(iuo+50,file = 'emic.param',status='old',form='formatted')
-      read(iuo+50,*)
-      read(iuo+50,*)
-      read(iuo+50,'(L4)') flgveg
-      read(iuo+50,'(L4)') flgicb
-      read(iuo+50,'(L4)') flgismg
-      read(iuo+50,'(L4)') flgisma
-      read(iuo+50,'(I1)') flgloch
-      read(iuo+50,*)
-      read(iuo+50,*)
-      read(iuo+50,*)
-      read(iuo+50,'(L4)') lradCO2
-      read(iuo+50,'(L4)') lferCO2
-      read(iuo+50,*)
-      read(iuo+50,*)
-      do i=1,26
-       if (i.ne.6.AND.i.ne.19.AND.i.ne.22.AND.i.ne.24.AND.i.ne.25.AND.i.ne.26) then
-            read(iuo+50,*)
-            read(iuo+50,'(A)') globalatt(i,1)
-            read(iuo+50,'(A)') globalatt(i,2)
-         end if
-      enddo
-      close(iuo+50)
-
-
-      write(*,'(A,L4)') 'Vecode:',flgveg
-      write(*,'(A,L4)') 'Iceberg:',flgicb
-      write(*,'(A,L4)') 'GISM:',flgismg
-      write(*,'(A,L4)') 'AISM:',flgisma
-      write(*,'(A,I1)') 'Loch:',flgloch
-      write(*,*)
-      write(*,'(A,L4)') 'CO2 radiative forcing:',lradCO2
-      write(*,'(A,L4)') 'CO2 fertilization:',lferCO2
-      write(*,*)
-
 c *** open namelist
 
       include 'openemicinfiles.h'
-
       nyears=10
       ndays=0
       irunlabel=000000
@@ -222,8 +82,6 @@ c *** open namelist
       iatm=6
       ilan=1
       iice=3
-      iobtrop=1
-      iobclin=1
       nwrskip=50
       nwrskip_days=0
 
@@ -242,10 +100,6 @@ c *** open namelist
       globalatt(19,2)=""//num_startyear
 
 
-      kism=1
-      if_ism=15
-      is_ism=15
-
       include 'openemicoutfiles.h'
 
       write(iuo+30, 900) 'nyears       =', nyears
@@ -255,34 +109,19 @@ c *** open namelist
       write(iuo+30, 900) 'iatm         =', iatm
       write(iuo+30, 900) 'ilan         =', ilan
       write(iuo+30, 900) 'iice         =', iice
-      write(iuo+30, 900) 'iobtrop      =', iobtrop
-      write(iuo+30, 900) 'iobclin      =', iobclin
       write(iuo+30, 900) 'nwrskip      =', nwrskip
       write(iuo+30, 900) 'nwrskip_days =', nwrskip_days
-      write(iuo+30, 901) 'flgveg       =', flgveg
-      write(iuo+30, 901) 'flgicb       =', flgicb
-      write(iuo+30, 901) 'flgismg      =', flgismg
-      write(iuo+30, 901) 'flgisma      =', flgisma
-      write(iuo+30, 901) 'flgloch      =', flgloch
 
 
       undef = 9.99E10
 
 c *** nstpyear is number of atmospheric timesteps per year
-c *** nocstpyear is number of ocean timesteps per year
 c *** ntstep is total number of timesteps
-c *** nbclins is number of atmospheric time steps per baroclinic ocean
-c *** timestep
-c *** nbtrops is number of atmospheric time steps per barotropic ocean
-c *** timestep
 
 
       nstpyear   = iatm*360
-      nocstpyear = 360/iobclin
       ntstep     = nstpyear*nyears
       ntotday    = nyears*360+ndays
-      nbclins    = iatm*iobclin
-      nbtrops    = iatm*iobtrop
 
       read(iuo+48,*)
       read(iuo+48,*) (fractocn(ija),ija=1,ijatm)
@@ -300,7 +139,6 @@ c *** timestep
       enddo
 
 900   format(a14,1x,i6)
-901   format(a14,1x,l6)
 
       return
       end
@@ -518,9 +356,8 @@ c-----------------------------------------------------------------------
         implicit none
         integer :: date
         character*255 prog,oldprog
-        double precision oldtime,hires_time,tl
         integer ndone,ntotal,i
-        save oldprog,oldtime
+        save oldprog
 
         write(prog,'(I6,''['')') date
         do i=1,40
