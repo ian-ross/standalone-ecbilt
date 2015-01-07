@@ -13,11 +13,11 @@ OBJS=$(addprefix src/, $(SRCS:.f=.o))
 INCALL=$(addprefix src/, $(INCS))
 
 ecbilt :$(OBJS)
-	$(FC) $(FFLAGS) -o atmos0.x $(OBJS)
+	$(FC) $(FFLAGS) -o ecbilt $(OBJS)
 
 src/%.o: src/%.f $(INCALL)
 	$(FC) $< $(FFLAGS) -c -o $@
 
 clean:
 	rm -f $(OBJS)
-	rm -f atmos0.x
+	rm -f ecbilt
