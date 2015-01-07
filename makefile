@@ -1,5 +1,5 @@
 FC = gfortran
-FFLAGS=-cpp -ffixed-line-length-none -fno-align-commons -O2
+FFLAGS=-cpp -ffixed-line-length-none -fno-align-commons -g
 
 SRCS=ecbilt.f global.f initial.f atmmodel.f atmphys.f atmdyn.f atmdiag.f \
      landmodel.f fluxmodel.f oceanfixed.f error.f nag.f root.f

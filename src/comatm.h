@@ -1,21 +1,21 @@
 c23456789012345678901234567890123456789012345678901234567890123456789012
 c-----------------------------------------------------------------------
-c *** File:     comatm.h                                                    
+c *** File:     comatm.h
 c *** Contents: General Parameter and Common declarations for ECbilt
 c-----------------------------------------------------------------------
 c *** PARAMETERS
-c     nm  :   the truncation is of type T(riangular) nm. 
+c     nm  :   the truncation is of type T(riangular) nm.
 c     nlon:   number of longitude points of the Gaussian grid
 c     nlat:   number of latitude  points of the Gaussian grid
-c     nvl :   number of vorticity levels in the vertical 
+c     nvl :   number of vorticity levels in the vertical
 c             (should be set to 3)
-c     ntl :   number of temperature levels in the vertical 
+c     ntl :   number of temperature levels in the vertical
 c             (equal to nvl-1)
 c     nsh :   half of nsh2
-c     nsh2:   number of coefficients needed to define one level of the 
+c     nsh2:   number of coefficients needed to define one level of the
 c             T nm model
 c     ngp:    number of grid points of the Gaussian grid
-c 
+c
 c *** COMMON  /rvari/ pi,dp,om,rgas,grav,radius
 c     pi :     value of pi
 c     fzero:   value of f at 45 degrees

@@ -371,8 +371,8 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       write(30, 900) 'idtbclin =', idtbclin
       write(30, 900) 'idtbtrop =', idtbtrop
 
-      write(30, 910) 'ndreloct =', ndreloct
-      write(30, 910) 'ndrelocs =', ndrelocs
+      write(30, 900) 'ndreloct =', ndreloct
+      write(30, 900) 'ndrelocs =', ndrelocs
       write(30, 900) 'icoupleh =', icoupleh
       write(30, 900) 'icouplew =', icouplew
       write(30, 900) 'icouples =', icouples

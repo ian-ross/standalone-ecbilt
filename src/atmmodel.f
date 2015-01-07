@@ -18,11 +18,11 @@ c *** field, mean atmospheric temperatures and the moisture field
 c-----------------------------------------------------------------------
       implicit none
 
-      call qtopsi 
+      call qtopsi
       call psitogeo
       call dyntemp
       call ptground
-      call geowin  
+      call geowin
       call omega3
       call diver
       call divwin
@@ -46,28 +46,28 @@ c-----------------------------------------------------------------------
       include 'comglobal.h'
 
       integer i,j
- 
+
 c *** atmospheric physics (in file atmphys.f)
- 
+
 
       if (iaphys.eq.1.and.irunatm.eq.1) then
 
         call atmphyszero
         call sensrad
 c        call tracer
-        call moisture 
+        call moisture
         call convec
         call fortemp
         call meantemp
       endif
 
-c *** atmospheric dynamics (in file atmdyn.f) 
- 
+c *** atmospheric dynamics (in file atmdyn.f)
+
       if (iadyn.eq.1.and.irunatm.eq.1) then
         if (iartif.eq.1) call forcdaily
         call forward
       endif
- 
+
       return
       end
 
@@ -88,7 +88,7 @@ c-----------------------------------------------------------------------
 
       integer i,j
 
-      do j=1,nlon 
+      do j=1,nlon
         do i=1,nlat
           if (lsmask(i,j).eq.1) then
             if (lseaice(i,j).eq.0) then
@@ -119,7 +119,7 @@ c----------------------------------------------------------------------
       integer i,j
 
       real*8 cdrags,cdragl
- 
+
       cdrags=cdrag
       cdragl=cdrag
       do j=1,nlon
@@ -130,16 +130,16 @@ c----------------------------------------------------------------------
             cdragv(i,j)=cdragl
           endif
           if (tsurf(i,j).lt.tempsg(i,j)) then
-            cdragv(i,j)=0.2*cdragv(i,j)  
+            cdragv(i,j)=0.2*cdragv(i,j)
           endif
         enddo
       enddo
 
       return
-      end           
+      end
 
-          
-      
+
+
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine wrendatmos
@@ -147,7 +147,7 @@ c-----------------------------------------------------------------------
 c *** output atmosphere for start new run
 c-----------------------------------------------------------------------
       implicit none
-      
+
       include 'comatm.h'
       include 'comdyn.h'
       include 'comphys.h'
@@ -157,13 +157,8 @@ c-----------------------------------------------------------------------
       integer i,j
 
       write(95) qprime,for
-      write(95) tsurf,tempm 
+      write(95) tsurf,tempm
       write(95) rmoisg,torain
 
       return
       end
-
-
-	
-
- 

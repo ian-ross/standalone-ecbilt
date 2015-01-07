@@ -32,6 +32,7 @@ c *** initialisation of parameters and initial state
 c *** forward time integration
 
       do icount=1,ntstep
+        write (*,*) 'icount=', icount
 
         istep=icount
         call mdldate(istep)
