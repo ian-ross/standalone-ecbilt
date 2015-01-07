@@ -3,9 +3,9 @@ c-----------------------------------------------------------------------
 c *** File:     comrunlabel.h
 c *** Contents: real start year of the run
 c-----------------------------------------------------------------------
-c *** PARAMETERS               
+c *** PARAMETERS
 c *** COMMON  /ilabel/  irunlabelf
 c     irunlabelf: real date at the starting point of this run
-c                 (irunlabelf=irunlabel-initdate)    
+c                 (irunlabelf=irunlabel-initdate)
       integer irunlabelf
-      common /ilabel/  irunlabelf 
+      common /ilabel/  irunlabelf

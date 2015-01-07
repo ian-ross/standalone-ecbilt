@@ -14,7 +14,7 @@
       subroutine ec_error(ierr)
 
       implicit none
-      
+
       include 'comatm.h'
       include 'comemic.h'
       include 'comphys.h'
@@ -31,12 +31,12 @@
       if (ierr.eq.1) then
         write(iuo+29,*) 'error in routine surftl of landmodel'
         write(iuo+29,*) 'too many iterations (> 20)'
-      endif  
-    
+      endif
+
       if (ierr.eq.2) then
         write(iuo+29,*) 'error in routine surftl of landmodel'
         write(iuo+29,*) 'divergence of solution'
-      endif      
+      endif
 
       if (ierr.eq.3) then
         write(iuo+29,*) 'error in routine test of atmdiag0.f'
@@ -155,7 +155,7 @@
         call flush(iuo+29)
         nwarns=nwarns+1
         if (nwarns.gt.100000) goto 10
-     
+
         return
 
       endif
@@ -164,9 +164,9 @@
 
       write(iuo+29,*) 'program aborted due to soft error'
       write(iuo+29,*) 'see state.grads for state of the system'
-      
+
       open(iuo+46,file='state.grads',form='unformatted')
-      
+
       write(iuo+46) ((real(u200(i,j)),j=1,nlon),i=1,nlat)
       write(iuo+46) ((real(v200(i,j)),j=1,nlon),i=1,nlat)
       write(iuo+46) ((real(u500(i,j)),j=1,nlon),i=1,nlat)

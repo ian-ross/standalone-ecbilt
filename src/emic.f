@@ -64,7 +64,7 @@ c-----------------------------------------------------------------------
       character*6 num_startyear
       character*3 num_startday
 
-      NAMELIST /tstepctl/ nyears,ndays,irunlabel,irunlabeld,iatm,ilan,iice,
+      NAMELIST /tstepctl/ nyears,ndays,irunlabel,irunlabeld,iatm,
      &                    nwrskip,nwrskip_days
 
 
@@ -80,8 +80,6 @@ c *** open namelist
       irunlabel=000000
       irunlabeld=0
       iatm=6
-      ilan=1
-      iice=3
       nwrskip=50
       nwrskip_days=0
 
@@ -107,8 +105,6 @@ c *** open namelist
       write(iuo+30, 900) 'irunlabel    =', irunlabel
       write(iuo+30, 900) 'irunlabeld   =', irunlabeld
       write(iuo+30, 900) 'iatm         =', iatm
-      write(iuo+30, 900) 'ilan         =', ilan
-      write(iuo+30, 900) 'iice         =', iice
       write(iuo+30, 900) 'nwrskip      =', nwrskip
       write(iuo+30, 900) 'nwrskip_days =', nwrskip_days
 
@@ -256,15 +252,6 @@ c-----------------------------------------------------------------------
      *           ,form='unformatted')
           call ec_wrendphy
           close(iuo+95)
-          open(iuo+95,file='startdata/inland'//numyear//'_'//numday//'.dat'
-     *           ,form='unformatted')
-!          call ec_wrendland
-          close(iuo+95)
-          open(iuo+95,file='startdata/incoup'//numyear//'_'//numday//'.dat'
-     *           ,form='unformatted')
-          call ec_wrendcoup
-          close(iuo+95)
-
        endif
 
        return
