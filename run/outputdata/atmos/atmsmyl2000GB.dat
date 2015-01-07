@@ -1,0 +1,59 @@
+Global Mean Budgets atmsmyl2000
+-------------------------------
+ 
+OLR (W/m2) DJF    233.228
+OLR (W/m2) JJA    243.585
+OLR (W/m2) annual 237.84
+************
+SLWR (W/m2) DJF    50.2511
+SLWR (W/m2) JJA    50.7975
+SLWR (W/m2) annual 51.2243
+************
+TSR (W/m2) DJF    235.838
+TSR (W/m2) JJA    240.348
+TSR (W/m2) annual 238.313
+************
+SSR (W/m2) DJF    145.882
+SSR (W/m2) JJA    148.924
+SSR (W/m2) annual 147.781
+************
+SHF (W/m2) DJF    14.4247
+SHF (W/m2) JJA    19.3092
+SHF (W/m2) annual 16.5554
+************
+LHF (W/m2) DJF    78.6117
+LHF (W/m2) JJA    81.7602
+LHF (W/m2) annual 78.8222
+************
+planetary albedo DJF    0.346691
+planetary albedo JJA    0.331312
+planetary albedo annual 0.336754
+************
+surface albedo DJF    0.169929
+surface albedo JJA    0.147585
+surface albedo annual 0.159781
+************
+precipitation DJF    98.3175
+precipitation JJA    102.164
+precipitation annual 98.4927
+************
+evaporation DJF    97.7584
+evaporation JJA    101.719
+evaporation annual 98.0327
+************
+t10 DJF    13.7319
+t10 JJA    17.2963
+t10 annual 15.2316
+************
+prec.water [kg/m^2] DJF    28.1102
+prec.water [kg/m^2] JJA    33.4042
+prec.water [kg/m^2] annual 30.4508
+************
+Net SFC (W/m2) DJF    -2.59442
+Net SFC (W/m2) JJA    2.94429
+Net SFC (W/m2) annual -1.17529
+************
+Net TOA (W/m2) DJF    -2.6119
+Net TOA (W/m2) JJA    3.23722
+Net TOA (W/m2) annual -0.475628
+************

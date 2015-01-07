@@ -1,0 +1,5 @@
+Here you can inspect different maps of ECBilt. Compile
+plotmaps.f: f77 plotmaps.f -o plotmaps.x and
+run plotmaps.x after you have run inputfiles.x in the
+main directory.
+Now several postscript files are produced.

@@ -1,0 +1,11 @@
+
+110     format(e13.6)
+111     format(65e12.5)
+112     format(65i4)
+113     format(65f6.2)
+114     format(65f6.1)
+115     format(65i3)
+116     format(65e13.6)
+117     format(65e14.7)
+
+120     format(65i1)

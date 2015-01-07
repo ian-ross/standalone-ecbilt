@@ -1,0 +1,173 @@
+ $runatctl
+ nyears    = 10
+ irunlabel = 2000
+ iatm      = 6
+ nwrskip   = 50
+ $end
+
+ $dispar
+ tdis   = 6.0
+ addisl = 1.
+ addish = 4.
+ trel   = 30.0
+ tdif   = 4.0
+ idif   = 4
+ $end
+
+ $dfmpar
+ rrdef1 = .131
+ rrdef2 = .071
+ h0     = 3.
+ $end
+
+ $moipar
+ ihavm  = 1
+ ivavm  = 1
+ imsink = 1
+ tdifq  = 2d0
+ gpm500 = 5500
+ relhmax= 0.8
+ hmoisr = 0.5d0
+ umoisr = 0.6
+ rainmax= 1e-5
+ $end
+
+ $fluxpar
+ cdrag  = 1.4e-03
+ uv10rfx= 0.8
+ uv10m  = 5.
+ uv10rws= 0.8
+ bmoism = 0.15
+ dsnm   = 1000.
+ ndayws = 15
+ $end
+
+ $forpar
+ iartif = 0
+ ipvf1   =1
+ ipvf2   =1
+ ipvf3   =1
+ ipvf4   =1
+ ipvf5   =1
+ ipvf6   =1
+ ipvf7   =1
+ $end
+
+ $radpar
+ $end
+ 
+ $satfor
+ isatfor  = 0
+ nbsatfor = 191
+ nafyear  = 10
+ irunatm  = 1
+ $end
+
+ $runoctl
+ idtbclin  = 1
+ idtbtrop  = 1
+ $end
+
+ $couppar
+ ndreloct = 20
+ ndrelocs = 40
+ icoupleh = 1
+ icouplew = 1
+ icouples = 1
+ ltflux   = .false.
+ mico     = .false.
+ $end
+
+ $icepar
+ rks      = 0.3097
+ rki      = 2.034
+ abottom  = 40d0
+ $end
+
+ $ocpar
+ rkap     = 8d-6
+ rkapv    = 3d-5
+ rkaph    = 1d3
+ accstr   = 100d6
+ $end
+
+ $levpar
+ $end
+   
+ $outatctl
+ ioutdaily =0
+ ixout     =1
+ meantype  =2
+ meanyl    =1
+ meantot   =0
+ $end
+
+ $wratpar
+ ts       = 1, 0, 1
+ t        = 1, 1, 1
+ u        = 0, 0, 1
+ v        = 0, 0, 1
+ omega    = 1, 0, 1
+ psi      = 1, 1, 1
+ shf      = 0, 0, 1
+ lhf      = 0, 0, 1 
+ lsp      = 1, 0, 0
+ hforc    = 0, 0, 0
+ vforc    = 0, 0, 0
+ cp       = 1, 0, 0
+ q        = 1, 0, 1
+ r        = 1, 0, 0
+ ageu     = 0, 0, 0
+ agev     = 0, 0, 0
+ ssr      = 0, 0, 1
+ tsr      = 0, 0, 1
+ ttr      = 0, 0, 1
+ str      = 0, 0, 1
+ bm       = 1, 0, 0
+ pp       = 0, 0, 1
+ evap     = 1, 0, 1
+ eminp    = 1, 0, 0 
+ albs     = 0, 0, 1
+ albp     = 0, 0, 1
+ ustress  = 0, 0, 0 
+ vstress  = 0, 0, 0
+ sdl      = 0, 0, 1 
+ uv10     = 0, 0, 0
+ runoffo  = 0, 0, 0 
+ runoffl  = 0, 0, 0
+ chi      = 0, 0, 0
+ sp       = 1, 0, 0
+ $end 
+
+ $outoctl
+ isnapshot = 0
+ ifreq = 90
+ $end
+ 
+ $wrocpar
+ to    = 0, 0 
+ sa    = 0, 0
+ ro    = 0, 0
+ hadvt = 0, 0 
+ hadvs = 0, 0
+ vadvt = 0, 0
+ vadvs = 0, 0
+ hdift = 0, 0
+ hdifs = 0, 0
+ vdift = 0, 0
+ vdifs = 0, 0
+ convt = 0, 0
+ convs = 0, 0
+ relaxt= 0, 0
+ realxs= 0, 0
+ uo    = 0, 0
+ vo    = 0, 0
+ wo    = 0, 0
+ heex  = 0, 0
+ saex  = 0, 0
+ brin  = 0, 0
+ heico = 0, 0
+ dice  = 0, 0
+ sds   = 0, 0
+ tice  = 0, 0
+ $end

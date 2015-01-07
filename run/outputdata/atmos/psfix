@@ -1,0 +1,11 @@
+#!/bin/csh
+if (${#argv} != 2) then
+	echo "Usage: psfix file npages"
+	exit 1
+endif
+awk -f psfixa $argv[1] > /tmp/in.ps
+
+mv /tmp/in.ps $argv[1]
+#psnup -w8.5in -h11in -$argv[2] /tmp/in.ps > $argv[1]:gr"fix.ps"
+#psnup is used to rearrange postscript pages and can be obtained from:
+#http://www.dcs.ed.ac.uk/home/ajcd/psutils/index.html

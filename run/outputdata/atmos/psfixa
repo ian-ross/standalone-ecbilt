@@ -1,0 +1,31 @@
+BEGIN	{
+	npages = 0
+	print "%!PS-Adobe-1"
+	print "%%PageOrder: Ascend"
+	print "%%Pages: (atend)"
+	print "%%EndComments"
+	print "%%BeginProlog"
+	print "/m {moveto} def"
+	print "/d {lineto} def"
+	print "/c {setrgbcolor} def"
+	print "/g {setgray} def"
+	print "/n {newpath} def"
+	print "/w {setlinewidth} def"
+	print "/s {stroke} def"
+	print "/f {fill} def"
+	print "%%EndProlog"
+	print "%%BeginSetup"
+	print "1 setlinecap 1 setlinejoin"
+	print "72 72 scale"
+	print "%%EndSetup"
+	print "%%Page: 1" 
+	print "gsave"
+	}
+/showpage/ {npages ++}
+	{if ($1 == "grestore") {print "grestore"; \
+	     print "gsave showpage grestore"; \
+	     print "%%Page: " npages+1;\
+	     print "gsave"; print substr($0,10,length-9)}
+	else if ($1 == "") print "gsave showpage grestore"
+	else if (NR > 11 && $1 != "gsave" ) print $0}
+	END	{print "%%Trailer";print "%%Pages:" npages ; print "%%EOF"}

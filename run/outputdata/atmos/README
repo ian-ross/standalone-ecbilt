@@ -1,0 +1,26 @@
+How to postprocess the output ?
+
+First compile tograds.f : f77 tograds.f -o tograds
+
+Then convert output to grads fi: tograds atmsmyl000000
+
+Next atmsmyl000000grdstl.ctl and atmsmyl000000grdsul.ctl can be viewed in 
+GrADS or scripts climate.gs and climatezm.gs and climateglob.gs can be executed:
+
+1. Open GrADS in portrait mode : grads -p
+2. type: run climate.gs atmsmyl000000 description
+3. Open GrADS in portrait mode : grads -p
+4. type: run climatezm.gs atmsmyl000000 description
+5. Open GrADS in portrait mode : grads -p
+6. type: run climateglob.gs atmsmyl000000 36 (this latter number is # seasons)
+
+Now you have two postscript files with plots:
+
+atmsmyl000000.ps and atmsmyl000000zm.ps and an ascii file atmsmyl000000GB.dat
+
+to compare to the plots produced at KNMI.
+
+(or you can use the unix script plot.sc)
+
+The scripts assume that gxps exists on your system. An awk script (psfixa) is executed to make some minor changes to the postscript files produced by gxps in order to get the page descriptions right. Lastly, in script psfix, psnup can be called to put several pages in a postscript file onto one page.
+
