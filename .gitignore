@@ -26,4 +26,5 @@
 *.exe
 *.out
 *.app
-/standalone-ecbilt
+/ecbilt
+/utils/inputfiles
