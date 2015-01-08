@@ -54,13 +54,13 @@ c
         enddo
       enddo
 
-c *** read climatological seaice cover 
+c *** read climatological seaice cover
 
-      ia1=ichar('1') 
-      ia9=ichar('9') 
-      ica=ichar('A') 
-      icd=ichar('D') 
-      iap=ichar('.') 
+      ia1=ichar('1')
+      ia9=ichar('9')
+      ica=ichar('A')
+      icd=ichar('D')
+      iap=ichar('.')
 
       do i=nlat,1,-1
         read (43,100) k,space,(ch(j),j=1,nlon)
@@ -145,10 +145,10 @@ c-----------------------------------------------------------------------
       include 'comphys.h'
       include 'comglobal.h'
       include 'comcoup.h'
-      
+
       integer index,i,j
       real*8  dum,facwin,facsum
-    
+
       index = int((day+0.5*dt)/(iatm*dt)) + 1
 
 c      write(100,*) 'index in oceanfixed ',index
@@ -159,7 +159,7 @@ c *** prescription of seaice cover
       facsum=1d0-facwin
 
       do i=1,nlat
-        do j=1,nlon 
+        do j=1,nlon
           lseaice(i,j)=0
           if (lsmask(i,j).eq.1) then
             if (lsicebirth(i,j).gt.0) then
@@ -181,18 +181,18 @@ c *** calculate seaice temperatures
       call seaicetemp
 
 c *** prescription of sst
- 
+
       do i=1,nlat
-        do j=1,nlon 
+        do j=1,nlon
           if (lsmask(i,j).eq.1.and.lseaice(i,j).eq.0) then
             stmix(i,j)=sstday(i,j,index)
           endif
         enddo
       enddo
-     
+
       return
       end
-       
+
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine seaicetemp
 c-----------------------------------------------------------------------
@@ -223,14 +223,14 @@ c *** tol is the wanted accuracy of the seaice temperature in degrees
       do j=1,nlon
         do i=1,nlat
 
-          if (lseaice(i,j).eq.1) then    
+          if (lseaice(i,j).eq.1) then
 
             il=i
             jl=j
             stice=tzero
             stice1=stice - 1.
-            stice2=stice 
-            
+            stice2=stice
+
             call zbrac(fluxsumice,stice1,stice2,itetel)
             if (itetel.eq.100) call error(7)
             tijs(i,j)=zbrent(fluxsumice,stice1,stice2,tol,itetel)
@@ -263,7 +263,7 @@ c      write(100,*) 'in oceanfixed over ice ',mxtetel
       end
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      function fluxsumice(stice) 
+      function fluxsumice(stice)
 c-----------------------------------------------------------------------
 c *** computes sum of fluxes between the seaice and the atmosphere
 c-----------------------------------------------------------------------
@@ -290,8 +290,8 @@ c *** latent heat flux
         efluxgp=alphav*cdragv(il,jl)*uv10(il,jl)*(qsatss-q10(il,jl))
       else
         efluxgp=alphas*cdragv(il,jl)*uv10(il,jl)*(qsatss-q10(il,jl))
-      endif      
-       
+      endif
+
       if (efluxgp.lt.0) efluxgp=0.
 
 c *** sum of all fluxes
@@ -302,4 +302,3 @@ c *** sum of all fluxes
 
       return
       end
-
