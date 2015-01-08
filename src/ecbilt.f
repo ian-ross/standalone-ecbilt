@@ -32,9 +32,12 @@ c *** initialisation of parameters and initial state
 c *** forward time integration
 
       do icount=1,ntstep
-        write (*,*) 'icount=', icount
-
         istep=icount
+        if (mod(istep - 1, iatm) .eq. 0) then
+           write (*, 100) iyear, imonth, iday
+        endif
+ 100    format (I6.6, '/', I2.2, '/', I2.2)
+
         call mdldate(istep)
 
         call oceanfixed
