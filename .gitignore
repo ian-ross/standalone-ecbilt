@@ -28,3 +28,5 @@
 *.app
 /ecbilt
 /utils/inputfiles
+/utils/tograds
+/utils/tonc
