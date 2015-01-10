@@ -28,11 +28,11 @@ c *** initialisation evaporation, bottom moisture and snow cover
       else
         read(91) bmoisg,runofo,dsnow,landsnow
       endif
-       
+
       do j=1,nlon
         do i=1,nlat
           if (lsmask(i,j).eq.1) then
-          
+
 c *** mountain heights set to zero above water surfaces
 
             rmount(i,j)=0d0
@@ -63,7 +63,7 @@ c-----------------------------------------------------------------------
       character*1 ch(nlon),space
 
 c *** computation of runoff masks
- 
+
 c *** asci number of small letter a
 
       ias=ichar('a') - 1
@@ -71,7 +71,7 @@ c *** asci number of small letter a
       do i=nlat,1,-1
         read (10,100) k,space,(ch(j),j=1,nlon)
         do j=1,nlon
-          if (lsmask(i,j).eq.0) then      
+          if (lsmask(i,j).eq.0) then
             ilabas(i,j)=ichar(ch(j)) - ias
             if (ilabas(i,j).lt.1.or.ilabas(i,j).gt.24) then
               write(29,*) 'in lat-lon point ',i,j
@@ -86,7 +86,7 @@ c *** asci number of small letter a
       do i=nlat,1,-1
         read (10,100) k,space,(ch(j),j=1,nlon)
         do j=1,nlon
-          if (lsmask(i,j).eq.1) then      
+          if (lsmask(i,j).eq.1) then
             iocbas(i,j)=ichar(ch(j)) - ias
             if (iocbas(i,j).lt.1.or.iocbas(i,j).gt.24) then
               iocbas(i,j)=0
@@ -98,8 +98,8 @@ c *** asci number of small letter a
 
       do i=nlat,1,-1
         do j=1,nlon
-          if (lsmask(i,j).eq.0) then      
-            ch(j)=char(ilabas(i,j)+ias) 
+          if (lsmask(i,j).eq.0) then
+            ch(j)=char(ilabas(i,j)+ias)
           else
             if (iocbas(i,j).eq.0) iocbas(i,j)=ichar('0')-iac
             ch(j)=char(iocbas(i,j)+iac)
@@ -157,19 +157,19 @@ c *** tol is the wanted accuracy of the land temperature in degrees
       do j=1,nlon
         do i=1,nlat
 
-          if (lsmask(i,j).eq.0) then    
+          if (lsmask(i,j).eq.0) then
 
             il=i
             jl=j
             tsland=tland(il,jl)
             tsland1=tsland
             tsland2=tsland + 1.
-            
+
             call zbrac(fluxsumland,tsland1,tsland2,itetel)
             if (itetel.eq.100) call error(7)
             tland(i,j)=zbrent(fluxsumland,tsland1,tsland2,tol,itetel)
             if (tland(i,j).lt.200.or.tland(i,j).gt.350) then
-              write(100,*) 'tland out of range'       
+              write(100,*) 'tland out of range'
               write(100,*) i,j,tland(i,j)
             endif
             if (itetel.eq.100) call error(8)
@@ -181,7 +181,7 @@ c *** surface temperature to meltpoint
             if (dsnow(i,j).gt.0d0.and.tland(i,j).gt.tzero) then
 	      tland(i,j)=tzero
             endif
-            
+
           endif
         enddo
       enddo
@@ -194,7 +194,7 @@ c      call flush(100)
       end
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      function fluxsumland(tsland) 
+      function fluxsumland(tsland)
 c-----------------------------------------------------------------------
 c *** computes sum of fluxes between the land and the atmosphere
 c-----------------------------------------------------------------------
@@ -221,9 +221,9 @@ c *** latent heat flux
         efluxgp=alphav*cdragv(il,jl)*uv10(il,jl)*(qsatss-q10(il,jl))
       else
         efluxgp=alphas*cdragv(il,jl)*uv10(il,jl)*(qsatss-q10(il,jl))
-      endif      
-      efluxgp=evfaca(il,jl)*efluxgp  
-       
+      endif
+      efluxgp=evfaca(il,jl)*efluxgp
+
       if (efluxgp.lt.0) efluxgp=0.
 
 c *** sum of all fluxes
@@ -285,7 +285,7 @@ c ***       sublimation or evaporation
               bmoisg(i,j)=bmoisg(i,j)-dtime*evap(i,j)
             else
 	      dsnovap=dtime*evap(i,j)
- 
+
               if (dsnovap.gt.dsnow(i,j)) then
                 bmoisg(i,j)=bmoisg(i,j)-(dsnovap-dsnow(i,j))
                 dsnow(i,j)=0.
@@ -302,16 +302,16 @@ c *** melting
 	      if (dsnomel.gt.0.) then
                 if (dsnomel.gt.dsnow(i,j)) dsnomel=dsnow(i,j)
                 dsnow(i,j)=dsnow(i,j)-dsnomel
-	      
+
 c *** melt water to bottom moisture
 
                 bmoisg(i,j)=bmoisg(i,j)+dsnomel
-              
+
 	      endif
 	    endif
 
-c *** if snowdepth above a thresshold, remove excessive snow 
-c *** artificially through the bottom moisture. 
+c *** if snowdepth above a thresshold, remove excessive snow
+c *** artificially through the bottom moisture.
 c *** neglect the heat involved
 
             if (dsnow(i,j).gt.dsnm) then
@@ -337,7 +337,7 @@ c *** landsnow is used in the definition of albedo at the surface
 
       return
       end
-        
+
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine runoff
 c-----------------------------------------------------------------------
@@ -365,14 +365,14 @@ c ***  total runoff for each land basin
 
           runofl(i,j)=0.
 
-          if (lsmask(i,j).eq.0) then       
+          if (lsmask(i,j).eq.0) then
 
             if (bmoisg(i,j).gt.bmoism) then
               runofl(i,j)=(bmoisg(i,j)-bmoism)/dtime
               bmoisg(i,j)=bmoism
             endif
 
-            runo(ilabas(i,j))=runo(ilabas(i,j)) + 
+            runo(ilabas(i,j))=runo(ilabas(i,j)) +
      *                            runofl(i,j)*darea*cosfi(i)
           endif
         enddo
@@ -398,7 +398,7 @@ c-----------------------------------------------------------------------
 c *** output atmosphere for start new run
 c-----------------------------------------------------------------------
       implicit none
-      
+
       include 'comatm.h'
       include 'comphys.h'
       include 'comland.h'
@@ -407,7 +407,3 @@ c-----------------------------------------------------------------------
 
       return
       end
-
-
-      
-

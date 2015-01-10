@@ -1,6 +1,6 @@
 c23456789012345678901234567890123456789012345678901234567890123456789012
 c-----------------------------------------------------------------------
-c *** File:     comdyn.h                                                    
+c *** File:     comdyn.h
 c *** Contents: Common declarations for dynamical part of atmospheric
 c               model of ECbilt
 c-----------------------------------------------------------------------
@@ -9,19 +9,19 @@ c     nshm:   contains numbers 22 down to 1 for index 0 to 21
 c     ll:     contains total wavenumber n of each spherical harmonic of
 c             the corresponding index
 c
-c *** COMMON  /linopr/ rm, rinhel, diss 
+c *** COMMON  /linopr/ rm, rinhel, diss
 c     rm:     contains zonal wavenumber m of each spherical harmonic of
 c             the corresponding index for zonal derivative operator
 c     rinhel: Laplace and Helmholtz operator for Q-PSI inversion
 c     diss:   dissipation coefficients for each spherical harmonic
-c             diss(k,1) : hyperviscosity at the three levels 
+c             diss(k,1) : hyperviscosity at the three levels
 c                         (tdif sets timescale)
-c             diss(k,2) : Ekman friction at lower level 
+c             diss(k,2) : Ekman friction at lower level
 c                         (tdis sets timescale)
 c
 c *** COMMON  /logpar/ lgdiss,inf
-c     lgdiss: if .true. then orography and land-sea mask dependent 
-c             friction at the lower level plus Ekman friction, 
+c     lgdiss: if .true. then orography and land-sea mask dependent
+c             friction at the lower level plus Ekman friction,
 c             else only Ekman friction
 c     inf:    if .true. then artificial PV forcing read from file
 c
@@ -55,7 +55,7 @@ c     h0:     scale factor for the topographically induced upward motion
 c             at the lower level
 c     idif:   determines scale-selectivity of hyperviscosity; power of
 c             laplace operator
-c 
+c
 c *** COMMON  /sfield/ psi, psit, psito, qprime, dqprdt, for, ws
 c     psi:    stream function at the nvl levels
 c     psit:   thickness at the ntl levels
@@ -80,8 +80,8 @@ c             with imposed lower bound of uv10m m/s
 c     uvw10:  wind strength at 10 m, extrapolated from 800 hPa at grid
 c     uv10r:  reduction factor between 800 hPa and surface winds
 c     uv10m:  minimum value of 10 m wind
-c     utot :   total zonal wind 
-c     vtot :   total meridional wind 
+c     utot :   total zonal wind
+c     vtot :   total meridional wind
 c     u800:   800 hPa geostrophic zonal wind
 c     v800:   800 hPa geostrophic meridional wind
 c     u500:   500 hPa geostrophic zonal wind
@@ -104,25 +104,24 @@ c *** COMMON /cdiv/   divs,divg
 c     divs:   divergence in spectral form
 c     divg:   divergence on Gaussian grid
 c
-c *** COMMON /forcx/  iartif,ipvf1,ipvf2,ipvf3,ipvf4,ipvf5,ipvf6,ipvf7
-c     iartif:  with (1) or without (0) artifical forcing at 200 mb
+c *** COMMON /forcx/  ipvf1,ipvf2,ipvf3,ipvf4,ipvf5,ipvf6,ipvf7
 c     ipvf1 :  with (1) or without (0) diabatic heating
 c     ipvf2 :  with (1) or without (0) advection of f by divergent wind
 c     ipvf3 :  with (1) or without (0) stretching term
-c     ipvf4 :  with (1) or without (0) advection of zeta by divergent 
+c     ipvf4 :  with (1) or without (0) advection of zeta by divergent
 c                                      wind
-c     ipvf5 :  with (1) or without (0) vertical advection of zeta and 
+c     ipvf5 :  with (1) or without (0) vertical advection of zeta and
 c                                      solenoidal term
-c     ipvf6 :  with (1) or without (0) advection of temperature by 
+c     ipvf6 :  with (1) or without (0) advection of temperature by
 c                                      divergent wind
 c     ipvf7 :  with (1) or without (0) (fo-f) times divergence
 c
 c *** COMMON /clfor/  forcgg1,forcggw1,forcggs1
 c     forcgg1: daily variying artificial PV forcing on Gaussian grid
 c              at 200 hPa only calculated from forcggw1 and forcggs1
-c     forcggw1: artificial PV forcing winter season on Gaussian grid 
+c     forcggw1: artificial PV forcing winter season on Gaussian grid
 c               at 200 hPa
-c     forcggs1: artificial PV forcing summer season on Gaussian grid 
+c     forcggs1: artificial PV forcing summer season on Gaussian grid
 c               at 200 hPa
 c
 c *** COMMON /cvert/  omegs,omegg
@@ -157,7 +156,7 @@ c-----------------------------------------------------------------------
       real*8  geopg(nlat,nlon,nvl)
       real*8  divs(nsh2,nvl),divg(nlat,nlon,nvl)
       integer iartif,ipvf1,ipvf2,ipvf3,ipvf4,ipvf5,ipvf6,ipvf7
-      real*8  forcgg1(nlat,nlon),forcggw1(nlat,nlon), 
+      real*8  forcgg1(nlat,nlon),forcggw1(nlat,nlon),
      *        forcggs1(nlat,nlon)
       real*8  omegs(nsh2,nvl),omegg(nlat,nlon,nvl)
       real*8  dfor1(nsh2),dfor2(nsh2)
@@ -166,7 +165,7 @@ c-----------------------------------------------------------------------
       logical lgdiss,inf
 
       common /intpar/ nshm, ll
-      common /linopr/ rm, rinhel, diss 
+      common /linopr/ rm, rinhel, diss
       common /logpar/ lgdiss,inf
       common /metras/ pp, pd, pw
       common /phypar/ rdiss, ddisdx, ddisdy
@@ -175,7 +174,7 @@ c-----------------------------------------------------------------------
       common /sfield/ psi, psit, psito, qprime, dqprdt, for, ws
       common /corog/  orog, rmount , dorodl , dorodm, qmount
       common /zotras/ trigd, trigi, wgg
-      common /cwind/  uv10,uv10rfx,uv10m,uv10rws, uvw10, utot, vtot, 
+      common /cwind/  uv10,uv10rfx,uv10m,uv10rws, uvw10, utot, vtot,
      *                u800, v800, u500,v500,u200,v200
       common /cgpsi/  psig,qgpv,geopg
       common /cdwin/  udiv,vdiv,udivg,vdivg

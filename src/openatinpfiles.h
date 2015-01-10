@@ -1,6 +1,6 @@
 c23456789012345678901234567890123456789012345678901234567890123456789012
 c-----------------------------------------------------------------------
-c *** open statements of atmosphere input files: 
+c *** open statements of atmosphere input files:
 c *** units 90-99 are reserved for initial states
 c *** units 20 and higher are reserved for other parts of ecbilt
 c-----------------------------------------------------------------------
@@ -19,19 +19,11 @@ c *** initialisation data
      &     status='old',form='formatted')
       open(unit=9,file='inputdata/atmos/lwavepar.dat',
      &     status='old',form='formatted')
- 
-      open(unit=10,file='inputdata/land/labas.dat') 
- 
-      open(unit=11,file='inputdata/artiforc/win.dat',
-     &                             status='old',form='formatted')
-      open(unit=12,file='inputdata/artiforc/sum.dat',
-     &                   status='old',form='formatted')
+
+      open(unit=10,file='inputdata/land/labas.dat')
+
       open(13,file='inputdata/atmos/cdrag.dat',
      &     status='old',form='formatted')
- 
-      
+
+
       open(15,file = 'namelist',status='old',form='formatted')
- 
- 
-
-

@@ -2002,17 +2002,6 @@ c *** the total pv forcing in nondimensional units
 
 c *** adding the artificial forcing (forcgg1)
 
-      if (iartif .eq. 1) then
-
-         call sptogg(vfor1,forcgg2,pp)
-         do i=1,nlat
-           do j=1,nlon
-             forcgg(i,j)=forcgg1(i,j)*cosfi(i)**8/dimfac+forcgg2(i,j)
-           enddo
-         enddo
-         call rggtosp(forcgg,vfor1)
-      endif
-
       vfor1(1)=0.d0
       vfor2(1)=0.d0
       vfor3(1)=0.d0

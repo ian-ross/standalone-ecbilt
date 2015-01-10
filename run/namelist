@@ -43,7 +43,6 @@
  $end
 
  $forpar
- iartif = 0
  ipvf1   =1
  ipvf2   =1
  ipvf3   =1
@@ -55,7 +54,7 @@
 
  $radpar
  $end
- 
+
  $satfor
  isatfor  = 0
  nbsatfor = 191
@@ -93,7 +92,7 @@
 
  $levpar
  $end
-   
+
  $outatctl
  ioutdaily =0
  ixout     =1
@@ -110,7 +109,7 @@
  omega    = 1, 0, 1
  psi      = 1, 1, 1
  shf      = 0, 0, 1
- lhf      = 0, 0, 1 
+ lhf      = 0, 0, 1
  lsp      = 1, 0, 0
  hforc    = 0, 0, 0
  vforc    = 0, 0, 0
@@ -126,29 +125,29 @@
  bm       = 1, 0, 0
  pp       = 0, 0, 1
  evap     = 1, 0, 1
- eminp    = 1, 0, 0 
+ eminp    = 1, 0, 0
  albs     = 0, 0, 1
  albp     = 0, 0, 1
- ustress  = 0, 0, 0 
+ ustress  = 0, 0, 0
  vstress  = 0, 0, 0
- sdl      = 0, 0, 1 
+ sdl      = 0, 0, 1
  uv10     = 0, 0, 0
- runoffo  = 0, 0, 0 
+ runoffo  = 0, 0, 0
  runoffl  = 0, 0, 0
  chi      = 0, 0, 0
  sp       = 1, 0, 0
- $end 
+ $end
 
  $outoctl
  isnapshot = 0
  ifreq = 90
  $end
- 
+
  $wrocpar
- to    = 0, 0 
+ to    = 0, 0
  sa    = 0, 0
  ro    = 0, 0
- hadvt = 0, 0 
+ hadvt = 0, 0
  hadvs = 0, 0
  vadvt = 0, 0
  vadvs = 0, 0

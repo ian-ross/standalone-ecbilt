@@ -57,8 +57,7 @@ c-----------------------------------------------------------------------
       NAMELIST /moipar/  ihavm,ivavm,imsink,tdifq,gpm500,relhmax,
      *                   hmoisr,umoisr,rainmax
       NAMELIST /fluxpar/ cdrag,uv10rfx,uv10m,uv10rws,dsnm,bmoism,ndayws
-      NAMELIST /forpar/  iartif,ipvf1,ipvf2,ipvf3,ipvf4,ipvf5,ipvf6,
-     *                    ipvf7
+      NAMELIST /forpar/  ipvf1,ipvf2,ipvf3,ipvf4,ipvf5,ipvf6,ipvf7
       NAMELIST /radpar/    solarc
       NAMELIST /satfor/   isatfor,nbsatfor,nafyear,irunatm
 
@@ -123,7 +122,6 @@ C bmoism:     maximum bottom moisture.                                 C
 C ndayws:     averaging period of wind stresses in days                C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C forcing parameter:                                                   C
-C iartif:     with (1) or without (0) artificial forcing               C
 C ipvf1 :     with (1) or without (0) diabatic heating                 C
 C ipvf2 :     with (1) or without (0) advection of f by divergent wind C
 C ipvf3 :     with (1) or without (0) stretching term                  C
@@ -183,7 +181,6 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       dsnm   = 2000.
       ndayws = 30
 
-      iartif = 0
       ipvf1  = 1
       ipvf2  = 1
       ipvf3  = 1
@@ -254,7 +251,6 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       write(30, 910) 'dsnm     =', dsnm
       write(30, 900) 'ndayws   =', ndayws
 
-      write(30, 900) 'iartif   =', iartif
       write(30, 900) 'ipvf1    =', ipvf1
       write(30, 900) 'ipvf2    =', ipvf2
       write(30, 900) 'ipvf3    =', ipvf3

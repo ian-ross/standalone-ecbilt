@@ -218,25 +218,6 @@ c *** forcing term
         enddo
       enddo
 
-      if (iartif.eq.1) then
-
-c ***   forcing data from liu, for is winter forcing, fors is summer
-
-        read(11,910)   ((forw(k,l),k=1,nsh2),l=1,nvl)
-        read(12,910)   ((fors(k,l),k=1,nsh2),l=1,nvl)
-
-c ***   liu's forcing at 200mb  in grid point
-
-        do k=1,nsh2
-          fw(k)=forw(k,1)
-          fs(k)=fors(k,1)
-        enddo
-
-        call sptogg(fw,forcggw1,pp)
-        call sptogg(fs,forcggs1,pp)
-
-      endif
-
 c *** input initial qprime and for
 
       if (irunlabel.eq.0) then
