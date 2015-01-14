@@ -1,0 +1,128 @@
+\documentclass[a4paper,11pt,article]{memoir}
+
+\usepackage[utf8]{inputenc}
+\usepackage{fourier}
+\usepackage{amsmath,amssymb}
+
+\usepackage{color}
+\definecolor{orange}{rgb}{0.75,0.5,0}
+\definecolor{magenta}{rgb}{1,0,1}
+\definecolor{cyan}{rgb}{0,1,1}
+\definecolor{grey}{rgb}{0.25,0.25,0.25}
+\newcommand{\outline}[1]{{\color{grey}{\scriptsize #1}}}
+\newcommand{\revnote}[1]{{\color{red}\textit{\textbf{#1}}}}
+\newcommand{\note}[1]{{\color{blue}\textit{\textbf{#1}}}}
+\newcommand{\citenote}[1]{{\color{orange}{[\textit{\textbf{#1}}]}}}
+
+\usepackage{xspace}
+\newcommand{\zfive}{\ensuremath{Z_{500}}\xspace}
+
+\usepackage{listings}
+\usepackage{courier}
+\lstset{basicstyle=\tiny\ttfamily,breaklines=true,language=Haskell}
+
+\usepackage{fancyvrb}
+\usepackage{url}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning}
+
+\usepackage{natbib}
+
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator*{\argmax}{arg \, max}
+
+\usepackage{subfig}
+\usepackage{float}
+\newfloat{listing}{tbp}{lop}
+\floatname{listing}{Listing}
+
+\title{Standalone ECBILT Experiments}
+\author{Ian~Ross}
+\date{13 January 2015 -- ???}
+
+\begin{document}
+
+\maketitle
+
+%======================================================================
+\chapter{Introduction}
+
+\begin{itemize}
+  \item{Build standalone ECBILT.}
+  \item{Source of code (standalone vs. version from LOVECLIM).}
+  \item{Approach: convert boundary conditions from HadAM3 run to form
+    suitable for ECBILT, do same sort of atmosphere-only simulation
+    and compare climatology (also looking at model performance along
+    the way).}
+  \item{First attempt: keep all ECBILT input files the same except for
+    SST, sea-ice and GHG and orbital forcing, which are taken from
+    tcszd UM simulation.}
+  \item{Possible second attempt: new land/sea mask and other boundary
+    conditions based on UM data.}
+\end{itemize}
+
+
+%======================================================================
+\chapter{Code setup}
+
+\begin{itemize}
+  \item{Build and test system setup.}
+  \item{Changes needed to make vanilla ECBILT code build and run.}
+\end{itemize}
+
+
+%======================================================================
+\chapter{Boundary conditions}
+
+\begin{itemize}
+  \item{ECBILT boundary condition requirements.}
+  \item{Choice of UM comparison run.}
+\end{itemize}
+
+%----------------------------------------------------------------------
+\section{SST and sea-ice only}
+
+\begin{itemize}
+  \item{Conversion of boundary conditions (1): SST, sea-ice, GHG
+    concentrations, orbital parameters.}
+  \item{Conversion of SST: take UM monthly SST fields, Poisson fill
+    missing values, regrid to ECBILT grid, mask with ECBILT land/sea
+    mask; then use periodic interpolation in time to generate daily
+    data.}
+\end{itemize}
+
+%----------------------------------------------------------------------
+\section{All boundary conditions}
+
+\begin{itemize}
+  \item{Conversion of boundary conditions (2): same plus land/sea
+    mask, lake mask, orography, albedo.}
+  \item{Plots of land/sea mask compared between original ECBILT, UM
+    and ECBILT-regridded UM mask.}
+\end{itemize}
+
+
+%======================================================================
+\chapter{Model performance}
+
+\begin{itemize}
+  \item{Timing.}
+  \item{Ideas for performance improvements.}
+\end{itemize}
+
+
+%======================================================================
+\chapter{Model climatology}
+
+\begin{itemize}
+  \item{Seasonal plots of ECBILT side-by-side with UM results.}
+  \item{Surface temperature.}
+  \item{Surface pressure.}
+  \item{Precipitable water.}
+  \item{Precipitation, evaporation and P-E.}
+  \item{Low-level/high-level winds with omega.}
+  \item{Z500.}
+\end{itemize}
+
+\end{document}
