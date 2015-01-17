@@ -336,18 +336,24 @@ CONTAINS
     CHARACTER(LEN=10)    :: varunits
 
     SELECT CASE (icode)
+    CASE (133) ! q
+       varunits = 'kg kg-1'
+    CASE (134) ! sp
+       varunits = 'Pa'
+    CASE (135) ! omega
+       varunits = 'Pa s-1'
     CASE (139, 130) ! ts, t
        varunits = 'degC'
-    CASE (141)
-       varunits = 'sdl'
+    CASE (141) ! sdl
+       varunits = 'm'
     CASE (146, 147, 176, 177, 178, 179) ! shf, lhf, ssr, str, tsr, ttr
        varunits = 'W m-2'
-    CASE (133) ! q
-       varunits = 'g m-2'
-    CASE (260, 182) ! pp, evap
+    CASE (260, 182, 142, 143) ! pp, evap, lsp, cp
        varunits = 'cm yr-1'
     CASE (131, 132) ! u, v
        varunits = 'm s-1'
+    CASE (156) ! gh
+       varunits = 'm'
     CASE DEFAULT
        varunits = ''
     END SELECT

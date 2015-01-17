@@ -1,7 +1,7 @@
 c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine fluxmodel
 c-----------------------------------------------------------------------
-c *** computes radiational fluxes, fluxes between the surface 
+c *** computes radiational fluxes, fluxes between the surface
 c *** and the atmosphere and potential vorticity forcing due to
 c *** diabatical heating and estimated ageostrophic terms
 c-----------------------------------------------------------------------
@@ -62,10 +62,10 @@ c-----------------------------------------------------------------------
 
       integer i,j
       real*8  qsat
- 
+
 c *** latent heatflux due to evaporation from surface (watt/m**2)
 c *** and evaporation rate (m/s)
-       
+
       do j=1,nlon
         do i=1,nlat
 
@@ -93,7 +93,7 @@ c *** evaporation factor =1 over snow, over wet land maximal 1
           evfaca(i,j)=evfac
           if (lsmask(i,j).eq.0) then
 
-	    if (dsnow(i,j).gt.0.) then 
+            if (dsnow(i,j).gt.0.) then
               evfaca(i,j)=evfac
             else
               evfaca(i,j)=evfac*min(1d0,bmoisg(i,j)/bmoism)
@@ -103,8 +103,8 @@ c *** evaporation factor =1 over snow, over wet land maximal 1
             evap (i,j)=evfaca(i,j)*evap (i,j)
           endif
         enddo
-      enddo        
- 
+      enddo
+
       return
       end
 
@@ -167,12 +167,12 @@ c-----------------------------------------------------------------------
       include 'comphys.h'
 
       integer i,j
- 
+
       real*8  qsat,qsatss
- 
+
 c *** latent heatflux due to evaporation from ocean (watt/m**2)
 c *** evaporation rate over ocean/seaice is prescribed from inato
-       
+
       do j=1,nlon
         do i=1,nlat
           if (lsmask(i,j).eq.1) then
@@ -196,8 +196,8 @@ c *** evaporation rate over ocean/seaice is prescribed from inato
 
           endif
         enddo
-      enddo        
- 
+      enddo
+
       return
       end
 
@@ -226,6 +226,3 @@ c *** upward longwave radiation (watt/m**2)
 
       return
       end
-
-
-

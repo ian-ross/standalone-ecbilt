@@ -1,7 +1,7 @@
 c23456789012345678901234567890123456789012345678901234567890123456789012
 c-----------------------------------------------------------------------
-c *** File:     comphys.h                                                    
-c *** Contents: Common declarations for physical part of atmospheric 
+c *** File:     comphys.h
+c *** Contents: Common declarations for physical part of atmospheric
 c ***           model of ECbilt
 c      COMMON /cgamma/ gamgr,gamean,gamvar,gamsq
 c      solarc:      solar constant.
@@ -13,7 +13,7 @@ c
 c      COMMON /ctempm/ tempm,thform,temp2gm,temp4gm,
 c                     tempsgm,tsurfm
 c      tempm:       global mean temperature.
-c      thform:      global mean 
+c      thform:      global mean
 c      temp2gm:     global mean temperature at 350 mb.
 c      temp4gm:     global mean temperature at 650 mb.
 c      tempsgm:     global mean temperature at 10 meters height.
@@ -62,12 +62,12 @@ c      sboltz:      stefan-boltzmann constant.
 c      rlatsub:     latent heat of sublimation.
 c      rlatfus:     latent heat of fusion.
 c      cwater:      4180
-c      gamma:       cpair/cvair       
+c      gamma:       cpair/cvair
 c      rkappa:      =(gamma-1)/gamma
 c      ps:          surface pressure.
 c      aa:          =(350/1000)**rkappa.
 c      bb:          =(650/1000)**rkappa
-c      gamad:       
+c      gamad:
 c      tzero:       =273.15
 c      alphad:      =roair*cdrag*cpair
 c      alphav:      =roair*cdrag*rlatvap
@@ -109,7 +109,7 @@ c      ihavm:       with (1) or without (0) horizontal divergence of moisture.
 c      ivavm:       with (1) or without (0) vertical divergence of moisture.
 c      imsink:      with (1) or without (0) the source or sink of moisture.
 c
-c      COMMON /cmois/  rmoiss,rmoisg,precip,evap,dcmoisg 
+c      COMMON /cmois/  rmoiss,rmoisg,precip,evap,dcmoisg
 c      rmoisg:      specific humidity.
 c      precip:      (not found)
 c      evap:        evaporation.
@@ -143,12 +143,12 @@ c      evfac:       maximum evaporation factor over land.
 c      ecfaca:      actual evaporation factor over land.
 c
 c      COMMON /calbedo/ albice,albsea,albsnow,albland,albseaw,albseas,
-c     *                abstow,abstos 
+c     *                abstow,abstos
 c      albice:      albedo of ice.
 c      albsea:      albedo of sea.
 c      albsnow:     albedo of snow.
 c      albland:     albedo of land.
-c      
+c
 c-----------------------------------------------------------------------
 
       integer   iqmtab,jqmtab,kqmtab
@@ -218,7 +218,7 @@ c-----------------------------------------------------------------------
       common /cice/   lseaice
       common /clandp/ landsnow
       common /calbedo/ albice,albsea,albsnow,albland,albseaw,albseas,
-     *                abstow,abstos 
+     *                abstow,abstos
       common /cpar1/  rowat,roair,cdrag,cpair,cvair,rlatvap,rlatcon,
      *                sboltz,rlatsub,rlatfus,cwater,gamma,rkappa,
      *                potfac1,potfac2,gamd,tzero,alphad,alphav,alphas

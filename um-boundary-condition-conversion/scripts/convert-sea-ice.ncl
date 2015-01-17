@@ -91,6 +91,16 @@ do ilat = 0, nlat - 1
           end if
         end if
       end if
+      btmp = stringtocharacter(birth(ilat))
+      b = btmp(ilon)
+      dtmp = stringtocharacter(death(ilat))
+      d = dtmp(ilon)
+      if (b .eq. d) then
+        btmp(ilon) = w_char
+        birth(ilat) = charactertostring(btmp)
+        dtmp(ilon) = w_char
+        death(ilat) = charactertostring(dtmp)
+      end if
     end if
   end do
 end do

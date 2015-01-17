@@ -56,10 +56,15 @@
     and compare climatology (also looking at model performance along
     the way).}
   \item{First attempt: keep all ECBILT input files the same except for
-    SST, sea-ice and GHG and orbital forcing, which are taken from
-    tcszd UM simulation.}
+    SST, sea-ice forcing, which are taken from tcszd UM simulation.}
   \item{Possible second attempt: new land/sea mask and other boundary
     conditions based on UM data.}
+  \item{Changing GHG forcing for the original standalone ECBILT isn't
+    possible because of the way the LW radiation scheme works: it's an
+    empirical fit to LW radiation absorption from the GFDL GCM.  I'm
+    not yet sure what GHG conditions that fitting was done against,
+    but I'm going to press on assuming that it was pre-industrial, as
+    for the UM simulation.}
 \end{itemize}
 
 
@@ -123,6 +128,20 @@
   \item{Precipitation, evaporation and P-E.}
   \item{Low-level/high-level winds with omega.}
   \item{Z500.}
+\end{itemize}
+
+%======================================================================
+\appendix
+\chapter{Experiments}
+
+\subsection*{control-expt-1}
+
+\begin{itemize}
+  \item{Original standalone ECBILT model.}
+  \item{SST and sea-ice forcing converted from UM \texttt{tcszd}
+    experiment.}
+  \item{Simulation length: 100 years; elapsed time 75
+    min. $\Rightarrow$ 45 elapsed seconds/model year.}
 \end{itemize}
 
 \end{document}

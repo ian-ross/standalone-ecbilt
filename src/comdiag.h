@@ -1,6 +1,6 @@
 c23456789012345678901234567890123456789012345678901234567890123456789012
 c-----------------------------------------------------------------------
-c *** File:     comdiag.h                                                    
+c *** File:     comdiag.h
 c *** Contents: Common declarations for diagnostics of ECbilt
 c-----------------------------------------------------------------------
       integer newts(20),newt(20),newu(20),newv(20),newomega(20),
@@ -233,5 +233,3 @@ c-----------------------------------------------------------------------
      *        sxdt23,sydt23,sxdt22,sydt22,sxdt21,sydt21,
      *        sxdu13,sydu13,sxdu12,sydu12,sxdu11,sydu11,
      *        sxdu23,sydu23,sxdu22,sydu22,sxdu21,sydu21
-
-

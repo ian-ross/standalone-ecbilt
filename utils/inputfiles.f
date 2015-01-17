@@ -1,9 +1,9 @@
       program inputfiles
       implicit none
 
-      include 'sources/comatm.h'
-      include 'sources/comdyn.h'
-      include 'sources/comocfix.h'
+      include 'comatm.h'
+      include 'comdyn.h'
+      include 'comocfix.h'
 
 
       real*4       sstday4(nlat,nlon)

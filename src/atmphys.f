@@ -589,7 +589,7 @@ c             call error(118)
 
 c ***     parameterization of Held and Suarez for the upward fluxes
 
-          ulrad1(i,j)=ra(1) + rb(1)*depot(i,j) + rc(1)*detes(i,j)         
+          ulrad1(i,j)=ra(1) + rb(1)*depot(i,j) + rc(1)*detes(i,j)
           ulrad2(i,j)=ra(2) + rb(2)*depot(i,j) + rc(2)*detes(i,j)
 
 c ***     parameterization of Idso and Jackson for the downward flux

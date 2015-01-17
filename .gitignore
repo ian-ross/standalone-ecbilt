@@ -33,3 +33,4 @@
 /utils/convert-sst
 /utils/convert-sst-ascii-to-nc
 /utils/convert-sst-nc-to-ascii
+/utils/convert-sst-ascii-to-dat

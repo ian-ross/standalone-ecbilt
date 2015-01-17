@@ -137,36 +137,3 @@
  chi      = 0, 0, 0
  sp       = 1, 0, 0
  $end
-
- $outoctl
- isnapshot = 0
- ifreq = 90
- $end
-
- $wrocpar
- to    = 0, 0
- sa    = 0, 0
- ro    = 0, 0
- hadvt = 0, 0
- hadvs = 0, 0
- vadvt = 0, 0
- vadvs = 0, 0
- hdift = 0, 0
- hdifs = 0, 0
- vdift = 0, 0
- vdifs = 0, 0
- convt = 0, 0
- convs = 0, 0
- relaxt= 0, 0
- realxs= 0, 0
- uo    = 0, 0
- vo    = 0, 0
- wo    = 0, 0
- heex  = 0, 0
- saex  = 0, 0
- brin  = 0, 0
- heico = 0, 0
- dice  = 0, 0
- sds   = 0, 0
- tice  = 0, 0
- $end
