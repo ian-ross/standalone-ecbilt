@@ -36,3 +36,8 @@ ncl $SCDIR/wind-plots.ncl
 ps2eps -f -l wind-plots.ps
 epstopdf wind-plots.eps
 /bin/rm -f wind-plots.ps wind-plots.eps
+
+ncl $SCDIR/orog-plots.ncl
+ps2eps -f -l orog-plots.ps
+epstopdf orog-plots.eps
+/bin/rm -f orog-plots.ps orog-plots.eps

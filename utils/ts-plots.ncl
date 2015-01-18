@@ -30,6 +30,7 @@ begin
   res@cnMaxLevelValF = 330
   res@cnLineLabelsOn = False
   res@cnFillOn = True
+  res@cnLinesOn = False
   res@cnLineThicknessF = 0.125
 
   res@mpLandFillColor = 255

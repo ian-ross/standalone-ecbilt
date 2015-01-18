@@ -34,3 +34,6 @@
 /utils/convert-sst-ascii-to-nc
 /utils/convert-sst-nc-to-ascii
 /utils/convert-sst-ascii-to-dat
+/utils/convert-orog-ascii-to-nc
+/doc/ecbilt-experiments/ecbilt-experiments.aux
+/doc/ecbilt-experiments/ecbilt-experiments.log
