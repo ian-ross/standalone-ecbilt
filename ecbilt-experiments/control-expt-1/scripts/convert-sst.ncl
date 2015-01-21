@@ -1,13 +1,13 @@
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 
 ;; Read UM SST forcing.
-sstinfp = addfile("../um-inidata/tcszd.qrclim.sst.nc", "r")
+sstinfp = addfile("../../um-inidata/tcszd.qrclim.sst.nc", "r")
 umlat = sstinfp->latitude
 umlon = sstinfp->longitude
 sstin = sstinfp->temp(:, 0, :, :)
 
 ;; Read ECBILT land/sea mask.
-ecmaskfp = addfile("ecbilt-mask.nc", "r")
+ecmaskfp = addfile("../inidata/ecbilt-mask.nc", "r")
 eclat = ecmaskfp->lat
 nlat = dimsizes(eclat)
 eclon = ecmaskfp->lon
@@ -58,5 +58,5 @@ do i = 0, nlat - 1
 end do
 
 ;; Write NetCDF output.
-ofile = addfile("ecbilt-sst.nc", "c")
+ofile = addfile("../inidata/ecbilt-sst.nc", "c")
 ofile->sst = sstout

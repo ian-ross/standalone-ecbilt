@@ -1,0 +1,6 @@
+#!/bin/bash
+
+ncl convert-sst.ncl
+ncl convert-sea-ice.ncl
+cd ../inidata
+../../../utils/convert-sst-nc-to-ascii
