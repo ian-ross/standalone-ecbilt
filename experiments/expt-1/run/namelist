@@ -1,0 +1,134 @@
+ $runatctl
+ nyears    = 100
+ irunlabel = 0
+ iatm      = 6
+ nwrskip   = 50
+ $end
+
+ $dispar
+ tdis   = 6.0
+ addisl = 1.
+ addish = 4.
+ trel   = 30.0
+ tdif   = 4.0
+ idif   = 4
+ $end
+
+ $dfmpar
+ rrdef1 = .131
+ rrdef2 = .071
+ h0     = 3.
+ $end
+
+ $moipar
+ ihavm  = 1
+ ivavm  = 1
+ imsink = 1
+ tdifq  = 2d0
+ gpm500 = 5500
+ relhmax= 0.8
+ hmoisr = 0.5d0
+ umoisr = 0.6
+ rainmax= 1e-5
+ $end
+
+ $fluxpar
+ cdrag  = 1.4e-03
+ uv10rfx= 0.8
+ uv10m  = 5.
+ uv10rws= 0.8
+ bmoism = 0.15
+ dsnm   = 1000.
+ ndayws = 15
+ $end
+
+ $forpar
+ ipvf1   =1
+ ipvf2   =1
+ ipvf3   =1
+ ipvf4   =1
+ ipvf5   =1
+ ipvf6   =1
+ ipvf7   =1
+ $end
+
+ $radpar
+ $end
+
+ $satfor
+ isatfor  = 0
+ nbsatfor = 191
+ nafyear  = 10
+ irunatm  = 1
+ $end
+
+ $runoctl
+ idtbclin  = 1
+ idtbtrop  = 1
+ $end
+
+ $couppar
+ ndreloct = 20
+ ndrelocs = 40
+ icoupleh = 1
+ icouplew = 1
+ icouples = 1
+ ltflux   = .false.
+ mico     = .false.
+ $end
+
+ $icepar
+ rks      = 0.3097
+ rki      = 2.034
+ abottom  = 40d0
+ $end
+
+ $ocpar
+ rkap     = 8d-6
+ rkapv    = 3d-5
+ rkaph    = 1d3
+ accstr   = 100d6
+ $end
+
+ $levpar
+ $end
+
+ $outatctl
+ ioutdaily =0
+ ixout     =1
+ meantype  =1
+ meanyl    =1
+ meantot   =0
+ $end
+
+ $wratpar
+ ts       = 0, 0, 1
+ t        = 0, 0, 1
+ u        = 0, 0, 1
+ v        = 0, 0, 1
+ omega    = 0, 0, 1
+ psi      = 0, 0, 1
+ gh       = 0, 0, 1
+ shf      = 0, 0, 1
+ lhf      = 0, 0, 1
+ lsp      = 0, 0, 1
+ cp       = 0, 0, 1
+ q        = 0, 0, 1
+ r        = 0, 0, 1
+ ssr      = 0, 0, 1
+ tsr      = 0, 0, 1
+ ttr      = 0, 0, 1
+ str      = 0, 0, 1
+ pp       = 0, 0, 1
+ evap     = 0, 0, 1
+ eminp    = 0, 0, 1
+ albs     = 0, 0, 1
+ albp     = 0, 0, 1
+ ustress  = 0, 0, 1
+ vstress  = 0, 0, 1
+ sdl      = 0, 0, 1
+ uv10     = 0, 0, 1
+ runoffo  = 0, 0, 1
+ runoffl  = 0, 0, 1
+ sp       = 0, 0, 1
+ $end
