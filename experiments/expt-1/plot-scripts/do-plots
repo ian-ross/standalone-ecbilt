@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCDIR=/home/iross/projects/genie/code/standalone-ecbilt/utils
+SCDIR=../plot-scripts
 
 ncl $SCDIR/ts-plots.ncl
 ps2eps -f -l ts-plots.ps
