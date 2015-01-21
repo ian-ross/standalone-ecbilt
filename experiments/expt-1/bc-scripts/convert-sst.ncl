@@ -58,5 +58,6 @@ do i = 0, nlat - 1
 end do
 
 ;; Write NetCDF output.
+system("/bin/rm -f ../inidata/ecbilt-sst.nc")
 ofile = addfile("../inidata/ecbilt-sst.nc", "c")
 ofile->sst = sstout

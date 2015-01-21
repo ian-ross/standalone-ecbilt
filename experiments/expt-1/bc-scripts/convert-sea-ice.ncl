@@ -36,9 +36,10 @@ ecicedpt = mask(ecicedpt, ecmask, 0)
 mdays = ispan(15, 15 + 11 * 30, 30)
 
 ;; Write NetCDF output.
-;ofile = addfile("../inidata/ecbilt-ice.nc", "c")
-;ofile->iceconc = eciceconc
-;ofile->icedepth = ecicedpt
+system("/bin/rm -f ../inidata/ecbilt-ice.nc")
+ofile = addfile("../inidata/ecbilt-ice.nc", "c")
+ofile->iceconc = eciceconc
+ofile->icedepth = ecicedpt
 
 ;; Set up ice birth and death month data.
 birth = new((/ nlat /), string)

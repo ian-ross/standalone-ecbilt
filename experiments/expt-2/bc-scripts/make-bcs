@@ -1,0 +1,9 @@
+#!/bin/bash
+
+ncl convert-land-mask.ncl
+ncl convert-lake-mask.ncl
+
+#ncl convert-sst.ncl
+#ncl convert-sea-ice.ncl
+#cd ../inidata
+#../../../utils/convert-sst-nc-to-ascii

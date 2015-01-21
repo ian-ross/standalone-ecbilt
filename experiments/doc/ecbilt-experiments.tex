@@ -105,7 +105,7 @@ used (GFortran 4.9.2).
 
 
 %======================================================================
-\section{Control experiment \#1}
+\section{Experiment \#1}
 
 \begin{itemize}
   \item{Run name: \texttt{expt-1}.}
@@ -313,5 +313,30 @@ seen in the $P-E$ plots.
     colours show middle atmosphere vertical pressure velocity.}
   \label{fig:wind}
 \end{figure}
+
+
+%======================================================================
+\section{Experiment \#2}
+
+\begin{itemize}
+  \item{Run name: \texttt{expt-2}.}
+  \item{Original standalone ECBILT code, with only minimal changes for
+    compilation.}
+  \item{Land/sea mask, orography, surface albedo, SST and sea-ice
+    forcing converted from UM \texttt{tcszd} experiment.}
+  \item{Simulation length: 100 years; spin-up: 70 years; analysis: 30
+    years.}
+\end{itemize}
+
+%----------------------------------------------------------------------
+\subsection{Boundary conditions}
+
+\begin{itemize}
+  \item{UM land/sea mask regridded to ECBILT grid.}
+  \item{Dummy ECBILT lake mask -- all land/sea contrasts already
+    included in input \texttt{mask.dat} file (ECBILT allows you to
+    distinguish between lakes and ocean, but the distinction doesn't
+    make any difference for the atmosphere model).}
+\end{itemize}
 
 \end{document}
