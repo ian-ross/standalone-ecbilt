@@ -1,0 +1,153 @@
+#!/usr/bin/perl
+
+# Arguments:
+#
+# 1. infile
+# 2. stride
+my $infile = $ARGV[0];
+my $stride = $ARGV[1];
+
+print "infile=$infile\n";
+print "stride=$stride\n";
+
+open PH, "|ncl";
+print PH <<"EOF";
+load "\$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_code.ncl"
+load "\$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
+
+infile = "$infile"
+stride = $stride
+
+begin
+  fp = addfile(infile, "r")
+  taux = fp->ustress
+  tauy = fp->vstress
+
+  wks = gsn_open_wks("ps", "stress-plots")
+  gsn_define_colormap(wks, "BlueWhiteOrangeRed")
+  gsn_reverse_colormap(wks)
+  NhlSetColor(wks, 255, 192/255.0, 192/255.0, 192/255.0)
+
+  plots = new(4, graphic)
+  panel_labels = new(4, string)
+
+  seas_labels = (/ "DJF", "MAM", "JJA", "SON" /)
+
+  res = True
+
+  res\@tiMainString = ""
+  res\@tiYAxisString = ""
+  res\@tiXAxisString = ""
+  res\@gsnLeftString = ""
+  res\@gsnRightString = ""
+  res\@gsnSpreadColors = True
+  res\@gsnSpreadColorEnd = 252
+
+  res\@mpLandFillColor = 255
+
+  res\@lbLabelBarOn = False
+
+  res\@gsnDraw = False
+  res\@gsnFrame = False
+
+  res\@tmXTOn = False
+  res\@tmXBOn = False
+  res\@tmYLOn = False
+  res\@tmYROn = False
+
+  res\@stLevelPalette = "hotres"
+  res\@stSpanLevelPalette = True
+  res\@stLevelSelectionMode = "ManualLevels"
+  res\@stMinLevelValF = 0.05
+  res\@stMaxLevelValF = 0.65
+  res\@stLevelSpacingF = 0.025
+  res\@stMonoLineColor = False
+  res\@stLineThicknessF = 0.5
+  res\@stLineStartStride = stride
+
+  pi = 0
+  do row = 0, 1
+    do col = 0, 1
+      plots(pi) = gsn_csm_streamline_map_ce(wks, taux(pi,:,:), \\
+                                            tauy(pi,:,:), res)
+      panel_labels(pi) = seas_labels(pi)
+      pi = pi + 1
+    end do
+  end do
+
+  pw = 0.406212
+  ph = 0.203106
+  pgapx = 0.0211234
+  pgapy = 0.0211234
+  px1 = 0.0895986
+  py1 = 0.980996
+  panelx = new(4, float)
+  panely = new(4, float)
+  pidx = 0
+  do r = 0, 1
+    do c = 0, 1
+      panelx(pidx) = px1 + (pw + pgapx) * c
+      panely(pidx) = py1 - (ph + pgapy) * r
+      pidx = pidx + 1
+    end do
+  end do
+
+  pres = True
+;  pres\@gsnPanelDebug = True
+  pres\@gsnPanelXF = panelx
+  pres\@gsnPanelYF = panely
+  pres\@gsnFrame = False
+  pres\@gsnPanelFigureStrings = panel_labels
+  pres\@gsnPanelFigureStringsPerimOn = False
+  pres\@gsnPanelFigureStringsPerimSpaceF = 0.125
+  pres\@gsnPanelFigureStringsFontHeightF = 0.01
+  pres\@amJust = "BottomLeft"
+  gsn_panel(wks, plots, (/ 4, 2 /), pres)
+
+  stream = get_overlay_plot(plots(0), "streamlinePlotClass", 0)
+  getvalues stream
+    "stLevels": lblevels
+    "stLevelColors": lbcolors
+  end getvalues
+
+  do idx = 0, dimsizes(lblevels) - 1
+    if (abs(lblevels(idx)) .lt. 0.001) then
+      lblevels(idx) = 0.0
+    end if
+  end do
+
+  lbres = True
+  lbw = 0.55
+  lbh = 0.05
+  lbres\@vpWidthF = lbw
+  lbres\@vpHeightF = lbh
+  lbres\@lbMonoFillPattern = True
+  lbres\@lbLabelFontHeightF = 0.015
+  lbres\@lbLabelAlignment = "InteriorEdges"
+  lbres\@lbPerimOn = False
+  lbres\@lbOrientation = "Horizontal"
+  lbres\@lbFillColors = lbcolors
+  lbres\@lbTitleString = "Wind stress (N/m~S~2~N~)"
+  lbres\@lbTitleFontHeightF = 0.015
+  lbres\@lbTitleOffsetF = 0.2
+  lbres\@lbTitlePosition = "Bottom"
+  lbres\@lbLabelStride = 4
+  lbres\@lbBoxLinesOn = False
+  lblabels = new(dimsizes(lblevels), string)
+  lblabels = lblevels
+
+  lbx = (1 - lbw) / 2.0
+  lby = 0.505
+  gsn_labelbar_ndc(wks, dimsizes(lbcolors), lblabels, lbx, lby, lbres)
+
+  frame(wks)
+
+end
+EOF
+
+close PH;
+
+system "ps2eps -f -l stress-plots.ps";
+system "epstopdf stress-plots.eps";
+unlink "stress-plots.ps";
+unlink "stress-plots.eps";

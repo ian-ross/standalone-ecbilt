@@ -2,12 +2,12 @@
 
 PATH=../../scripts:$PATH
 i="um-tracer.nc"
-l="UM:tcszd"
 
-make-plot $i ts-plots ts $l BlueRed fill 210,330,10 "Surface temperature (K)"
-make-plot $i sp-plots sp:100.0 $l BlueRed lines 500,1100,5
-make-plot $i pp-plots pp $l WhiteBlue fill 0,4000,200 "Total precipitation (mm/yr)"
-make-plot $i evap-plots evap $l WhiteRed fill 0,5000,200 "Total evaporation (mm/yr)"
-make-plot $i pmine-plots pp,evap $l BlueWhiteOrangeRed fill -3500,3500,500 "P-E (mm/yr)"
-make-plot $i z500-plots z500 $l BlueRed lines 4500,6000,100
-make-wind-plot $i um-offset.nc $l 7
+make-plot $i ts-plots ts BlueRed fill 210,330,10 "Surface temperature (K)"
+make-plot $i sp-plots sp:100.0 BlueRed lines 500,1100,5
+make-plot $i pp-plots pp WhiteBlue fill 0,4000,200 "Total precipitation (mm/yr)"
+make-plot $i evap-plots evap WhiteRed fill 0,5000,200 "Total evaporation (mm/yr)"
+make-plot $i pmine-plots pp,evap BlueWhiteOrangeRed fill -3500,3500,500 "P-E (mm/yr)"
+make-plot $i z500-plots z500 BlueRed lines 4500,6000,100
+make-wind-plot $i um-offset.nc 7
+make-tau-plot um-stress.nc 4

@@ -206,12 +206,12 @@ that would be the obvious thing to do.
 %----------------------------------------------------------------------
 \subsection{Model climatology}
 
-Figures~\ref{fig:ts-1}--\ref{fig:wind-1} show seasonal climatologies
+Figures~\ref{fig:ts-1}--\ref{fig:stress-1} show seasonal climatologies
 of surface temperature, precipitation, evaporation, $P-E$ and
 atmospheric circulation for the ECBILT experiment 1 simulation --
 these should be compared with the HadAM3 HadAM3 \texttt{tcszd}
 simulation results in
-Figures~\ref{fig:ts-hadam3}--\ref{fig:wind-hadam3} in
+Figures~\ref{fig:ts-hadam3}--\ref{fig:stress-hadam3} in
 Appendix~\ref{sec:hadam3}.
 
 \paragraph{Surface temperature}
@@ -302,7 +302,9 @@ expect: the atmospheric circulation in ECBILT is weaker and more
 diffuse than in HadAM3, particularly in the vertical direction.  This
 vertical smoothing because of the small number of vertical levels in
 ECBILT is almost certainly the source of the weaker hydrological cycle
-seen in the $P-E$ plots.
+seen in the $P-E$ plots.  Slightly surprisingly though, the spatial
+patterns and magnitude of the wind stress look pretty good, especially
+over the oceans.
 
 \begin{figure}
   \begin{center}
@@ -312,6 +314,16 @@ seen in the $P-E$ plots.
     show upper level and lower level winds, colours show middle
     atmosphere vertical pressure velocity.}
   \label{fig:wind-1}
+\end{figure}
+
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-1/plots/stress-plots}
+  \end{center}
+  \caption{Seasonal surface wind stress plots for ECBILT experiment
+    1.}
+  \label{fig:stress-1}
 \end{figure}
 
 
@@ -346,8 +358,27 @@ seen in the $P-E$ plots.
 \end{itemize}
 
 
-%======================================================================
 \appendix
+%======================================================================
+\section{ECBILT code changes}
+
+%----------------------------------------------------------------------
+\subsection*{All experiments}
+
+\begin{itemize}
+  \item{Wind stress calculation: incorporation of \texttt{cwdrag} drag
+    coefficient for wind stress.}
+\end{itemize}
+
+%----------------------------------------------------------------------
+\subsection*{Experiment 3}
+
+
+%----------------------------------------------------------------------
+\subsection*{Experiment 4}
+
+
+%======================================================================
 \section{HadAM3 \texttt{tcszd} comparison results}
 \label{sec:hadam3}
 
@@ -395,6 +426,15 @@ seen in the $P-E$ plots.
     comparison simulation: arrows show upper level and lower level
     winds, colours show middle atmosphere vertical pressure velocity.}
   \label{fig:wind-hadam3}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../hadam3-comparison/plots/stress-plots}
+  \end{center}
+  \caption{Seasonal surface wind stress plots for HadAM3
+    \texttt{tcszd} comparison simulation.}
+  \label{fig:stress-hadam3}
 \end{figure}
 
 \end{document}

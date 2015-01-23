@@ -4,16 +4,13 @@
 #
 # 1. winfile
 # 2. oinfile
-# 3. Model label
-# 5. Wind vector step
+# 3. Wind vector step
 my $winfile = $ARGV[0];
 my $oinfile = $ARGV[1];
-my $model_label = $ARGV[2];
-my $wstep = $ARGV[3];
+my $wstep = $ARGV[2];
 
 print "winfile=$winfile\n";
 print "oinfile=$oinfile\n";
-print "model_label=$model_label\n";
 print "wstep=$wstep\n";
 
 open PH, "|ncl";
@@ -23,7 +20,6 @@ load "\$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
 
 winfile = "$winfile"
 oinfile = "$oinfile"
-model_label = "$model_label"
 wstep = $wstep
 
 begin
@@ -136,7 +132,7 @@ begin
       overlay(plots(pi), v1)
       overlay(plots(pi), v2)
 
-      panel_labels(pi) = model_label + " (" + seas_labels(pi) + ")"
+      panel_labels(pi) = seas_labels(pi)
       pi = pi + 1
     end do
   end do

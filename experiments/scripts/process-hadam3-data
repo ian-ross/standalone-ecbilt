@@ -11,7 +11,10 @@
 
 DIMRENAMES1='-d t,time -v t,time'
 DIMRENAMES2='-d latitude,lat -v latitude,lat -d longitude,lon -v longitude,lon'
+DIMRENAMES3='-d latitude_1,lat -v latitude_1,lat'
+DIMRENAMES4='-d longitude_1,lon -v longitude_1,lon'
 DIMRENAMES="$DIMRENAMES1 $DIMRENAMES2"
+DIMRENAMESALT="$DIMRENAMES1 $DIMRENAMES3 $DIMRENAMES4"
 
 ncks -d t,828, -v tempsurf um-job/monthly/*.tempsurf.monthly.nc tmp1.nc
 ncwa -O -a surface tmp1.nc tmp1.nc
@@ -95,5 +98,22 @@ ncrename $DIMRENAMES -v omega_mm_p,omega tmp11.nc
 ncks -O -x -v p tmp11.nc tmp11.nc
 
 cdo yseasmean tmp11.nc um-offset.nc
+
+/bin/rm -f tmp*.nc
+
+for mon in jan feb mar apr may jun jul aug sep oct nov dec
+do
+    ncks -v taux_mm_hyb,tauy_mm_hyb --mk_rec_dmn t \
+         $UMCL/*.pdcl${mon}.nc tmp_${mon}.nc
+done
+ncrcat tmp_jan.nc tmp_feb.nc tmp_mar.nc tmp_apr.nc tmp_may.nc tmp_jun.nc \
+       tmp_jul.nc tmp_aug.nc tmp_sep.nc tmp_oct.nc tmp_nov.nc tmp_dec.nc \
+       tmp11.nc
+/bin/rm -f tmp_???.nc
+ncwa -O -a hybrid_p_x1000 tmp11.nc tmp11.nc
+ncrename $DIMRENAMESALT -v taux_mm_hyb,ustress -v tauy_mm_hyb,vstress tmp11.nc
+ncks -O -x -v hybrid_p_x1000 tmp11.nc tmp11.nc
+
+cdo yseasmean tmp11.nc um-stress.nc
 
 /bin/rm -f tmp*.nc

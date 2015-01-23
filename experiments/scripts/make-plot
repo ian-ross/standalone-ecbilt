@@ -5,19 +5,17 @@
 # 1. infile
 # 2. outfile
 # 3. vars (single variable or v1,v2 for comparison + ":scale")
-# 4. Model label
-# 5. Colour map
-# 6. fill/lines
-# 7. Min,max,step for levels
-# 8. Label bar title (if missing, no label bar)
+# 4. Colour map
+# 5. fill/lines
+# 6. Min,max,step for levels
+# 7. Label bar title (if missing, no label bar)
 my $infile = $ARGV[0];
 my $outfile = $ARGV[1];
 my $vars = $ARGV[2];
-my $model_label = $ARGV[3];
-my $cmap = $ARGV[4];
-my $type = $ARGV[5];
-my $levels = $ARGV[6];
-my $lb_title = @ARGV >= 8 ? $ARGV[7] : "";
+my $cmap = $ARGV[3];
+my $type = $ARGV[4];
+my $levels = $ARGV[5];
+my $lb_title = @ARGV >= 7 ? $ARGV[6] : "";
 
 my ($fill, $lb);
 $fill = ($type ne "lines") ? "True" : "False";
@@ -47,7 +45,6 @@ if ($comp eq "True") {
     print "invar=$invar\n";
 }
 print "scale=$scale\n";
-print "model_label=$model_label\n";
 print "cmap=$cmap\n";
 print "fill=$fill\n";
 print "level_spacing=$level_spacing\n";
@@ -69,7 +66,6 @@ invar1 = "$invar1"
 invar2 = "$invar2"
 scale = $scale
 outfile = "$outfile"
-model_label = "$model_label"
 cmap = "$cmap"
 fill = $fill
 level_spacing = $level_spacing
@@ -140,7 +136,7 @@ begin
   do row = 0, 1
     do col = 0, 1
       plots(pi) = gsn_csm_contour_map_ce(wks, v(pi, :, :), res)
-      panel_labels(pi) = model_label + " (" + seas_labels(pi) + ")"
+      panel_labels(pi) = seas_labels(pi)
       pi = pi + 1
     end do
   end do

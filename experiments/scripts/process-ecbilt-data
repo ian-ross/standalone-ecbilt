@@ -8,7 +8,8 @@
 #
 
 # Extract plot variables for ECBILT.
-ncks -d time,840, -v ts,sp,u,v,omega,gh,pp,evap ecbilt-in.nc tmp1.nc
+VARS=ts,sp,u,v,omega,gh,pp,evap,ustress,vstress
+ncks -d time,840, -v $VARS ecbilt-in.nc tmp1.nc
 
 # Seasonal means.
 cdo yseasmean tmp1.nc tmp2.nc
@@ -55,6 +56,8 @@ ncatted -a units,pp,o,c,"mm yr-1" tmp13.nc
 ncap2 -O -s 'evap = evap * 10' tmp13.nc tmp13.nc
 ncatted -a units,evap,o,c,"mm yr-1" tmp13.nc
 ncap2 -O -s 'z500 = z500 / 9.8 + 5500' tmp13.nc tmp13.nc
+ncatted -a units,ustress,o,c,"N m-2" tmp13.nc
+ncatted -a units,vstress,o,c,"N m-2" tmp13.nc
 
 # Clean up.
 ncks -x -v lev,lev2 tmp13.nc ecbilt.nc
