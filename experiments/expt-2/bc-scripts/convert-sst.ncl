@@ -7,7 +7,7 @@ umlon = sstinfp->longitude
 sstin = sstinfp->temp(:, 0, :, :)
 
 ;; Read ECBILT land/sea mask.
-ecmaskfp = addfile("../inidata/ecbilt-mask.nc", "r")
+ecmaskfp = addfile("../inidata/ecbilt-um-mask.nc", "r")
 eclat = ecmaskfp->lat
 nlat = dimsizes(eclat)
 eclon = ecmaskfp->lon

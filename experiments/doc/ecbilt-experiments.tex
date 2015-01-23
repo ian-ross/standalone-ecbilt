@@ -322,8 +322,14 @@ seen in the $P-E$ plots.
   \item{Run name: \texttt{expt-2}.}
   \item{Original standalone ECBILT code, with only minimal changes for
     compilation.}
-  \item{Land/sea mask, orography, surface albedo, SST and sea-ice
-    forcing converted from UM \texttt{tcszd} experiment.}
+  \item{Land/sea mask, orography, SST and sea-ice forcing converted
+    from UM \texttt{tcszd} experiment.}
+  \item{River routing mask converted to new land/sea mask by hand.}
+  \item{Original ECBILT albedo data: the albedo code uses a simple
+    interpolation scheme based on fixed latitude-dependent values read
+    in at startup for bare-soil, TOA and ocean albedo.  This will need
+    to be modified to calculate albedos based on land surface
+    characteristics.}
   \item{Simulation length: 100 years; spin-up: 70 years; analysis: 30
     years.}
 \end{itemize}

@@ -8,7 +8,7 @@ iceconcin = iceinfp->iceconc(:, 0, :, :)
 icedptin = iceinfp->field92(:, 0, :, :)
 
 ;; Read ECBILT land/sea mask.
-ecmaskfp = addfile("../inidata/ecbilt-mask.nc", "r")
+ecmaskfp = addfile("../inidata/ecbilt-um-mask.nc", "r")
 eclat = ecmaskfp->lat
 nlat = dimsizes(eclat)
 eclon = ecmaskfp->lon

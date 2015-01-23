@@ -1,0 +1,99 @@
+#!/bin/bash
+
+/bin/rm -f tmp*.nc um-tracer.nc um-offset.nc
+
+#======================================================================
+#
+#  UM
+#
+
+# Extract plot variables for UM.
+
+DIMRENAMES1='-d t,time -v t,time'
+DIMRENAMES2='-d latitude,lat -v latitude,lat -d longitude,lon -v longitude,lon'
+DIMRENAMES="$DIMRENAMES1 $DIMRENAMES2"
+
+ncks -d t,828, -v tempsurf um-job/monthly/*.tempsurf.monthly.nc tmp1.nc
+ncwa -O -a surface tmp1.nc tmp1.nc
+ncrename $DIMRENAMES -v tempsurf,ts tmp1.nc
+ncks -O -x -v surface tmp1.nc tmp1.nc
+
+ncks -d t,828, -v mslp um-job/monthly/*.mslp.monthly.nc tmp2.nc
+ncwa -O -a msl tmp2.nc tmp2.nc
+ncrename $DIMRENAMES -v mslp,sp tmp2.nc
+ncks -O -x -v msl tmp2.nc tmp2.nc
+
+ncks -d t,828, -v precip um-job/monthly/*.precip.monthly.nc tmp3.nc
+ncwa -O -a surface tmp3.nc tmp3.nc
+ncrename $DIMRENAMES -v precip,pp tmp3.nc
+ncks -O -x -v surface tmp3.nc tmp3.nc
+
+ncks -d t,828, -v totalevap um-job/monthly/*.totalevap.monthly.nc tmp4.nc
+ncwa -O -a surface tmp4.nc tmp4.nc
+ncrename $DIMRENAMES -v totalevap,evap tmp4.nc
+ncks -O -x -v surface tmp4.nc tmp4.nc
+
+ncks -d time,828, -v u850 um-job/monthly/*.u850.monthly.nc tmp5.nc
+ncwa -O -a lev tmp5.nc tmp5.nc
+ncrename $DIMRENAMES2 -v u850,ulower tmp5.nc
+ncks -O -x -v lev tmp5.nc tmp5.nc
+
+ncks -d time,828, -v u200 um-job/monthly/*.u200.monthly.nc tmp6.nc
+ncwa -O -a lev tmp6.nc tmp6.nc
+ncrename $DIMRENAMES2 -v u200,uupper tmp6.nc
+ncks -O -x -v lev tmp6.nc tmp6.nc
+
+ncks -d time,828, -v v850 um-job/monthly/*.v850.monthly.nc tmp7.nc
+ncwa -O -a lev tmp7.nc tmp7.nc
+ncrename $DIMRENAMES2 -v v850,vlower tmp7.nc
+ncks -O -x -v lev tmp7.nc tmp7.nc
+
+ncks -d time,828, -v v200 um-job/monthly/*.v200.monthly.nc tmp8.nc
+ncwa -O -a lev tmp8.nc tmp8.nc
+ncrename $DIMRENAMES2 -v v200,vupper tmp8.nc
+ncks -O -x -v lev tmp8.nc tmp8.nc
+
+ncks -d time,828, -v z500 um-job/monthly/*.z500.monthly.nc tmp9.nc
+ncwa -O -a lev tmp9.nc tmp9.nc
+ncrename $DIMRENAMES2 tmp9.nc
+ncks -O -x -v lev tmp9.nc tmp9.nc
+
+ncks -A tmp2.nc tmp1.nc
+ncks -A tmp3.nc tmp1.nc
+ncks -A tmp4.nc tmp1.nc
+ncks -A tmp5.nc tmp1.nc
+ncks -A tmp6.nc tmp1.nc
+ncks -A tmp7.nc tmp1.nc
+ncks -A tmp8.nc tmp1.nc
+ncks -A tmp9.nc tmp1.nc
+
+cdo yseasmean tmp1.nc um-tracer.nc
+
+# Convert units.
+ncap2 -O -s 'pp = pp * 3600 * 24 * 360' um-tracer.nc um-tracer.nc
+ncatted -a units,pp,o,c,"mm yr-1" um-tracer.nc
+ncap2 -O -s 'evap = evap * 360' um-tracer.nc um-tracer.nc
+ncatted -a units,evap,o,c,"mm yr-1" um-tracer.nc
+
+
+# Deal with monthly omega data.
+
+UMCL=um-job/climate
+
+/bin/rm -f tmp_???.nc
+for mon in jan feb mar apr may jun jul aug sep oct nov dec
+do
+    ncks -v omega_mm_p --mk_rec_dmn t -d p,500.0 \
+         $UMCL/*.pccl${mon}.nc tmp_${mon}.nc
+done
+ncrcat tmp_jan.nc tmp_feb.nc tmp_mar.nc tmp_apr.nc tmp_may.nc tmp_jun.nc \
+       tmp_jul.nc tmp_aug.nc tmp_sep.nc tmp_oct.nc tmp_nov.nc tmp_dec.nc \
+       tmp11.nc
+/bin/rm -f tmp_???.nc
+ncwa -O -a p tmp11.nc tmp11.nc
+ncrename $DIMRENAMES -v omega_mm_p,omega tmp11.nc
+ncks -O -x -v p tmp11.nc tmp11.nc
+
+cdo yseasmean tmp11.nc um-offset.nc
+
+/bin/rm -f tmp*.nc

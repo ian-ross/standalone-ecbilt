@@ -2,8 +2,16 @@
 
 ncl convert-land-mask.ncl
 ncl convert-lake-mask.ncl
+ncl convert-orog.ncl
+ncl convert-sst.ncl
+ncl convert-sea-ice.ncl
+cd ../inidata
+../../../utils/convert-sst-nc-to-ascii
 
-#ncl convert-sst.ncl
-#ncl convert-sea-ice.ncl
-#cd ../inidata
-#../../../utils/convert-sst-nc-to-ascii
+cp mask.dat lakemask.dat ../run/inputdata/ocean
+cp berg.asc ../run/inputdata/atmos
+cp icemask.dat sst_daily.asc ../run/inputdata/ocfix
+cp labas.dat ../run/inputdata/land
+
+cd ../run
+../../../utils/inputfiles

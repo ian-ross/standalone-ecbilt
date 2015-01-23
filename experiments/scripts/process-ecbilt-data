@@ -1,0 +1,61 @@
+#!/bin/bash
+
+/bin/rm -f tmp*.nc ecbilt.nc
+
+#======================================================================
+#
+#  ECBILT
+#
+
+# Extract plot variables for ECBILT.
+ncks -d time,840, -v ts,sp,u,v,omega,gh,pp,evap ecbilt-in.nc tmp1.nc
+
+# Seasonal means.
+cdo yseasmean tmp1.nc tmp2.nc
+
+# Pull out winds for seperate processing.
+ncks -v u,v -d lev2,0 tmp2.nc tmp3.nc
+ncrename -v u,ulower -v v,vlower tmp3.nc
+ncwa -a lev2 tmp3.nc tmp4.nc
+ncks -O -x -v lev2 tmp4.nc tmp4.nc
+ncks -v u,v -d lev2,2 tmp2.nc tmp5.nc
+ncrename -v u,uupper -v v,vupper tmp5.nc
+ncwa -a lev2 tmp5.nc tmp6.nc
+ncks -O -x -v lev2 tmp6.nc tmp6.nc
+
+# Put winds back in.
+ncks -x -v u,v tmp2.nc tmp7.nc
+ncks -A tmp4.nc tmp7.nc
+ncks -A tmp6.nc tmp7.nc
+
+# Pull out omega for seperate processing.
+ncks -v omega -d lev,1 tmp2.nc tmp8.nc
+ncwa -a lev tmp8.nc tmp9.nc
+ncks -O -x -v lev tmp9.nc tmp9.nc
+
+# Put omega back in.
+ncks -x -v omega tmp7.nc tmp10.nc
+ncks -A tmp9.nc tmp10.nc
+
+# Pull out geopotential height for seperate processing.
+ncks -v gh -d lev2,1 tmp2.nc tmp11.nc
+ncrename -v gh,z500 tmp11.nc
+ncwa -a lev2 tmp11.nc tmp12.nc
+ncks -O -x -v lev2 tmp12.nc tmp12.nc
+
+# Put Z500 back in.
+ncks -x -v gh tmp10.nc tmp13.nc
+ncks -A tmp12.nc tmp13.nc
+
+# Convert units.
+ncap2 -O -s 'ts = ts + 273.16' tmp13.nc tmp13.nc
+ncatted -a units,ts,o,c,K tmp13.nc
+ncap2 -O -s 'pp = pp * 10' tmp13.nc tmp13.nc
+ncatted -a units,pp,o,c,"mm yr-1" tmp13.nc
+ncap2 -O -s 'evap = evap * 10' tmp13.nc tmp13.nc
+ncatted -a units,evap,o,c,"mm yr-1" tmp13.nc
+ncap2 -O -s 'z500 = z500 / 9.8 + 5500' tmp13.nc tmp13.nc
+
+# Clean up.
+ncks -x -v lev,lev2 tmp13.nc ecbilt.nc
+/bin/rm tmp*.nc

@@ -12,14 +12,14 @@ PROGRAM convert_orog
 
   INTEGER :: ncid
   INTEGER :: latdimid, londimid
-  INTEGER :: latvarid, lonvarid, orogvarid
+  INTEGER :: latvarid, lonvarid, orogvarid, sdfricvarid
   INTEGER :: ncstatus
 
   DOUBLE PRECISION, DIMENSION(NLON) :: lons
   DOUBLE PRECISION, DIMENSION(NLAT) :: lats
 
   INTEGER :: i, j, k
-  REAL*4, DIMENSION(NLAT, NLON) :: orog
+  REAL*4, DIMENSION(NLAT, NLON) :: orog, sdfric
   INTEGER, DIMENSION(0:NLON, 0:NLAT) :: indu
   INTEGER, DIMENSION(0:NLON-1, 0:NLAT-1) :: indt
   INTEGER, DIMENSION(NLAT, NLON) :: lsmask
@@ -54,6 +54,10 @@ PROGRAM convert_orog
   CALL chk(NF90_PUT_ATT(ncid, orogvarid, 'units', 'm'))
   CALL chk(NF90_PUT_ATT(ncid, orogvarid, 'missing_value', 9.99E10))
 
+  CALL chk(NF90_DEF_VAR(ncid, 'sdfric', NF90_DOUBLE, &
+       (/ londimid, latdimid /), sdfricvarid))
+  CALL chk(NF90_PUT_ATT(ncid, sdfricvarid, 'missing_value', 9.99E10))
+
   CALL chk(NF90_ENDDEF(ncid))
 
   DO i = 1, NLAT
@@ -66,6 +70,7 @@ PROGRAM convert_orog
   CALL chk(NF90_PUT_VAR(ncid, lonvarid, lons))
 
   READ (13, *) orog
+  READ (13, *) sdfric
   READ (40,120)
   DO j = NLAT, 0, -1
      READ (40, 120) (indu(i, j), i = 0, NLON)
@@ -82,9 +87,14 @@ PROGRAM convert_orog
 310 FORMAT (i4, i2, 90i1)
 120 FORMAT (65i1)
 
-  WHERE (lsmask == 1) orog = 9.99E10
+  WHERE (lsmask == 1)
+     orog = 9.99E10
+     sdfric = 9.99E10
+  END WHERE
 
   CALL chk(NF90_PUT_VAR(ncid, orogvarid, TRANSPOSE(orog), &
+          (/ 1, 1 /), (/ NLON, NLAT /)))
+  CALL chk(NF90_PUT_VAR(ncid, sdfricvarid, TRANSPOSE(sdfric), &
           (/ 1, 1 /), (/ NLON, NLAT /)))
 
 200 CONTINUE

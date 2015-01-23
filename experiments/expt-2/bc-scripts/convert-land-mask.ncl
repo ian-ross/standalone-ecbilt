@@ -32,16 +32,17 @@ chmask = where(msk, char1, char0)
 chmaskneg = new((/ nlat /), string)
 chmaskneg = where(msk, char0, char1)
 
-out = new((/ 2 * nlat + 1 /), string)
+out = new((/ 2 * nlat + 2 /), string)
 out(0) = "12345678901234567890123456789012345678901234567890123456789012345"
+out(1) = "00000000000000000000000000000000000000000000000000000000000000000"
 do i = 0, nlat - 1
   mskrow = chmask(nlat - 1 - i)
   tmp = stringtocharacter(mskrow)
   rpt = charactertostring(tmp(nlon - 1))
-  out(i + 1) = str_concat((/ mskrow, rpt /))
+  out(i + 2) = str_concat((/ mskrow, rpt /))
   row = sprinti("%2d", nlat - 1 - i)
   mskrowneg = chmaskneg(nlat - 1 - i)
-  out(i + 1 + nlat) = str_concat((/ "  ", row, " ", mskrowneg /))
+  out(i + 2 + nlat) = str_concat((/ "  ", row, " ", mskrowneg /))
 end do
 
 asciiwrite("../inidata/mask.dat", out)
