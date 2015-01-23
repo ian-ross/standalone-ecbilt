@@ -54,7 +54,7 @@ c-----------------------------------------------------------------------
       NAMELIST /dfmpar/  rrdef1,rrdef2,h0
       NAMELIST /moipar/  ihavm,ivavm,imsink,tdifq,gpm500,relhmax,
      *                   hmoisr,umoisr,rainmax
-      NAMELIST /fluxpar/ cdrag,uv10rfx,uv10m,uv10rws,dsnm,bmoism,ndayws
+      NAMELIST /fluxpar/ cdrag,cwdrag,uv10rfx,uv10m,uv10rws,dsnm,bmoism,ndayws
       NAMELIST /forpar/  ipvf1,ipvf2,ipvf3,ipvf4,ipvf5,ipvf6,ipvf7
       NAMELIST /radpar/    solarc
       NAMELIST /satfor/   isatfor,nbsatfor,nafyear,irunatm
@@ -105,6 +105,7 @@ C             oversaturation occurs.                                   C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C Surface flux Parameters:                                             C
 C cdrag:      coefficient in sensible and latent air-surface heat flux C
+C cwdrag:     coefficient in wind stress                               C
 C uv10rfx:    reduction factor of 800 hPa winds to obtain              C
 C             10 mtr wind used in the definition of the surface        C
 C             heat fluxes                                              C
@@ -172,6 +173,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       rainmax= 1e-5
 
       cdrag  = 1.4e-03
+      cwdrag = 2.0e-03
       uv10rfx= 0.8
       uv10m  = 4.
       uv10rws= 0.8
@@ -242,6 +244,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       write(30, 910) 'rainmax  =', rainmax
 
       write(30, 910) 'cdrag    =', cdrag
+      write(30, 910) 'cwdrag   =', cwdrag
       write(30, 910) 'uv10rfx  =', uv10rfx
       write(30, 910) 'uv10m    =', uv10m
       write(30, 910) 'uv10rws  =', uv10rws

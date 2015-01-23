@@ -123,6 +123,7 @@ c----------------------------------------------------------------------
       cdragl=cdrag
       do j=1,nlon
         do i=1,nlat
+          cdragw(i,j) = cwdrag
           if (lsmask(i,j).eq.1) then
             cdragv(i,j)=cdrags
           else

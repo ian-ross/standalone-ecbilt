@@ -47,10 +47,11 @@ c      abso2:       solar radiation absorbtion coefficient.
 c
 c      COMMON /cpar1/  rowat,roair,cdrag,cpair,cvair,rlatvap,rlatcon,
 c      *                sboltz,rlatsub,rlatfus,cwater,gamma,rkappa,ps,
-c      *                aa,bb,gamd,tzero,alphad,alphav,alphas
+c      *                aa,bb,gamd,tzero,alphad,alphav,alphas,cwdrag
 c      rowat:       density of water.
 c      roair:       mean air desity at sea level.
 c      cdrag:       coefficient in sensible and latent air-sea heat flux.
+c      cwdrag:      coefficient in wind stress.
 c      cdragv:      coef. in sen. en lat. heat flux depending on roughness
 c                   length and stability (Richardson number)
 c      richar:      richardson number
@@ -175,7 +176,7 @@ c-----------------------------------------------------------------------
       integer landsnow(nlat,nlon)
       real*8  albice(nlat),albsea(nlat),albsnow(nlat),albland(nlat),
      *        albseaw(nlat),albseas(nlat),abstow(nlat),abstos(nlat)
-      real*8  rowat,roair,cdrag,cpair,cvair,rlatvap,rlatcon,
+      real*8  rowat,roair,cdrag,cwdrag,cpair,cvair,rlatvap,rlatcon,
      *        sboltz,rlatsub,rlatfus,cwater,gamma,rkappa,
      *        potfac1,potfac2,gamd,tzero,alphad,alphav,alphas
       real*8  cdragv(nlat,nlon),cdragw(nlat,nlon),richar(nlat,nlon)
@@ -219,7 +220,7 @@ c-----------------------------------------------------------------------
       common /clandp/ landsnow
       common /calbedo/ albice,albsea,albsnow,albland,albseaw,albseas,
      *                abstow,abstos
-      common /cpar1/  rowat,roair,cdrag,cpair,cvair,rlatvap,rlatcon,
+      common /cpar1/  rowat,roair,cdrag,cwdrag,cpair,cvair,rlatvap,rlatcon,
      *                sboltz,rlatsub,rlatfus,cwater,gamma,rkappa,
      *                potfac1,potfac2,gamd,tzero,alphad,alphav,alphas
       common /cparv/  cdragv,cdragw,richar,chsea,cdsea,chlan,cdlan
