@@ -34,6 +34,7 @@
 
  $fluxpar
  cdrag  = 1.4e-03
+ cwdrag = 2.0e-03
  uv10rfx= 0.8
  uv10m  = 5.
  uv10rws= 0.8
