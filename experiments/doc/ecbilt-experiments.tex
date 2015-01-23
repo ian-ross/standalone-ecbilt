@@ -175,18 +175,6 @@ heuristics are used to determine ``birth'' and ``death'' months for
 sea ice in each grid cell, and this information is encoded into the
 ASCII file format used by ECBILT.
 
-%% %----------------------------------------------------------------------
-%% \subsubsection{Other boundary conditions}
-
-%% \begin{itemize}
-%%   \item{Conversion of boundary conditions (2): same plus land/sea
-%%     mask, lake mask, orography, albedo, GHG concentrations, orbital
-%%     parameters.}
-%%   \item{Plots of land/sea mask compared between original ECBILT, UM
-%%     and ECBILT-regridded UM mask.}
-%% \end{itemize}
-
-
 %----------------------------------------------------------------------
 \subsection{Model performance}
 
@@ -349,6 +337,18 @@ over the oceans.
 %----------------------------------------------------------------------
 \subsection{Boundary conditions}
 
+%% %----------------------------------------------------------------------
+%% \subsubsection{Other boundary conditions}
+
+%% \begin{itemize}
+%%   \item{Conversion of boundary conditions (2): same plus land/sea
+%%     mask, lake mask, orography, albedo, GHG concentrations, orbital
+%%     parameters.}
+%%   \item{Plots of land/sea mask compared between original ECBILT, UM
+%%     and ECBILT-regridded UM mask.}
+%% \end{itemize}
+
+
 \begin{itemize}
   \item{UM land/sea mask regridded to ECBILT grid.}
   \item{Dummy ECBILT lake mask -- all land/sea contrasts already
@@ -356,6 +356,85 @@ over the oceans.
     distinguish between lakes and ocean, but the distinction doesn't
     make any difference for the atmosphere model).}
 \end{itemize}
+
+%----------------------------------------------------------------------
+\subsection{Model performance}
+
+Run time: 77 min 39 sec.
+
+
+%----------------------------------------------------------------------
+\subsection{Model climatology}
+
+Figures~\ref{fig:ts-2}--\ref{fig:stress-2} show seasonal climatologies
+of surface temperature, precipitation, evaporation, $P-E$ and
+atmospheric circulation for the ECBILT experiment 2 simulation --
+these should be compared with the HadAM3 HadAM3 \texttt{tcszd}
+simulation results in
+Figures~\ref{fig:ts-hadam3}--\ref{fig:stress-hadam3} in
+Appendix~\ref{sec:hadam3}.
+
+\paragraph{Surface temperature}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-2/plots/ts-plots}
+  \end{center}
+  \caption{Seasonal surface temperature for ECBILT experiment 2.}
+  \label{fig:ts-2}
+\end{figure}
+
+\paragraph{Precipitation}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-2/plots/pp-plots}
+  \end{center}
+  \caption{Seasonal precipitation for ECBILT experiment 2.}
+  \label{fig:pp-2}
+\end{figure}
+
+\paragraph{Evaporation}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-2/plots/evap-plots}
+  \end{center}
+  \caption{Seasonal evaporation for ECBILT experiment 2.}
+  \label{fig:evap-2}
+\end{figure}
+
+\paragraph{$P-E$}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-2/plots/pmine-plots}
+  \end{center}
+  \caption{Seasonal precipitation minus evaporation for ECBILT
+    experiment 2.}
+  \label{fig:pmine-2}
+\end{figure}
+
+\paragraph{Winds}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-2/plots/wind-plots}
+  \end{center}
+  \caption{Seasonal circulation plots for ECBILT experiment 2: arrows
+    show upper level and lower level winds, colours show middle
+    atmosphere vertical pressure velocity.}
+  \label{fig:wind-2}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-2/plots/stress-plots}
+  \end{center}
+  \caption{Seasonal surface wind stress plots for ECBILT experiment
+    2.}
+  \label{fig:stress-2}
+\end{figure}
 
 
 \appendix
@@ -413,8 +492,8 @@ over the oceans.
   \begin{center}
     \includegraphics[width=\textwidth]{../hadam3-comparison/plots/pmine-plots}
   \end{center}
-  \caption{Seasonal precipitation minus evaporation for ECBILT
-    experiment 1.}
+  \caption{Seasonal precipitation minus evaporation for HadAM3
+    \texttt{tcszd} comparison simulation.}
   \label{fig:pmine-hadam3}
 \end{figure}
 
