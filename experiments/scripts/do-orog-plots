@@ -1,0 +1,8 @@
+#!/bin/bash
+
+SCDIR=../../scripts
+
+ncl $SCDIR/orog-plots.ncl
+ps2eps -f -l orog-plots.ps
+epstopdf orog-plots.eps
+/bin/rm -f orog-plots.ps orog-plots.eps

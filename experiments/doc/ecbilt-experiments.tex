@@ -136,7 +136,7 @@ encouraging enough.
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=\textwidth]{../expt-1/plots/orog-plots}
+    \includegraphics[width=\textwidth]{../fixed-data/plots/orog-plots}
   \end{center}
   \caption{ECBILT and UM orography and land/sea masks used for
     comparison experiments.}
@@ -206,10 +206,13 @@ that would be the obvious thing to do.
 %----------------------------------------------------------------------
 \subsection{Model climatology}
 
-Figures~\ref{fig:ts}--\ref{fig:wind} show seasonal climatologies of
-surface temperature, precipitation, evaporation, $P-E$ and atmospheric
-circulation for the ECBILT simulation alongside the same plots for the
-HadAM3 \texttt{tcszd} simulation.
+Figures~\ref{fig:ts-1}--\ref{fig:wind-1} show seasonal climatologies
+of surface temperature, precipitation, evaporation, $P-E$ and
+atmospheric circulation for the ECBILT experiment 1 simulation --
+these should be compared with the HadAM3 HadAM3 \texttt{tcszd}
+simulation results in
+Figures~\ref{fig:ts-hadam3}--\ref{fig:wind-hadam3} in
+Appendix~\ref{sec:hadam3}.
 
 \paragraph{Surface temperature}
 
@@ -225,9 +228,8 @@ near the Rockies are the areas where this is most obvious.
   \begin{center}
     \includegraphics[width=\textwidth]{../expt-1/plots/ts-plots}
   \end{center}
-  \caption{Seasonal surface temperature for ECBILT and UM comparison
-    experiments.}
-  \label{fig:ts}
+  \caption{Seasonal surface temperature for ECBILT experiment 1.}
+  \label{fig:ts-1}
 \end{figure}
 
 \paragraph{Precipitation}
@@ -249,9 +251,8 @@ model with only three levels in the vertical.
   \begin{center}
     \includegraphics[width=\textwidth]{../expt-1/plots/pp-plots}
   \end{center}
-  \caption{Seasonal precipitation for ECBILT and UM comparison
-    experiments.}
-  \label{fig:pp}
+  \caption{Seasonal precipitation for ECBILT experiment 1.}
+  \label{fig:pp-1}
 \end{figure}
 
 \paragraph{Evaporation}
@@ -267,9 +268,8 @@ alone one with only three!
   \begin{center}
     \includegraphics[width=\textwidth]{../expt-1/plots/evap-plots}
   \end{center}
-  \caption{Seasonal evaporation for ECBILT and UM comparison
-    experiments.}
-  \label{fig:evap}
+  \caption{Seasonal evaporation for ECBILT experiment 1.}
+  \label{fig:evap-1}
 \end{figure}
 
 \paragraph{$P-E$}
@@ -289,9 +289,9 @@ right.
   \begin{center}
     \includegraphics[width=\textwidth]{../expt-1/plots/pmine-plots}
   \end{center}
-  \caption{Seasonal precipitation minus evaporation for ECBILT and UM
-    comparison experiments.}
-  \label{fig:pmine}
+  \caption{Seasonal precipitation minus evaporation for ECBILT
+    experiment 1.}
+  \label{fig:pmine-1}
 \end{figure}
 
 \paragraph{Winds}
@@ -308,10 +308,10 @@ seen in the $P-E$ plots.
   \begin{center}
     \includegraphics[width=\textwidth]{../expt-1/plots/wind-plots}
   \end{center}
-  \caption{Seasonal circulation plots for ECBILT and UM comparison
-    experiments: arrows show upper level and lower level winds,
-    colours show middle atmosphere vertical pressure velocity.}
-  \label{fig:wind}
+  \caption{Seasonal circulation plots for ECBILT experiment 1: arrows
+    show upper level and lower level winds, colours show middle
+    atmosphere vertical pressure velocity.}
+  \label{fig:wind-1}
 \end{figure}
 
 
@@ -344,5 +344,57 @@ seen in the $P-E$ plots.
     distinguish between lakes and ocean, but the distinction doesn't
     make any difference for the atmosphere model).}
 \end{itemize}
+
+
+%======================================================================
+\appendix
+\section{HadAM3 \texttt{tcszd} comparison results}
+\label{sec:hadam3}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../hadam3-comparison/plots/ts-plots}
+  \end{center}
+  \caption{Seasonal surface temperature for HadAM3 \texttt{tcszd}
+    comparison simulation.}
+  \label{fig:ts-hadam3}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../hadam3-comparison/plots/pp-plots}
+  \end{center}
+  \caption{Seasonal precipitation for HadAM3 \texttt{tcszd} comparison
+    simulation.}
+  \label{fig:pp-hadam3}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../hadam3-comparison/plots/evap-plots}
+  \end{center}
+  \caption{Seasonal evaporation for HadAM3 \texttt{tcszd} comparison
+    simulation.}
+  \label{fig:evap-hadam3}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../hadam3-comparison/plots/pmine-plots}
+  \end{center}
+  \caption{Seasonal precipitation minus evaporation for ECBILT
+    experiment 1.}
+  \label{fig:pmine-hadam3}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../hadam3-comparison/plots/wind-plots}
+  \end{center}
+  \caption{Seasonal circulation plots for HadAM3 \texttt{tcszd}
+    comparison simulation: arrows show upper level and lower level
+    winds, colours show middle atmosphere vertical pressure velocity.}
+  \label{fig:wind-hadam3}
+\end{figure}
 
 \end{document}
