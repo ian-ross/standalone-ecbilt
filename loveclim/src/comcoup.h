@@ -1,25 +1,12 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-c23456789012345678901234567890123456789012345678901234567890123456789012
-c-----------------------------------------------------------------------
-c *** File:     comcoup.h                                                    
-c *** Contents: Common declarations for coupling module of ECbilt
-c-----------------------------------------------------------------------
+!23456789012345678901234567890123456789012345678901234567890123456789012
+!-----------------------------------------------------------------------
+! *** File:     comcoup.h
+! *** Contents: Common declarations for coupling module of ECbilt
+!-----------------------------------------------------------------------
 
       integer    kamax,komax,ijatm,ijocn
-      parameter  (ijatm=64*32,ijocn=122*65,komax=17,kamax=14)
-      integer iobclint,iobtropt,indo2a(ijatm,kamax),inda2o(ijocn,komax)
+      parameter  (ijatm=64*32,ijocn=64*32,komax=17,kamax=14)
+      integer iobclint,iobtropt
       real*8  cohesws(nlat,nlon),clhesws(nlat,nlon)
       real*8  cohesw0(nlat,nlon),clhesw0(nlat,nlon)
       real*8  cohesw1(nlat,nlon),clhesw1(nlat,nlon)
@@ -34,8 +21,8 @@ c-----------------------------------------------------------------------
       real*8  coevap(nlat,nlon),clevap(nlat,nlon)
       real*8  winstua(nlat,nlon),winstva(nlat,nlon)
       real*8  sumohfx(nlat,nlon),sumoswr(nlat,nlon)
-      real*8  sumihfx(nlat,nlon),sumiswr(nlat,nlon) 
-      real*8  sumofwf(nlat,nlon),sumisno(nlat,nlon) 
+      real*8  sumihfx(nlat,nlon),sumiswr(nlat,nlon)
+      real*8  sumofwf(nlat,nlon),sumisno(nlat,nlon)
       real*8  sumty(nlat,nlon),sumtx(nlat,nlon)
       real*8  sumuv10(nlat,nlon)
       real*8  couptcc(nlat,nlon)
@@ -46,19 +33,15 @@ c-----------------------------------------------------------------------
       real*8  couprunl(nlat,nlon),coupruno(nlat,nlon)
       real*8  couphsnn,couphsns
       real*8  sumicof(nlat,nlon),sumpress(nlat,nlon)
-      real*8  wo2a(ijatm,kamax),wa2o(ijocn,komax)
 
-      common /ec_rcoup/winstua,winstva,sumtx,sumty,
-     &      couprf,coupsf,couptcc,samix,
-     &      cohesws,clhesws,cohesw0,clhesw0,cohesw1,clhesw1,
-     &      cohesw2,clhesw2,coulrads,clulrads,coulrad0,clulrad0,
-     &      coulrad1,clulrad1,coulrad2,clulrad2,codlrads,cldlrads,
-     &      coeflux,cleflux,cohflux,clhflux,coevap,clevap,
-     &      sumrl,sumro,couprunl,coupruno,couphsnn,couphsns,
-     &      sumohfx,sumoswr,sumihfx,sumiswr,sumofwf,sumisno,
+      common /rcoup/winstua,winstva,sumtx,sumty, &
+     &      couprf,coupsf,couptcc,samix, &
+     &      cohesws,clhesws,cohesw0,clhesw0,cohesw1,clhesw1, &
+     &      cohesw2,clhesw2,coulrads,clulrads,coulrad0,clulrad0, &
+     &      coulrad1,clulrad1,coulrad2,clulrad2,codlrads,cldlrads, &
+     &      coeflux,cleflux,cohflux,clhflux,coevap,clevap, &
+     &      sumrl,sumro,couprunl,coupruno,couphsnn,couphsns, &
+     &      sumohfx,sumoswr,sumihfx,sumiswr,sumofwf,sumisno, &
      &      sumhsn,sumhss,sumohsn,sumohss,sumicof,sumuv10,sumpress
-     
-      common /ec_icoup/ iobtropt,iobclint,indo2a,inda2o
-      
-      common /ec_gridinfo/ wo2a,wa2o
 
+      common /icoup/ iobtropt,iobclint

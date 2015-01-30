@@ -1,0 +1,13 @@
+$tstepctl
+nyears       = 10
+ndays        = 0
+irunlabel    = 001949
+irunlabeld   = 360
+iatm         = 6
+ilan         = 1
+iice         = 2
+iobtrop      = 1
+iobclin      = 1
+nwrskip      = 10
+nwrskip_days = 0
+$end

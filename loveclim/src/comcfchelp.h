@@ -16,7 +16,7 @@ c-----------------------------------------------------------------------
 c *** File:     comcfchelp.h
 c *** Contents: common declaration for time (from ecbilt to clio)
 c-----------------------------------------------------------------------
-c *** COMMON /ec_timectl/ day,ntstep,nyears,nstpyear,nocstpyear,iatm,
+c *** COMMON /timectl/ day,ntstep,nyears,nstpyear,nocstpyear,iatm,
 c                      iyear,imonth,iday
 c     day:       keeps track of time in days during the integration
 c     ntstep:    total number of timesteps of the integration
@@ -38,8 +38,7 @@ c-----------------------------------------------------------------------
       integer     ntstep,nstpyear,nocstpyear,ntotday
       integer     iyear,imonth,iday,iseason
 
-      common /ec_timepar/ nyears,irunlabel,iatm,ilan,iice,iobtrop,
+      common /timepar/ nyears,irunlabel,iatm,ilan,iice,iobtrop,
      *                 iobclin,nwrskip
-      common /ec_timectl/ day,ntstep,nstpyear,nocstpyear,iyear,imonth,
+      common /timectl/ day,ntstep,nstpyear,nocstpyear,iyear,imonth,
      *                    iday,iseason,ntotday,nbclins,nbtrops
-

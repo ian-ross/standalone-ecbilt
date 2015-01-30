@@ -521,6 +521,21 @@ GENIE land/sea masks and river routing information.
 %----------------------------------------------------------------------
 \subsection{Code changes}
 
+Need to build an ``eviscerated'' LOVECLIM with CLIO replaced by the
+fixed ocean from the standalone ECBILT code and the land
+surface/vegetation model replaced by the fixed land surface scheme
+from standalone ECBILT.
+
+Steps:
+\begin{enumerate}
+  \item{Make standalone ``Fortran + makefiles'' setup for LOVECLIM.}
+  \item{Reorganise LOVECLIM code: just want ECBILT plus stubs for the
+    things it connects to.}
+  \item{Convert fixed ocean code.}
+  \item{Convert fixed land code.}
+  \item{Tidy up.}
+  \item{Organise boundary condition files.}
+\end{enumerate}
 
 %----------------------------------------------------------------------
 \subsection{Boundary conditions}

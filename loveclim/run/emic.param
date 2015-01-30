@@ -1,0 +1,74 @@
+# Components Activation 
+
+   T       VECODE
+   F       ICEBERGS
+   F      GISM
+   F      AISM
+   0      LOCH
+
+# CO2 forcing: 
+  
+   T      Radiative
+   T      Fertilization
+
+# global attributes:
+
+title
+LOVECLIM1.2 model output prepared for PMIP3 experiment
+
+institution
+TECLIM - Georges Lemaitre Centre for Earth and Climate Research, Louvain-la-Neuve, Belgium
+
+source
+LOVECLIM1.2 (2010) - atmosphere: ECBILT(32x64xL3,T21L3) - ocean: CLIO(122x65xL20,3x3,L20)
+
+contact
+thierry.fichefet@uclouvain.be, hugues.goosse@uclouvain.be, marie-france.loutre@uclouvain.be
+
+project_id
+iClips
+
+experiment_id
+piControl
+
+realization
+1
+
+cmor_version
+1.1f
+
+Conventions
+CF-1.0
+
+history
+Output from PMIP3/output
+
+reTences
+Model described by Goosse et al. (Geosci. Model Dev., 2010, 576-591). Also see http://www.climate.be
+
+comment
+Test drive
+
+experiment
+pre-industrial control
+
+institute_id
+LOVECLIM
+
+model_id
+LOVECLIM1.2
+
+forcing
+Pre-industrial GHG, insolation
+
+parent_experiment_id
+piControl
+
+initialization_method
+1
+
+physics_version
+1
+
+product
+output

@@ -1,22 +1,9 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-c23456789012345678901234567890123456789012345678901234567890123456789012
-c-----------------------------------------------------------------------
-c *** File:     comato.h                                                    
-c *** Contents: Common declarations for driving the ocean of ECbilt 
-c ***           with atmospheric data during spin-up phase
-c-----------------------------------------------------------------------
+!23456789012345678901234567890123456789012345678901234567890123456789012
+!-----------------------------------------------------------------------
+! *** File:     comato.h
+! *** Contents: Common declarations for driving the ocean of ECbilt
+! ***           with atmospheric data during spin-up phase
+!-----------------------------------------------------------------------
 
       integer  nocfile
       integer  nbsatfor,nafyear
@@ -25,7 +12,6 @@ c-----------------------------------------------------------------------
       real*4   oq10(nlat,nlon),otorain(nlat,nlon),orunofo(nlat,nlon)
       real*4   oevap(nlat,nlon)
 
-      common /ec_ato/  otempsg,odlrads,ouv10,owinstu,owinstv,
+      common /ato/  otempsg,odlrads,ouv10,owinstu,owinstv, &
      &              oq10,otorain,orunofo,oevap
-      common /ec_iato/ nocfile,nbsatfor,nafyear
-
+      common /iato/ nocfile,nbsatfor,nafyear
