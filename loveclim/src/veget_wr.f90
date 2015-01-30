@@ -52,8 +52,8 @@
       real*8 vegsum, vegmap
       common / cm1wvg / vegsum, vegmap(nlat,nlon,nvgmax),vegsum2
 
-      logical flgveg,flgicb,flgisma,flgismg
-      common /coupl/ flgveg,flgicb,flgisma,flgismg
+      logical flgveg
+      common /coupl/ flgveg
 !--data + local variables :
       integer i,j,k,n, kk,ns, nbwr1,nbwr2
       real*8 zero, one, var(nlon)

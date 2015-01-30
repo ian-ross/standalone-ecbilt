@@ -12,15 +12,6 @@
 !
 ! CO2 atmospheric concentration:
 !
-! ...... If flgloch=T:
-!  LOCH computes PGACO2 (But this one has no impact in LOCH);
-!  ECBilt takes PGACO2;
-!  Initialization of PGACO2:
-!         - if no run before this one then ECBilt reads PGACO2 in a forcing file
-!         - if the atmospheric CO2 concentration comes from a previous
-!             run, then PGACO2 is read in initecbilt:iatmphys;
-!
-! ...... If flgloch=F:
 !  ECBilt reads PGACO2 in a forcing file
 !
 !-----------------------------------------------------------------------
@@ -41,7 +32,7 @@
       include 'comsurf.h'
       include 'comemic.h'
       integer ittt
-      double precision DTloch,patmCO2
+      double precision patmCO2
       integer istep,k
 
 
@@ -50,29 +41,14 @@
 
       call initemic
       call initecbilt
-!      call inioceanfixed
+      call inioceanfixed
       call initlbm
       call initcoup
 
       initialization=.false.
       patmCO2=PGACO2
 
-      !C This call is now active in initlbm <============
-      !     if (flgveg) then
-      !
-      ! Note: the value of patmCO2 has no impact during this call.
-      !              call veget(i,j,dtime,epss,patmCO2,fractn(1,1,nld),
-      !    &         darea,tempsgn(1,1,nld))
-      !
-      !     endif
-      !C                                       <============
-
-      ! Carbon in the ocean & atmosphere: Anne Mouchet
-
-      ! *** OCEAN-SEAICE >>
-
       do istep=1,ntstep
-!         call oc2co(istep)
          call update(istep)
          call co2at
          call at2co
@@ -81,29 +57,25 @@
          ! *** integrate atmosphere
          call ecbilt(istep)
 
-         do k=1,ilan
-            call la2co
-            call fluxes(nld)
-            call co2la
-            ! *** integrate land
-            call lbm(istep, k)
-            call lae2co
-            call sumfluxland(k)
-          enddo
+         call la2co
+         call fluxes(nld)
+         call co2la
+         call lbm(istep)
+         call lae2co
+         call sumfluxland
 
-          call sumfluxocean(istep)
+         call sumfluxocean(istep)
 
-          ! *** integrate ocean-seaice
-          call oceanfixed(int((day+0.5*dt)/(iatm*dt)) + 1)
+         call oceanfixed(int((day+0.5*dt)/(iatm*dt)) + 1)
 
-          !!! CHECK!
-          call writestate(istep)
+         !!! CHECK!
+         call writestate(iday)
 
-          if (flgveg) then
-             call veget(istep,dtime,epss,patmCO2,fractn(1,1,nld), &
-     &            darea,tempsgn(1,1,nld))
-          endif
-       enddo
+         if (flgveg) then
+            call veget(istep,dtime,epss,patmCO2,fractn(1,1,nld), &
+                 & darea,tempsgn(1,1,nld))
+         endif
+      enddo
 
       call writestate(ntotday)
       call error(999)
@@ -129,9 +101,10 @@
       parameter (ismfile = 400)
       character*6 num_startyear
       character*3 num_startday
+      logical dummy
 
-      NAMELIST /tstepctl/nyears,ndays,irunlabel,irunlabeld,iatm,ilan, &
-           & iice,iobtrop,iobclin,nwrskip,nwrskip_days
+      NAMELIST /tstepctl/nyears,ndays,irunlabel,irunlabeld,iatm, &
+           & iobtrop,iobclin,nwrskip,nwrskip_days
 
 
       include 'openemicinfiles.h'
@@ -145,10 +118,10 @@
       read(iuo+50,*)
       read(iuo+50,*)
       read(iuo+50,'(L4)') flgveg
-      read(iuo+50,'(L4)') flgicb
-      read(iuo+50,'(L4)') flgismg
-      read(iuo+50,'(L4)') flgisma
-      read(iuo+50,'(I1)') flgloch
+      read(iuo+50,'(L4)') dummy
+      read(iuo+50,'(L4)') dummy
+      read(iuo+50,'(L4)') dummy
+      read(iuo+50,'(I1)') dummy
       read(iuo+50,*)
       read(iuo+50,*)
       read(iuo+50,*)
@@ -167,10 +140,6 @@
 
 
       write(*,'(A,L4)') 'Vecode:',flgveg
-      write(*,'(A,L4)') 'Iceberg:',flgicb
-      write(*,'(A,L4)') 'GISM:',flgismg
-      write(*,'(A,L4)') 'AISM:',flgisma
-      write(*,'(A,I1)') 'Loch:',flgloch
       write(*,*)
       write(*,'(A,L4)') 'CO2 radiative forcing:',lradCO2
       write(*,'(A,L4)') 'CO2 fertilization:',lferCO2
@@ -185,8 +154,6 @@
       irunlabel=000000
       irunlabeld=0
       iatm=6
-      ilan=1
-      iice=3
       iobtrop=1
       iobclin=1
       nwrskip=50
@@ -218,18 +185,11 @@
       write(iuo+30, 900) 'irunlabel    =', irunlabel
       write(iuo+30, 900) 'irunlabeld   =', irunlabeld
       write(iuo+30, 900) 'iatm         =', iatm
-      write(iuo+30, 900) 'ilan         =', ilan
-      write(iuo+30, 900) 'iice         =', iice
       write(iuo+30, 900) 'iobtrop      =', iobtrop
       write(iuo+30, 900) 'iobclin      =', iobclin
       write(iuo+30, 900) 'nwrskip      =', nwrskip
       write(iuo+30, 900) 'nwrskip_days =', nwrskip_days
       write(iuo+30, 901) 'flgveg       =', flgveg
-      write(iuo+30, 901) 'flgicb       =', flgicb
-      write(iuo+30, 901) 'flgismg      =', flgismg
-      write(iuo+30, 901) 'flgisma      =', flgisma
-      write(iuo+30, 901) 'flgloch      =', flgloch
-
 
       undef = 9.99E10
 

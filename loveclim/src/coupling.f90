@@ -155,17 +155,11 @@
 
       do j=1,nlon
         do i=1,nlat
-	  couprf(i,j)=torain(i,j)
-	  coupsf(i,j)=tosnow(i,j)
-	  couptcc(i,j)=tcc(i,j)
-
- 	enddo
+           couprf(i,j)=torain(i,j)
+           coupsf(i,j)=tosnow(i,j)
+           couptcc(i,j)=tcc(i,j)
+        enddo
       enddo
-
-! *** calculate flux correction to snow and rain over oceans
-! *** to deal with too much precipitation in the arctic in ecbilt
-
-      call preccor
 
       end
 
@@ -220,7 +214,7 @@
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine sumfluxland(kst)
+      subroutine sumfluxland
 !-----------------------------------------------------------------------
 ! *** accumulate surface fluxes between atmosphere and land
 !-----------------------------------------------------------------------
@@ -232,12 +226,10 @@
       include 'comsurf.h'
       include 'comemic.h'
 
-      integer kst,i,j
-      real*8  rlan
+      integer i,j
 
-      if (kst.eq.1) then
-        do j=1,nlon
-	  do i=1,nlat
+      do j=1,nlon
+         do i=1,nlat
             clhesws(i,j) = 0.
             clhesw0(i,j) = 0.
             clhesw1(i,j) = 0.
@@ -252,11 +244,10 @@
 	    clevap(i,j)  = 0.
 	    sumrl(i,j)   = 0.
 	    sumro(i,j)   = 0.
-	  enddo
-	enddo
-        sumhsn=0.
-        sumhss=0.
-      endif
+         enddo
+      enddo
+      sumhsn=0.
+      sumhss=0.
       do j=1,nlon
 	do i=1,nlat
           clhesws(i,j) = clhesws(i,j) + fractn(i,j,nld)*heswsn(i,j,nld)
@@ -278,31 +269,26 @@
       sumhsn=sumhsn+couphsnn
       sumhss=sumhss+couphsns
 
-      if (kst.eq.ilan) then
-        rlan=1d0/float(ilan)
-	do j=1,nlon
-	  do i=1,nlat
-            clhesws(i,j) = clhesws(i,j) *rlan
-            clhesw0(i,j) = clhesw0(i,j) *rlan
-            clhesw1(i,j) = clhesw1(i,j) *rlan
-            clhesw2(i,j) = clhesw2(i,j) *rlan
-            clulrad0(i,j)= clulrad0(i,j)*rlan
-            clulrad1(i,j)= clulrad1(i,j)*rlan
-            clulrad2(i,j)= clulrad2(i,j)*rlan
-            clulrads(i,j)= clulrads(i,j)*rlan
-            cldlrads(i,j)= cldlrads(i,j)*rlan
-            clhflux(i,j) = clhflux(i,j) *rlan
-	    cleflux(i,j) = cleflux(i,j) *rlan
-	    clevap(i,j)  = clevap(i,j)  *rlan
-	    sumrl(i,j)   = sumrl(i,j)   *rlan
-	    sumro(i,j)   = sumro(i,j)   *rlan
-	  enddo
-        enddo
-        sumhsn=sumhsn *rlan
-        sumhss=sumhss *rlan
-!       sumhsn=sumhsn
-!       sumhss=sumhss
-      endif
+      do j=1,nlon
+         do i=1,nlat
+            clhesws(i,j) = clhesws(i,j)
+            clhesw0(i,j) = clhesw0(i,j)
+            clhesw1(i,j) = clhesw1(i,j)
+            clhesw2(i,j) = clhesw2(i,j)
+            clulrad0(i,j)= clulrad0(i,j)
+            clulrad1(i,j)= clulrad1(i,j)
+            clulrad2(i,j)= clulrad2(i,j)
+            clulrads(i,j)= clulrads(i,j)
+            cldlrads(i,j)= cldlrads(i,j)
+            clhflux(i,j) = clhflux(i,j)
+	    cleflux(i,j) = cleflux(i,j)
+	    clevap(i,j)  = clevap(i,j)
+	    sumrl(i,j)   = sumrl(i,j)
+	    sumro(i,j)   = sumro(i,j)
+         enddo
+      enddo
+      sumhsn=sumhsn
+      sumhss=sumhss
 
       end
 
@@ -458,129 +444,6 @@
 
       end
 
-
-!23456789012345678901234567890123456789012345678901234567890123456789012
-
-      subroutine preccor
-!-----------------------------------------------------------------------
-
-! *** computes mean values of ocean basins
-!-----------------------------------------------------------------------
-
-      implicit none
-
-      include 'comatm.h'
-      include 'comdiag.h'
-      include 'comphys.h'
-      include 'comsurf.h'
-      include 'comemic.h'
-      include 'comcoup.h'
-
-      integer i,j
-      real*8 amcor(nbasa)
-      real*8 sum1rf,sum2rf,sum1sf,sum2sf
-
-!     (1)='ATL N  '
-      amcor(1)=corAN
-!     (2)='PAC N  '
-      amcor(2)=corPN
-!     (3)='ARCTIC '
-      amcor(3)=corAC
-!     (4)='INDIAN '
-      amcor(4)=corID
-!     (5)='ATL S  '
-      amcor(5)=corAS
-!     (6)='PAC S  '
-      amcor(6)=corPS
-!     (7)='ANTAR  '
-      amcor(7)=corAA
-
-! *** apply correction to rainfall (couprf)
-! *** sum volume of water that is subtracted at higher latitudes over
-! *** gridpoints that cover ocean
-
-      sum1rf=0.0
-      do j=1,nlon
-       do i=1,nlat
-!        if (iocbasa(i,j).gt.0.and.fracto(i,j).gt.epss) then
-         if (iocbasa(i,j).gt.0.and.fracto(i,j).gt.0.1) then
-           if (amcor(iocbasa(i,j)).lt.0 ) then
-             sum1rf=sum1rf+couprf(i,j)*darea(i)*amcor(iocbasa(i,j))
-             couprf(i,j)=couprf(i,j)*(1.+amcor(iocbasa(i,j)))
-           endif
-         endif
-       enddo
-      enddo
-
-! *** sum area over which this water is to be spread, over full ocean
-! *** grid points only
-      sum2rf=0.0
-
-      do j=1,nlon
-       do i=1,nlat
-         if (iocbasa(i,j).gt.0.and.fracto(i,j).eq.1d0) then
-           if (amcor(iocbasa(i,j)).gt.0 ) then
-             sum2rf=sum2rf+darea(i)*amcor(iocbasa(i,j))
-           endif
-         endif
-       enddo
-      enddo
-! *** calculate water flux per meter squared
-
-      sum1rf=sum1rf/sum2rf
-
-! *** reduce rainfall accordingly
-
-      do j=1,nlon
-       do i=1,nlat
-         if (iocbasa(i,j).gt.0.and.fracto(i,j).eq.1d0) then
-           if (amcor(iocbasa(i,j)).gt.0 ) then
-             couprf(i,j)=couprf(i,j)-sum1rf*amcor(iocbasa(i,j))
-           endif
-         endif
-       enddo
-      enddo
-
-! *** apply correction to snowfall (coupsf)
-
-      sum1sf=0.0
-      do j=1,nlon
-       do i=1,nlat
-         if (iocbasa(i,j).gt.0.and.fracto(i,j).gt.0.1) then
-           if (amcor(iocbasa(i,j)).lt.0 ) then
-             sum1sf=sum1sf+coupsf(i,j)*darea(i)*amcor(iocbasa(i,j))
-             coupsf(i,j)=coupsf(i,j)*(1.+amcor(iocbasa(i,j)))
-           endif
-         endif
-       enddo
-      enddo
-
-      sum2sf=0.0
-
-      do j=1,nlon
-       do i=1,nlat
-         if (iocbasa(i,j).gt.0.and.fracto(i,j).eq.1d0) then
-           if (amcor(iocbasa(i,j)).gt.0 ) then
-             sum2sf=sum2sf+darea(i)*amcor(iocbasa(i,j))
-           endif
-         endif
-       enddo
-      enddo
-
-      sum1sf=sum1sf/sum2sf
-
-      do j=1,nlon
-       do i=1,nlat
-         if (iocbasa(i,j).gt.0.and.fracto(i,j).eq.1d0) then
-           if (amcor(iocbasa(i,j)).gt.0 ) then
-             coupsf(i,j)=coupsf(i,j)-sum1sf*amcor(iocbasa(i,j))
-           endif
-         endif
-       enddo
-      enddo
-
-      return
-      end
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012

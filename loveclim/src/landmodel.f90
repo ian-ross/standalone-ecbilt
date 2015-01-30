@@ -146,7 +146,7 @@
 
 ! *** land time step
 
-      dtland=3600.*24./(iatm*ilan)
+      dtland=3600.*24./iatm
       rdtland=1d0/dtland
 
 900   format(a12,1x,i6)

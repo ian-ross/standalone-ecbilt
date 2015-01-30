@@ -14,7 +14,7 @@
 !     nocstpyear:number of ocean timesteps that fit in one year
 !     iatm:      number of atmospheric timesteps that fit in one day
 !     nwrskip    number of years between writing the model state to disk
-!     nwrskip_days: number of days mod 360 between writing the model state to disk
+!     nwrskip_days: number of days mod 360 between writing model state to disk
 !     => model state writen every nwrskip*360 + nwrskip_days days
 !     iyear:     counts the years during the integration
 !     imonth:    counts the months during the integration
@@ -51,28 +51,28 @@
 
       real*8      day,undef,fracto(nlat,nlon),dareafac(nlat)
       real*8      PCO2ref,PGACO2
-      integer     nyears,ndays,irunlabel,irunlabeld,iatm,ilan,iice,&
+      integer     nyears,ndays,irunlabel,irunlabeld,iatm, &
            & iobtrop,iobclin,nwrskip,nwrskip_days,nbclins,nbtrops, &
            & end_year,end_day
       integer     ntstep,nstpyear,nocstpyear,isatfor,ntotday
       integer     iyear,imonth,iday,iseason
-      integer     is_ism,if_ism,kism,tstartism,flgloch
+      integer     is_ism,if_ism,kism,tstartism
       character*10 fini
-      logical     flgveg,flgicb,flgisma,flgismg
+      logical     flgveg
       logical     flgtsi,flgvol,flgghg,flgsul
       logical     lferCO2,lradCO2
       logical     initialization
       character*120 globalatt(26,2)
 
-      common /timepar/ nyears,ndays,irunlabel,irunlabeld,iatm,ilan, &
-           & iice,iobtrop,iobclin,nwrskip,nwrskip_days,end_year,end_day
+      common /timepar/ nyears,ndays,irunlabel,irunlabeld,iatm, &
+           & iobtrop,iobclin,nwrskip,nwrskip_days,end_year,end_day
       common /timectl/ day,ntstep,nstpyear,nocstpyear,iyear,imonth, &
            & iday,iseason,ntotday,nbclins,nbtrops,initialization
       common /startctl/fini
 
       common /globaldef/undef,fracto,dareafac
 
-      common /coupl/ flgveg,flgicb,flgisma,flgismg
+      common /coupl/ flgveg
 
       common /couplint/ is_ism,if_ism,kism,tstartism
       common /trans/ flgtsi,flgvol,flgghg,flgsul
