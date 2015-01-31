@@ -105,9 +105,8 @@
 !     divs:   divergence in spectral form
 !     divg:   divergence on Gaussian grid
 !
-! *** COMMON /forcx/  iartif,ipvf1,ipvf2,ipvf3,ipvf4,ipvf5
+! *** COMMON /forcx/  ipvf1,ipvf2,ipvf3,ipvf4,ipvf5
 ! forcing parameter:
-! iartif:     with (1) or without (0) artificial forcing
 ! ipvf1 :     with (1) or without (0) diabatic heating
 ! ipvf2 :     with (1) or without (0) advection of f by divergent wind
 ! ipvf3 :     with (1) or without (0) stretching term
@@ -115,14 +114,6 @@
 !             wind
 ! ipvf5 :     with (1) or without (0) advection of temperature by
 !                                  divergent wind
-! *** COMMON /clfor/  forcgg1,forcggw1,forcggs1
-!     forcgg1: daily variying artificial PV forcing on Gaussian grid
-!              at 200 hPa only calculated from forcggw1 and forcggs1
-!     forcggw1: artificial PV forcing winter season on Gaussian grid
-!               at 200 hPa
-!     forcggs1: artificial PV forcing summer season on Gaussian grid
-!               at 200 hPa
-!
 ! *** COMMON /cvert/  omegs,omegg
 !     omegs: vertical velocity omega in spectral form
 !     omegg: vertical velocity omega on Gaussian grid
@@ -153,8 +144,7 @@
       real*8  psig(nlat,nlon,nvl),qgpv(nlat,nlon,nvl)
       real*8  geopg(nlat,nlon,nvl)
       real*8  divs(nsh2,nvl),divg(nlat,nlon,nvl)
-      integer iartif,ipvf1,ipvf2,ipvf3,ipvf4,ipvf5
-      real*8  forcgg1(nlat,nlon),forcggw1(nlat,nlon),forcggs1(nlat,nlon)
+      integer ipvf1,ipvf2,ipvf3,ipvf4,ipvf5
       real*8  omegs(nsh2,nvl),omegg(nlat,nlon,nvl)
       real*8  dfor1(nsh2),dfor2(nsh2)
       real*8  gekdis(nlat,nlon)
@@ -175,8 +165,7 @@
       common /cgpsi/  psig,qgpv,geopg
       common /cdwin/  udiv,vdiv,udivg,vdivg
       common /cdiv/   divs,divg,chig,chi
-      common /forcx/  iartif,ipvf1,ipvf2,ipvf3,ipvf4,ipvf5
-      common /clfor/  forcgg1,forcggw1,forcggs1
+      common /forcx/  ipvf1,ipvf2,ipvf3,ipvf4,ipvf5
       common /cvert/  omegs,omegg
       common /cdfor/  dfor1,dfor2
       common /ekman/  gekdis

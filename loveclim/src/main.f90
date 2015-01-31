@@ -39,7 +39,7 @@
       PCO2ref=277.4D0
       PGACO2=PCO2ref
 
-      call initemic
+      call initdriver
       call initecbilt
       call inioceanfixed
       call initlbm
@@ -48,7 +48,7 @@
       initialization=.false.
       patmCO2=PGACO2
 
-      do istep=1,ntstep
+      do istep = 1, ntstep
          call update(istep)
          call co2at
          call at2co
@@ -85,7 +85,7 @@
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine initemic
+      subroutine initdriver
 !-----------------------------------------------------------------------
 ! *** initialisation of climate model
 !-----------------------------------------------------------------------
@@ -99,13 +99,11 @@
       parameter (ijatm=nlat*nlon)
       real*8    fractocn(ijatm)
       parameter (ismfile = 400)
-      character*6 num_startyear
       character*3 num_startday
       logical dummy
 
       NAMELIST /tstepctl/nyears,ndays,irunlabel,irunlabeld,iatm, &
-           & iobtrop,iobclin,nwrskip,nwrskip_days
-
+           & nwrskip,nwrskip_days
 
       include 'openemicinfiles.h'
       include 'openatoutfiles.h'
@@ -114,36 +112,9 @@
 
 ! *** open emic.param
 
-      open(iuo+50,file = 'emic.param',status='old',form='formatted')
-      read(iuo+50,*)
-      read(iuo+50,*)
-      read(iuo+50,'(L4)') flgveg
-      read(iuo+50,'(L4)') dummy
-      read(iuo+50,'(L4)') dummy
-      read(iuo+50,'(L4)') dummy
-      read(iuo+50,'(I1)') dummy
-      read(iuo+50,*)
-      read(iuo+50,*)
-      read(iuo+50,*)
-      read(iuo+50,'(L4)') lradCO2
-      read(iuo+50,'(L4)') lferCO2
-      read(iuo+50,*)
-      read(iuo+50,*)
-      do i=1,26
-       if (i.ne.6.AND.i.ne.19.AND.i.ne.22.AND.i.ne.24.AND.i.ne.25.AND.i.ne.26) then
-            read(iuo+50,*)
-            read(iuo+50,'(A)') globalatt(i,1)
-            read(iuo+50,'(A)') globalatt(i,2)
-         end if
-      enddo
-      close(iuo+50)
-
-
-      write(*,'(A,L4)') 'Vecode:',flgveg
-      write(*,*)
-      write(*,'(A,L4)') 'CO2 radiative forcing:',lradCO2
-      write(*,'(A,L4)') 'CO2 fertilization:',lferCO2
-      write(*,*)
+      flgveg = .TRUE.
+      lradCO2 = .TRUE.
+      lferCO2 = .TRUE.
 
 ! *** open namelist
 
@@ -154,8 +125,6 @@
       irunlabel=000000
       irunlabeld=0
       iatm=6
-      iobtrop=1
-      iobclin=1
       nwrskip=50
       nwrskip_days=0
 
@@ -170,9 +139,6 @@
       endif
 
       fini=num_startyear//'_'//num_startday
-      globalatt(19,1)="branch_time"
-      globalatt(19,2)=""//num_startyear
-
 
       kism=1
       if_ism=15
@@ -185,29 +151,17 @@
       write(iuo+30, 900) 'irunlabel    =', irunlabel
       write(iuo+30, 900) 'irunlabeld   =', irunlabeld
       write(iuo+30, 900) 'iatm         =', iatm
-      write(iuo+30, 900) 'iobtrop      =', iobtrop
-      write(iuo+30, 900) 'iobclin      =', iobclin
       write(iuo+30, 900) 'nwrskip      =', nwrskip
       write(iuo+30, 900) 'nwrskip_days =', nwrskip_days
-      write(iuo+30, 901) 'flgveg       =', flgveg
 
       undef = 9.99E10
 
 ! *** nstpyear is number of atmospheric timesteps per year
-! *** nocstpyear is number of ocean timesteps per year
 ! *** ntstep is total number of timesteps
-! *** nbclins is number of atmospheric time steps per baroclinic ocean
-! *** timestep
-! *** nbtrops is number of atmospheric time steps per barotropic ocean
-! *** timestep
-
 
       nstpyear   = iatm*360
-      nocstpyear = 360/iobclin
       ntstep     = nstpyear*nyears
       ntotday    = nyears*360+ndays
-      nbclins    = iatm*iobclin
-      nbtrops    = iatm*iobtrop
 
       read(iuo+48,*)
       read(iuo+48,*) (fractocn(ija),ija=1,ijatm)
@@ -232,11 +186,11 @@
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine inimdldate
-!--------------------------------------------------------------------------------
+!-----------------------------------------------------------------------------
 ! ***
 ! *** This routine initialises the day, month, year of the model run
 ! ***
-!-------------------------------------------------------------------------------
+!-----------------------------------------------------------------------------
       implicit none
 
       include 'comatm.h'
@@ -244,14 +198,14 @@
       include 'comunit.h'
       include 'comrunlabel.h'
 
-      day    = 0
-      iyear  = 0
-      imonth = int(((irunlabeld-1)-mod(irunlabeld-1,30))/30)+1
-      iday   = mod(irunlabeld-1,30)+1
-      iseason= mod(irunlabeld,90)
-      initialization=.true.
+      day     = 0
+      iyear   = 0
+      imonth  = int(((irunlabeld - 1) - mod(irunlabeld - 1, 30)) / 30) + 1
+      iday    = mod(irunlabeld - 1, 30) + 1
+      iseason = mod(irunlabeld, 90)
+      initialization = .true.
 
-      write(iuo+99,*) 'Init Date', irunlabelf+iyear, imonth, iday
+      write (iuo+99,*) 'Init Date', irunlabelf + iyear, imonth, iday
 
       return
       end
@@ -259,13 +213,13 @@
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine mdldate(istep)
-!--------------------------------------------------------------------------------
+!-----------------------------------------------------------------------------
 ! ***
 ! *** This routine calculates the day, month, year of the model run from
 ! *** integration steps.
 ! *** Written by xueli wang April 1995.
 ! ***
-!-------------------------------------------------------------------------------
+!-----------------------------------------------------------------------------
       implicit none
 
       include 'comatm.h'

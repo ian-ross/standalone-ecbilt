@@ -670,34 +670,30 @@
 ! NVE is day of the Vernal Equinox, set at 21 MARCH
 ! Implementatie van Nanne
 
-      if ( iscencel.eq.1) then
-
-       if((mod(nint(day*real(iatm)),nstpyear).eq.0).or.(initialization.eqv..true.)) call celest
-       !if (mod(istep,nstpyear).eq.1) call celest
-! values are used from celest.f (now incorporated in ECBilt)
-
-       ecc=ecc2
-       obl=asin(so)
-       omweb=(perh+180.00)*deg2rad
-
-      elseif (iscencel.eq.2) then
-       if((mod(nint(day*real(iatm)),nstpyear).eq.0).or.(initialization.eqv..true.)) call bretagnon
-       !if (mod(istep,nstpyear).eq.1) call bretagnon
-
-        ecc=ecc2
-        obl=asin(so)
-        omweb=(perh+180.00)*deg2rad
-
+      if (iscencel .eq. 1) then
+         if ((mod(nint(day * real(iatm)), nstpyear) .eq. 0) &
+              & .or. (initialization .eqv. .true.)) &
+              & call celest
+         ecc = ecc2
+         obl = asin(so)
+         omweb = (perh + 180.00) * deg2rad
+      elseif (iscencel .eq. 2) then
+         if ((mod(nint(day * real(iatm)), nstpyear) .eq. 0) &
+              & .or. (initialization .eqv. .true.)) &
+              & call bretagnon
+         ecc = ecc2
+         obl = asin(so)
+         omweb = (perh + 180.00) * deg2rad
       else
-
-!      ecc=0.016724
-!      obl=23.446*deg2rad
-!      omweb=(102.04+180.00)*deg2rad
-       ecc=eccf
-       obl=oblf*deg2rad
-       omweb=(omwebf+180.00)*deg2rad
-!      write(iuo+99,*) 'Orbital parameters',eccf,oblf,omwebf
-!      solarc=1365.
+         ! iscencel == 0
+!        ecc=0.016724
+!        obl=23.446*deg2rad
+!        omweb=(102.04+180.00)*deg2rad
+         ecc = eccf
+         obl = oblf * deg2rad
+         omweb = (omwebf + 180.00) * deg2rad
+!        write(iuo+99,*) 'Orbital parameters',eccf,oblf,omwebf
+!        solarc = 1365.
       endif
       NVE=30+30+21
 !
@@ -3219,18 +3215,6 @@
 
 
 ! *** adding the artificial forcing (forcgg1)
-
-      if (iartif .eq. 1) then
-
-         call sptogg(vfor1,forcgg2,pp)
-         do i=1,nlat
-           do j=1,nlon
-             forcgg(i,j)=forcgg1(i,j)*cosfi(i)**8/dimfac+forcgg2(i,j)
-           enddo
-         enddo
-         call rggtosp(forcgg,vfor1)
-      endif
-
 
       vfor1(1)=0.d0
       vfor2(1)=0.d0

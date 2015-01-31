@@ -38,14 +38,13 @@
  $end
 
  $forpar
- iartif = 0
  ipvf1   =1
  ipvf2   =1
  ipvf3   =1
  ipvf4   =1
  ipvf5   =1
  $end
- 
+
  $radpar
  iradcloud = 0
  iscencel  = 0
@@ -85,14 +84,14 @@
 
 
  $end
-  
+
  $satfor
  isatfor   = 0
  nbsatfor  = 191
  nafyear   = 10
  iclimflux = 0
  $end
- 
+
  $fluxpar
  cdrag  = 1.4e-03
  cwdrag = 2.1e-03
@@ -116,7 +115,7 @@
  $outatctl
  ixout     =1
  $end
- 
+
 $flgout
  irad     = 1
  $end

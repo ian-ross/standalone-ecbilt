@@ -213,7 +213,7 @@
       NAMELIST /moipar/  ihavm,ivavm,imsink,tdifq,gpm500,relhmax, &
      &                   hmoisr,umoisr,rainmax
       NAMELIST /cloudpar/ relhcrit,relhfac
-      NAMELIST /forpar/  iartif,ipvf1,ipvf2,ipvf3,ipvf4,ipvf5
+      NAMELIST /forpar/  ipvf1,ipvf2,ipvf3,ipvf4,ipvf5
       NAMELIST /radpar/    solarc,iradcloud,iscenghg,iscenghg2s, &
      &                     iscentsi,iscenvol, &
      &                     iscensul,isceno3, &
@@ -294,7 +294,6 @@
 ! corAA       flux correction in the Southern Ocean                    C
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 ! forcing parameter:                                                   C
-! iartif:     with (1) or without (0) artificial forcing               C
 ! ipvf1 :     with (1) or without (0) diabatic heating                 C
 ! ipvf2 :     with (1) or without (0) advection of f by divergent wind C
 ! ipvf3 :     with (1) or without (0) stretching term                  C
@@ -363,7 +362,6 @@
       relhfac  = 1.0d0
 
 
-      iartif = 0
       ipvf1  = 1
       ipvf2  = 1
       ipvf3  = 1
@@ -478,7 +476,6 @@
       write(iuo+30, 910) 'rainmax  =', rainmax
 
 
-      write(iuo+30, 900) 'iartif   =', iartif
       write(iuo+30, 900) 'ipvf1    =', ipvf1
       write(iuo+30, 900) 'ipvf2    =', ipvf2
       write(iuo+30, 900) 'ipvf3    =', ipvf3

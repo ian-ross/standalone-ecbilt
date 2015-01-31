@@ -459,28 +459,15 @@
 
 !     Write the global attributes
          status=NF_REDEF(ncid)
-         globalatt(6,1)="table_id"
-         globalatt(6,2)="Table Lmon (13 November 2004)"
-         globalatt(22,1)="tracking_id"
          call system('uuidgen > uuidgen_file')
          open(iveg+84,file = 'uuidgen_file',status='old',form='formatted')
          read(iveg+84,*) longdata
          close(iveg+84)
          call system('rm -rf uuidgen_file')
-         globalatt(22,2)=trim(longdata)
-         globalatt(24,1)="frequency"
-         globalatt(24,2)="yr"
 	     call date_and_time(VALUES=cvalues)
 	     longdata=''
 	     write(longdata,999) cvalues(1), cvalues(2), cvalues(3), cvalues(5), cvalues(6), cvalues(7)
  999     format(i4.4,'-',i2.2,'-',i2.2,'T',i2.2,':',i2.2,':',i2.2,'Z')
-         globalatt(25,1)="creation_date"
-         globalatt(25,2)=trim(longdata)
-         globalatt(26,1)="modeling_realm"
-         globalatt(26,2)="land"
-	     do i=1,26
-	        status=NF_PUT_ATT_TEXT(ncid,NF_GLOBAL,globalatt(i,1),len_trim(globalatt(i,2)),trim(globalatt(i,2)))
-	     enddo
          status=NF_ENDDEF(ncid)
 
 !     -----------------------------------------------------------------------
@@ -511,7 +498,7 @@
       status=NF_DEF_VAR(ncid,I_num%short,NF_FLOAT,1,start,varid)
 
       IF (I_info%std=="time") THEN
-         string="months since "//globalatt(19,2)//"-1-1"
+         string="months since "//num_startyear//"-1-1"
       END IF
 
 !     Define the attributes

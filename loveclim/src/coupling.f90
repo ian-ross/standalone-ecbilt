@@ -123,7 +123,6 @@
 
       call la2co
       call lae2co
-!      call oc2co(1)
       call at2co
 
 ! *** initialisation of fluxes
@@ -269,27 +268,6 @@
       sumhsn=sumhsn+couphsnn
       sumhss=sumhss+couphsns
 
-      do j=1,nlon
-         do i=1,nlat
-            clhesws(i,j) = clhesws(i,j)
-            clhesw0(i,j) = clhesw0(i,j)
-            clhesw1(i,j) = clhesw1(i,j)
-            clhesw2(i,j) = clhesw2(i,j)
-            clulrad0(i,j)= clulrad0(i,j)
-            clulrad1(i,j)= clulrad1(i,j)
-            clulrad2(i,j)= clulrad2(i,j)
-            clulrads(i,j)= clulrads(i,j)
-            cldlrads(i,j)= cldlrads(i,j)
-            clhflux(i,j) = clhflux(i,j)
-	    cleflux(i,j) = cleflux(i,j)
-	    clevap(i,j)  = clevap(i,j)
-	    sumrl(i,j)   = sumrl(i,j)
-	    sumro(i,j)   = sumro(i,j)
-         enddo
-      enddo
-      sumhsn=sumhsn
-      sumhss=sumhss
-
       end
 
 
@@ -404,8 +382,8 @@
       sumohsn      = sumohsn+sumhsn
       sumohss      = sumohss+sumhss
 
-      if (iobclint.eq.nbclins) then
-        ratm=1d0/float(nbclins)
+      if (iobclint.eq.iatm) then
+        ratm=1d0/float(iatm)
 	do j=1,nlon
 	  do i=1,nlat
             sumohfx(i,j) = sumohfx(i,j)*ratm
@@ -427,10 +405,10 @@
 	if (iclimflux.eq.1) call climflux(istep)
       endif
 
-      if (iobtropt.eq.nbtrops) then
+      if (iobtropt.eq.iatm) then
         rndws=1d0/dble(ndayws)
         dwsm1=ndayws-1d0
-        ratm=1d0/float(nbtrops)
+        ratm=1d0/float(iatm)
 	do j=1,nlon
 	  do i=1,nlat
 	    winstua(i,j) = winstua(i,j)*ratm
@@ -469,7 +447,7 @@
       common /mixlayer/ hefxcl,tmixcl,hefx,hefxo
 
 
-      if ( ist.eq.iobclin) then
+      if ( ist.eq.1) then
         do k=1,360
           do j=1,nlon
             do i=1,nlat
@@ -504,13 +482,9 @@
             enddo
 	  enddo
 	enddo
-	index=0
-	do k=1,360/iobclin
-	  do l=1,iobclin
-	    index=index+1
-            write(51) ((real(hefxcl(i,j,index)),j=1,nlon),i=1,nlat)
-            write(52) ((real(tmixcl(i,j,index)),j=1,nlon),i=1,nlat)
-	  enddo
+	do k=1,360
+            write(51) ((real(hefxcl(i,j,1)),j=1,nlon),i=1,nlat)
+            write(52) ((real(tmixcl(i,j,1)),j=1,nlon),i=1,nlat)
 	enddo
       endif
 

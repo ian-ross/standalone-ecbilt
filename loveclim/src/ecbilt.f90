@@ -51,7 +51,6 @@
 ! *** atmospheric dynamics (in file atmdyn.f)
 
       if (iadyn.eq.1) then
-        if (iartif.eq.1) call forcdaily
         call forward
       endif
 

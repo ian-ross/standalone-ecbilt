@@ -15,7 +15,7 @@
       include 'comphys.h'
       include 'comcoup.h'
       include 'comunit.h'
-      INCLUDE 'comrunlabel.h'  ! usefull to detect the right position in berg.nc file
+      INCLUDE 'comrunlabel.h'  ! usefull to detect the right position in berg.nc
 
       integer i,j,k1,k2,k,l,m,n,ifail,ii,jj,i1,j1,nn
       real*8  pigr4,dis,dif,rll,ininag(nlat,nlon),asum
@@ -23,17 +23,16 @@
       real*8  rnorm,rh0,dd
       real*8  agg(nlat,nlon), agg1(nlat,nlon), agg2(nlat,nlon)
       REAL(KIND=8), DIMENSION(:,:), ALLOCATABLE :: zagg1, zagg2
-      real*8  fw(nsh2),fs(nsh2),fors(nsh2,nvl), fmu(nlat,2)
-      real*8  forw(nsh2,nvl),wsx(nsh2),areafac
+      real*8  areafac
       real*8  spv
       character*6 numyear
       character*3 numday
 
       ! netcdf file
       !LGM variable
-      INTEGER :: idd_time, idf_berg, idv_time, idv_h, idv_sfric, istatus ! id netcdf file
-      INTEGER :: ntime_berg, itime_berg                                  ! time dimension
-      INTEGER, DIMENSION(:)  , ALLOCATABLE :: nvtime_berg                ! time of each
+      INTEGER :: idd_time, idf_berg, idv_time, idv_h, idv_sfric, istatus
+      INTEGER :: ntime_berg, itime_berg
+      INTEGER, DIMENSION(:)  , ALLOCATABLE :: nvtime_berg
 
       read (iuo+1) nshm, ll
 
@@ -68,41 +67,6 @@
 ! *** Heigh orography in m
 ! *** Surface dependent friction
       CALL topo
-
-! *** forcing term
-
-      do l=1,nvl
-        do k=1,nsh2
-          forw(k,l)=0.0d0
-          fors(k,l)=0.0d0
-        enddo
-      enddo
-
-      do j=1,nlon
-        do i=1,nlat
-          forcggw1(i,j)=0d0
-          forcggs1(i,j)=0d0
-        enddo
-      enddo
-
-      if (iartif.eq.1) then
-
-! ***   forcing data from liu, for is winter forcing, fors is summer
-
-        read(iuo+11,910)   ((forw(k,l),k=1,nsh2),l=1,nvl)
-        read(iuo+12,910)   ((fors(k,l),k=1,nsh2),l=1,nvl)
-
-! ***   liu's forcing at 200mb  in grid point
-
-        do k=1,nsh2
-          fw(k)=forw(k,1)
-          fs(k)=fors(k,1)
-        enddo
-
-        call sptogg(fw,forcggw1,pp)
-        call sptogg(fs,forcggs1,pp)
-
-      endif
 
 ! *** input initial qprime and for
 
@@ -1406,31 +1370,6 @@
       return
       end
 
-!23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine forcdaily
-!-----------------------------------------------------------------------
-! *** calculates artificial forcing as a function of the time
-! *** of the year
-!-----------------------------------------------------------------------
-      implicit none
-
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comemic.h'
-
-      integer i,j
-
-      do i=1,nlat
-        do j=1,nlon
-          forcgg1(i,j)=dabs(180.d0-day)*forcggw1(i,j)/180.d0 + &
-               & forcggs1(i,j) - dabs(180.d0-day)*forcggs1(i,j)/180.d0
-        enddo
-      enddo
-
-      return
-      end
-
 !123456789012345678901234567890123456789012345678901234567890123456789012
       subroutine topo
 !-----------------------------------------------------------------------
@@ -1460,8 +1399,8 @@
       real*8  rnorm,rh0,dd
       real*8  agg(nlat,nlon), agg1(nlat,nlon), agg2(nlat,nlon)
       REAL(KIND=8), DIMENSION(:,:), ALLOCATABLE :: zagg1, zagg2
-      real*8  fw(nsh2),fs(nsh2),fors(nsh2,nvl), fmu(nlat,2)
-      real*8  forw(nsh2,nvl),wsx(nsh2),areafac
+      real*8  fmu(nlat,2)
+      real*8  wsx(nsh2),areafac
 
       INTEGER :: idd_time, idf_berg, idv_time, idv_h, idv_sfric, istatus ! id netcdf file
       INTEGER :: ntime_berg, itime_berg                                  ! time dimension

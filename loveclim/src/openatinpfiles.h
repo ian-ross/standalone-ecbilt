@@ -9,8 +9,6 @@
 
       open(iuo+1,file='inputdata/coef.dat',status='old',form='unformatted')
       open(iuo+7,file='inputdata/gauss.asc',status='old',form='formatted')
-      open(iuo+11,file='inputdata/win.dat',status='old',form='formatted')
-      open(iuo+12,file='inputdata/sum.dat',status='old',form='formatted')
 
       open(iuo+14,file='inputdata/ocbas.dat',status='old',form='formatted')
 

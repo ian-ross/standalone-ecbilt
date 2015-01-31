@@ -125,7 +125,7 @@
         read(iuo+4,*) albsnow(i)
       enddo
 
-      call landcoverupdate(1,1)
+      call landcoverupdate(1)
 
 ! Because of this flag, there are no initial conditions for the surface vegetation at all when VECODE is put to .FALSE.
 ! By commenting the if/endif lines in the initialization part of the landmodel0.f, the model can run with a non-dynamical constant vegetation cover.
@@ -259,7 +259,7 @@
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine lbm(istep,kst)
+      subroutine lbm(istep)
 !-----------------------------------------------------------------------
 ! *** landmodel
 ! *** computes: bottom moisture, snow coverage, runoff, landtemperature
@@ -267,9 +267,9 @@
       include 'comland.h'
       include 'comemic.h'
 
-      integer kst,istep
+      integer istep
 
-      if (iscenland.eq.1) call landcoverupdate(istep,kst)
+      if (iscenland.eq.1) call landcoverupdate(istep)
       call landtemp
       call landprecip
       call runoff(istep)
@@ -488,7 +488,7 @@
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine landcoverupdate(istep,kst)
+      subroutine landcoverupdate(istep)
 !-----------------------------------------------------------------------
 ! *** updates land surface albedo and forest fraction
 ! *** once every 5 years
@@ -501,13 +501,13 @@
       include 'comemic.h'
       include 'comunit.h'
 
-      integer i,j,is,scenyr,yr,istep,iy,kst
+      integer i,j,is,scenyr,yr,istep,iy
       real*8  d
 
 
 ! *** update once every 5 years
 
-      if (mod(istep,5*nstpyear).eq.1.and.kst.eq.1) then
+      if (mod(istep,5*nstpyear).eq.1) then
 
 ! *** scenario starts in 1970, after 2100 no updates
         if (iyear.eq.0) then

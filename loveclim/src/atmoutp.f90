@@ -646,39 +646,16 @@
 
 !     Write the global attributes
          status=NF_REDEF(ncid)
-         globalatt(6,1)="table_id"
-         globalatt(6,2)="Table Amon (7 April 2004)"
-         globalatt(22,1)="tracking_id"
          call system('uuidgen > uuidgen_file')
          open(iuo+84,file = 'uuidgen_file',status='old',form='formatted')
          read(iuo+84,*) longdata
          close(iuo+84)
          call system('rm -rf uuidgen_file')
-         globalatt(22,2)=trim(longdata)
-         globalatt(24,1)="frequency"
-         SELECT CASE (how_to_compute_time)
-         CASE (Compute_Time_in_Days)
-            globalatt(24,2)="day"
-         CASE (Compute_Time_in_Years_Months)
-            globalatt(24,2)="mon"
-         CASE (Compute_Time_in_Months_Only)
-            globalatt(24,2)="mon"
-         CASE (Compute_Time_in_Years_Only)
-            globalatt(24,2)="yr"
-         END SELECT
          call date_and_time(VALUES=cvalues)
          longdata=''
          write(longdata,999) cvalues(1), cvalues(2), cvalues(3), &
               & cvalues(5), cvalues(6), cvalues(7)
  999     format(i4.4,'-',i2.2,'-',i2.2,'T',i2.2,':',i2.2,':',i2.2,'Z')
-         globalatt(25,1)="creation_date"
-         globalatt(25,2)=trim(longdata)
-         globalatt(26,1)="modeling_realm"
-         globalatt(26,2)="atmos"
-         do i=1,26
-            status=NF_PUT_ATT_TEXT(ncid,NF_GLOBAL,globalatt(i,1),&
-                 &len_trim(globalatt(i,2)),trim(globalatt(i,2)))
-         enddo
          status=NF_ENDDEF(ncid)
 
 !     -----------------------------------------------------------------------
