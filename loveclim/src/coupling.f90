@@ -26,81 +26,70 @@
       write(numday,'(i3.3)') irunlabeld
 
       if (irunlabel.eq.0) then
-	do j=1,nlon
-	  do i=1,nlat
-            clhesws(i,j) = 0.
-            clhesw0(i,j) = 0.
-            clhesw1(i,j) = 0.
-            clhesw2(i,j) = 0.
-            clulrad0(i,j)= 0.
-            clulrad1(i,j)= 0.
-            clulrad2(i,j)= 0.
-            clulrads(i,j)= 0.
-            cldlrads(i,j)= 0.
-            clhflux(i,j) = 0.
-	    cleflux(i,j) = 0.
-            clevap(i,j)  = 0.
-            cohesws(i,j) = 0.
-            cohesw0(i,j) = 0.
-            cohesw1(i,j) = 0.
-            cohesw2(i,j) = 0.
-            coulrad0(i,j)= 0.
-            coulrad1(i,j)= 0.
-            coulrad2(i,j)= 0.
-            coulrads(i,j)= 0.
-            codlrads(i,j)= 0.
-            cohflux(i,j) = 0.
-	    coeflux(i,j) = 0.
-            coevap(i,j)  = 0.
-            sumohfx(i,j) = 0.
-            sumoswr(i,j) = 0.
-            sumihfx(i,j) = 0.
-            sumiswr(i,j) = 0.
-            sumofwf(i,j) = 0.
-            sumisno(i,j) = 0.
-            sumicof(i,j) = 0.
-            sumuv10(i,j) = 0.
-            sumpress(i,j)= 0.
-	    winstua(i,j) = 0.
-	    winstva(i,j) = 0.
-	    sumtx(i,j)   = 0.
-	    sumty(i,j)   = 0.
-          enddo
-	enddo
-        sumohsn=0.
-        sumohss=0.
-
+         clhesws = 0.
+         clhesw0 = 0.
+         clhesw1 = 0.
+         clhesw2 = 0.
+         clulrad0= 0.
+         clulrad1= 0.
+         clulrad2= 0.
+         clulrads= 0.
+         cldlrads= 0.
+         clhflux = 0.
+         cleflux = 0.
+         clevap  = 0.
+         cohesws = 0.
+         cohesw0 = 0.
+         cohesw1 = 0.
+         cohesw2 = 0.
+         coulrad0= 0.
+         coulrad1= 0.
+         coulrad2= 0.
+         coulrads= 0.
+         codlrads= 0.
+         cohflux = 0.
+         coeflux = 0.
+         coevap  = 0.
+         sumohfx = 0.
+         sumoswr = 0.
+         sumihfx = 0.
+         sumiswr = 0.
+         sumofwf = 0.
+         sumisno = 0.
+         sumicof = 0.
+         sumuv10 = 0.
+         sumpress= 0.
+         winstua = 0.
+         winstva = 0.
+         sumtx   = 0.
+         sumty   = 0.
+         sumohsn=0.
+         sumohss=0.
       else
-
-	open(iuo+95,file='startdata/incoup'//numyear//'_'//numday//'.dat', &
-      & form='unformatted')
-	read(iuo+95) sumohfx,sumoswr,sumihfx,sumiswr,sumofwf,sumisno, &
-      & winstua,winstva,sumtx,sumty
-	read(iuo+95) cohesws,cohesw0,cohesw1,cohesw2,coulrad0,coulrad1, &
-      & coulrad2,coulrads,codlrads,cohflux,coeflux,coevap
-	close(iuo+95)
-        sumohsn=0.0
-        sumohss=0.0
-
-	do j=1,nlon
-	  do i=1,nlat
-            clhesws(i,j) = 0.
-            clhesw0(i,j) = 0.
-            clhesw1(i,j) = 0.
-            clhesw2(i,j) = 0.
-            clulrad0(i,j)= 0.
-            clulrad1(i,j)= 0.
-            clulrad2(i,j)= 0.
-            clulrads(i,j)= 0.
-            cldlrads(i,j)= 0.
-            clhflux(i,j) = 0.
-	    cleflux(i,j) = 0.
-            clevap(i,j)  = 0.
-            sumicof(i,j) = 0.
-            sumuv10(i,j) = 0.
-            sumpress(i,j)= 0.
-          enddo
-	enddo
+         open(iuo+95,file='startdata/incoup'//numyear//'_'//numday//'.dat', &
+              & form='unformatted')
+         read (iuo+95) sumohfx,sumoswr,sumihfx,sumiswr,sumofwf,sumisno, &
+              & winstua,winstva,sumtx,sumty
+         read (iuo+95) cohesws,cohesw0,cohesw1,cohesw2,coulrad0,coulrad1, &
+              & coulrad2,coulrads,codlrads,cohflux,coeflux,coevap
+         close(iuo+95)
+         sumohsn=0.0
+         sumohss=0.0
+         clhesws = 0.
+         clhesw0 = 0.
+         clhesw1 = 0.
+         clhesw2 = 0.
+         clulrad0= 0.
+         clulrad1= 0.
+         clulrad2= 0.
+         clulrads= 0.
+         cldlrads= 0.
+         clhflux = 0.
+         cleflux = 0.
+         clevap  = 0.
+         sumicof = 0.
+         sumuv10 = 0.
+         sumpress= 0.
       endif
 
 ! *** 0 added without modifying the restart file.

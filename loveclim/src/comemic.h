@@ -48,7 +48,6 @@
       integer     iyear,imonth,iday,iseason
       integer     is_ism,if_ism,kism,tstartism
       character*10 fini
-      logical     flgveg
       logical     flgtsi,flgvol,flgghg,flgsul
       logical     lferCO2,lradCO2
       logical     initialization
@@ -61,8 +60,6 @@
       common /startctl/fini
 
       common /globaldef/undef,fracto,dareafac
-
-      common /coupl/ flgveg
 
       common /couplint/ is_ism,if_ism,kism,tstartism
       common /trans/ flgtsi,flgvol,flgghg,flgsul

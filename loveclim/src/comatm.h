@@ -25,11 +25,10 @@
 !     grav :   gravity acceleration [m/s^2]
 !     radius:  radius of earth [m]
 !
-! *** COMMON  /ipar/  iadyn,iaphys,initdate,initfield
+! *** COMMON  /ipar/  iadyn,iaphys,initdate
 !     iadyn :  with (1) atmospheric dynamics or without (0)
 !     iaphys:  with (1) atmospheric physics or without (0)
 !     iaphys:  with (1) atmospheric physics or without (0)
-!     initfield:  initiqlisation form rest(0) or from file (1)
 !     initdate: date of the beginning of the WHOLE experiment)
 !               (actually it is the difference between the starting point
 !                of the experiment and initdate)
@@ -58,7 +57,7 @@
       parameter ( nm=21, nlon=64, nlat=32, nvl=3, ntl=nvl-1, &
      &            nsh=((nm+1)*(nm+2))/2, nsh2=2*nsh, ngp=nlon*nlat)
 
-      integer iadyn,iaphys,initdate,initfield
+      integer iadyn,iaphys,initdate
       real*8  pi,fzero,dp,om,rgas,grav,radius
       real*8  phi(nlat)
       real*8  cosfi(nlat),sinfi(nlat),tanfi(nlat)
@@ -68,7 +67,7 @@
 
 
       common /rvari/ pi,fzero,dp,om,rgas,grav,radius
-      common /ipar/  iadyn,iaphys,initdate,initfield
+      common /ipar/  iadyn,iaphys,initdate
       common /ggrid/ phi,cosfi,sinfi,tanfi,dareas,darea,tarea,tareas
       common /ctstep/ dt,dtime,dtt,rdtime
       common /plev/  plevel,tlevel,rlogtl12,p0,alogtl12,alogtl1pl2, &

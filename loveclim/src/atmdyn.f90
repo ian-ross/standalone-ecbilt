@@ -70,7 +70,7 @@
 
 ! *** input initial qprime and for
 
-      if (irunlabel.eq.0) then
+      if (irunlabel .eq. 0) then
         do k=1,nsh2
           do l=1,nvl
             qprime(k,l)=0d0
@@ -103,97 +103,10 @@
         close(iuo+95)
       endif
 
-!! THIS IS A PERTURBATION OF THE ATMOSPHERE VIA STREAM FUNCTION
-!      write(iuo+66,*) 'ensemble',iens,numens
-!      if (iens.eq.1) then
-!       write(iuo+66,*) 'ensemble',iens,numens
-!       write(iuo+66,*) 1-log(float(numens))/23
-!       qprime=qprime*(1-log(float(numens))/23)
-!      endif
-
-      ! This perturbation is NEVER activated
-      if (ipert.ne.0) call addperturb
-
   910 format(10e12.5)
 
       return
       end
-
-!1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-      subroutine addperturb
-
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comemic.h'
-
-      real*8 qpgg1(nlat,nlon),qpgg2(nlat,nlon),qpgg3(nlat,nlon)
-
-      write(*,*)'ipert=',ipert
-
-      call sptogg(qprime(1,1), qpgg1,pp)
-      call sptogg(qprime(1,2), qpgg2,pp)
-      call sptogg(qprime(1,3), qpgg3,pp)
-
-! *** ran1 initialization by calling it with a negative number
-      qpgg1(1,1)=ran1(-1)
-
-      do i=1,nlat
-        do j=1,nlon
-          qpgg1(i,j)=qpgg1(i,j)*(1.025-0.05*ran1(ipert))
-        enddo
-      enddo
-
-      do i=1,nlat
-        do j=1,nlon
-          qpgg2(i,j)=qpgg2(i,j)*(1.025-0.05*ran1(ipert))
-        enddo
-      enddo
-
-      do i=1,nlat
-        do j=1,nlon
-          qpgg3(i,j)=qpgg3(i,j)*(1.025-0.05*ran1(ipert))
-        enddo
-      enddo
-
-      call ggtosp(qpgg1,qprime(1,1))
-      call ggtosp(qpgg2,qprime(1,2))
-      call ggtosp(qpgg3,qprime(1,3))
-
-      end
-
-!1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-!  (C) Copr. 1986-92 Numerical Recipes Software +.-).
-      function ran1(idum)
-      implicit none
-      integer idum,ia,im,iq,ir,ntab,ndiv
-      real ran1,am,eps,rnmx
-      parameter (ia=16807,im=2147483647,am=1./im,iq=127773,ir=2836, &
-           & ntab=32,ndiv=1+(im-1)/ntab,eps=1.2e-7,rnmx=1.-eps)
-      integer j,k,iv(ntab),iy
-      save iv,iy
-      data iv /ntab*0/, iy /0/
-      if (idum.le.0.or.iy.eq.0) then
-        idum=max(-idum,1)
-        do j=ntab+8,1,-1
-          k=idum/iq
-          idum=ia*(idum-k*iq)-ir*k
-          if (idum.lt.0) idum=idum+im
-          if (j.le.ntab) iv(j)=idum
-        enddo
-        iy=iv(1)
-      endif
-      k=idum/iq
-      idum=ia*(idum-k*iq)-ir*k
-      if (idum.lt.0) idum=idum+im
-      j=1+iy/ndiv
-      iy=iv(j)
-      iv(j)=idum
-      ran1=min(am*iy,rnmx)
-      return
-      end
-
-
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ddt
@@ -1388,7 +1301,7 @@
       include'comemic.h'
       include'comcoup.h'
       include'comunit.h'
-      INCLUDE 'comrunlabel.h'  ! usefull to detect the right position in berg.nc file
+      INCLUDE 'comrunlabel.h'
 
       real*8 asum,spv
       integer i,j,i1,j1,ii,jj
@@ -1402,21 +1315,22 @@
       real*8  fmu(nlat,2)
       real*8  wsx(nsh2),areafac
 
-      INTEGER :: idd_time, idf_berg, idv_time, idv_h, idv_sfric, istatus ! id netcdf file
-      INTEGER :: ntime_berg, itime_berg                                  ! time dimension
-      INTEGER, DIMENSION(:)  , ALLOCATABLE :: nvtime_berg                ! time of each
+      INTEGER :: idd_time, idf_berg, idv_time, idv_h, idv_sfric, istatus
+      INTEGER :: ntime_berg, itime_berg
+      INTEGER, DIMENSION(:)  , ALLOCATABLE :: nvtime_berg
 
-!-pour changer topo (dyn+thermo), mettre le nouveau champ dans rmount_ism(verifier les flgism):
+!-pour changer topo (dyn+thermo), mettre le nouveau champ dans
+!-rmount_ism(verifier les flgism):
 
 ! *** real parameters
-	pigr4=4.d0*pi
-	rl1=1.0d0/rrdef1**2
-	rl2=1.0d0/rrdef2**2
-	relt1=max(0.0d0,rl1/(trel*pigr4))
-	relt2=max(0.0d0,rl2/(trel*pigr4))
-	dis=max(0.0d0,1.0d0/(tdis*pigr4))
-	rll=dble(ll(nsh))
-	dif=max(0.0d0,1.0d0/(tdif*pigr4*(rll*(rll+1))**idif))
+      pigr4=4.d0*pi
+      rl1=1.0d0/rrdef1**2
+      rl2=1.0d0/rrdef2**2
+      relt1=max(0.0d0,rl1/(trel*pigr4))
+      relt2=max(0.0d0,rl2/(trel*pigr4))
+      dis=max(0.0d0,1.0d0/(tdis*pigr4))
+      rll=dble(ll(nsh))
+      dif=max(0.0d0,1.0d0/(tdif*pigr4*(rll*(rll+1))**idif))
 
 ! *** zonal derivative operator
       k2=0
@@ -1493,12 +1407,12 @@
 ! *** height of orography in meters
 
       ! LOAD netcdf forcing file
-      istatus=NF90_OPEN("inputdata/berg.nc", NF90_NOWRITE, idf_berg) !ouvre le fichier
-      istatus=NF90_INQ_DIMID(idf_berg, 'time' , idd_time ) !recupère l'id du temps
-      istatus=NF90_INQUIRE_DIMENSION(idf_berg , idd_time, len = ntime_berg) !recupère à partir de l'id, le nombre de pas de temps
-      istatus=nf90_inq_varid(idf_berg, 'time' , idv_time ) !recupère l'id du temps
-      istatus=nf90_inq_varid(idf_berg, "h"    , idv_h    )     !récupère l'id de la variable h
-      istatus=nf90_inq_varid(idf_berg, "sfric", idv_sfric) !récupère l'id de la variable sfric
+      istatus=NF90_OPEN("inputdata/berg.nc", NF90_NOWRITE, idf_berg)
+      istatus=NF90_INQ_DIMID(idf_berg, 'time', idd_time)
+      istatus=NF90_INQUIRE_DIMENSION(idf_berg, idd_time, len = ntime_berg)
+      istatus=nf90_inq_varid(idf_berg, 'time', idv_time)
+      istatus=nf90_inq_varid(idf_berg, "h", idv_h)
+      istatus=nf90_inq_varid(idf_berg, "sfric", idv_sfric)
 
       ! ALLOCATE variable
       ALLOCATE(nvtime_berg(ntime_berg), zagg1(nlon, nlat))
@@ -1509,7 +1423,9 @@
       ! SELECT the right time
       itime_berg=0
       DO i=1,ntime_berg
-         IF (INT(ABS((nvtime_berg(i)-(irunlabelf+iyear)))) == INT(MINVAL(ABS(nvtime_berg(:)-(irunlabelf+iyear))))) itime_berg=i
+         IF (INT(ABS((nvtime_berg(i)-(irunlabelf+iyear)))) == &
+              & INT(MINVAL(ABS(nvtime_berg(:)-(irunlabelf+iyear))))) &
+              & itime_berg = i
       END DO
       IF (itime_berg==0) THEN
          PRINT *, "topo = error in detection time slide : ", itime_berg
@@ -1517,7 +1433,8 @@
       END IF
 
       ! READ variable agg1
-      istatus=nf90_get_var(idf_berg, idv_h, zagg1, start = (/1,1,itime_berg/), count = (/nlon,nlat,1/)) !charge les valeurs dans la variable sulopt
+      istatus=nf90_get_var(idf_berg, idv_h, zagg1, &
+           & start = (/1,1,itime_berg/), count = (/nlon,nlat,1/))
       agg1=TRANSPOSE(zagg1)
 
       ! UPDATE rmount
@@ -1531,12 +1448,12 @@
          enddo
        enddo
 
-      WRITE(iuo+99,*) "================================================================="
-      WRITE(iuo+99,*) "========================= topo ==============================="
+      WRITE(iuo+99,*) "===================== topo ==========================="
       WRITE(iuo+99,*) "Read berg in file ",TRIM('inputdata/berg.nc')
       WRITE(iuo+99,*) "For year (AD) = ",irunlabelf+iyear
-      WRITE(iuo+99,*) "selected time is ", nvtime_berg(itime_berg)," index is ",itime_berg,"/",ntime_berg
-      WRITE(iuo+99,*) "================================================================="
+      WRITE(iuo+99,*) "selected time is ", nvtime_berg(itime_berg), &
+           & " index is ",itime_berg,"/",ntime_berg
+      WRITE(iuo+99,*) "======================================================"
       CALL FLUSH(iuo+99)
 
       DEALLOCATE(zagg1, nvtime_berg)
@@ -1552,7 +1469,8 @@
       if (lgdiss) then
         ! READ friction variable
         ALLOCATE(zagg2(nlon, nlat))
-        istatus=nf90_get_var(idf_berg, idv_sfric, zagg2, start = (/1,1,itime_berg/), count = (/nlon,nlat,1/)) !charge les valeurs dans la variable sulopt
+        istatus=nf90_get_var(idf_berg, idv_sfric, zagg2, &
+             & start = (/1,1,itime_berg/), count = (/nlon,nlat,1/))
         agg2=TRANSPOSE(zagg2)
         DEALLOCATE(zagg2)
 

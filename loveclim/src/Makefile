@@ -12,14 +12,13 @@ SRCmain=main.f90
 SRCATMOS=ecbilt.f90 initial.f90 atmphys.f90 atmdyn.f90 atmoutp.f90 \
          atmdiag.f90 nag.f coupling.f90 error.f90
 SRCOCEAN=oceanfixed.f90 root.f
-SRCVEGET=veget.f90 veget_outp.f90 veget_sub.f90 veget_wr.f90
 SRCLAND=landmodel.f90
 
 INCALL=comatfor.h comatm.h comcoup.h comcouphelp.h comdiag.h comdyn.h \
        comemic.h comland.h comoutlocal.h comphys.h openatinpfiles.h \
-       openatoutfiles.h veget.h comocfix.h
+       openatoutfiles.h comocfix.h
 
-SRCALL=$(SRCmain) $(SRCATMOS) $(SRCLAND) $(SRCVEGET) $(SRCOCEAN)
+SRCALL=$(SRCmain) $(SRCATMOS) $(SRCLAND) $(SRCOCEAN)
 OBJALL1=$(SRCALL:.f90=.o)
 OBJALL=$(addprefix obj/, $(OBJALL1:.f=.o))
 

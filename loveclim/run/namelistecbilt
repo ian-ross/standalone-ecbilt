@@ -1,7 +1,6 @@
  $runatctl
  iadyn=1
  iaphys=1
- ipert=0
  initdate=0
  $end
 

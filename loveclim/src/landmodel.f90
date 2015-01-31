@@ -25,23 +25,14 @@
 
       include 'openlainpfiles.h'
 
-
-!       write(numyear,'(i6.6)') irunlabel+int((irunlabeld)/360)
-!       write(numday,'(i3.3)') mod(irunlabeld,360)
       write(numyear,'(i6.6)') irunlabel
       write(numday,'(i3.3)') irunlabeld
 
 ! *** land fraction
 
-      do j=1,nlon
-        do i=1,nlat
-          fractl(i,j)=1.-fracto(i,j)
-	enddo
-      enddo
-
+      fractl = 1.0 - fracto
 
 ! *** set land parameters
-
 
       pi=4d0*datan(1d0)
       radius=6.37e+6
@@ -57,7 +48,7 @@
       iscenland = 0
       islndstrt = 1990
 
-      read(iuo+47, NML = landpar)
+      read (iuo+47, NML = landpar)
 
       write(iuo+30, 910) 'bmoism    =', bmoismfix
       write(iuo+30, 910) 'dsnm      =', dsnm
@@ -72,34 +63,24 @@
 ! *** grid of the surface is gaussian, read from dareafac
 ! *** which is initialised in initemic from file darea.dat
 
-      do i=1,nlat
-        dareas(i)= dareafac(i)
-      enddo
-
-      tareas=0d0
-      do i=1,nlat
-	tareas=tareas+nlon*dareas(i)
-      enddo
-
+      dareas = dareafac
+      tareas = 0d0
+      tareas = SUM(nlon * dareas)
 
 ! *** initialisation of evaporation, bottom moisture and snow cover
 
-      if (irunlabel.eq.0) then
-        do j=1,nlon
-          do i=1,nlat
-            bmoisg(i,j)=bmoismfix
-            dsnow(i,j)=0d0
-            runofo(i,j)=0d0
-            tland(i,j)=tzero+10.
-          enddo
-        enddo
-        heatsnown=0.0
-        heatsnows=0.0
-      else
+      IF (irunlabel == 0) THEN
+         bmoisg = bmoismfix
+         dsnow = 0d0
+         runofo = 0d0
+         tland = tzero + 10.0
+         heatsnown=0.0
+         heatsnows=0.0
+      ELSE
         open(iuo+95,file='startdata/inland'//numyear//'_'//numday//'.dat', &
              & form='unformatted')
-        read(iuo+95) bmoisg,runofo,dsnow,tland
- 	close(iuo+95)
+        read (iuo+95) bmoisg,runofo,dsnow,tland
+        close(iuo+95)
         do j=1,nlon
           do i=1,nlat
             dsnow(i,j)=min(dsnow(i,j),dsnm)
@@ -107,42 +88,21 @@
         enddo
         heatsnown=0.0
         heatsnows=0.0
+      END IF
 
-      endif
-
-      do j=1,nlon
-        do i=1,nlat
-          if (fractl(i,j).lt.epsl) then
-            bmoisg(i,j)=0d0
-          endif
-        enddo
-      enddo
+      WHERE (fractl < epsl) bmoisg = 0d0
 
 ! *** read snow albedos
 
-      read(iuo+4,*)
+      read (iuo+4,*)
       do i=1,nlat
-        read(iuo+4,*) albsnow(i)
+        read (iuo+4,*) albsnow(i)
       enddo
 
       call landcoverupdate(1)
-
-! Because of this flag, there are no initial conditions for the surface vegetation at all when VECODE is put to .FALSE.
-! By commenting the if/endif lines in the initialization part of the landmodel0.f, the model can run with a non-dynamical constant vegetation cover.
-
-!      if (flgveg) then
-
-! Note: the value of patmCO2 has no impact during this call.
-       call veget(1,1,dtime,1d-10,280,fractn(1,1,nld),dareas,tempsgn(1,1,nld))
-
-!      endif
-
-
-
       call landalbedoR(1)
       call landalbedo(1)
       call inirunoff
-
 
 ! *** land time step
 
@@ -156,106 +116,93 @@
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine inirunoff
+      SUBROUTINE inirunoff
 !-----------------------------------------------------------------------
 ! *** initialises the runof basins
 !-----------------------------------------------------------------------
-      implicit none
+      IMPLICIT NONE
 
-      include 'comland.h'
-      include 'comunit.h'
+      INCLUDE 'comland.h'
+      INCLUDE 'comunit.h'
 
-      integer     i,j,k,ias,ibas,iac
-      character*1 ch(nlon),space
+      INTEGER     i,j,k,ias,ibas,iac
+      CHARACTER*1 ch(nlon), space
 
-! *** computation of runoff masks
+      iocbas = 0
+      ilabas = 0
+      nbasins = 1
+      ias = ICHAR('a') - 1
+      iac = ICHAR('A') - 1
+      DO i = nlat, 1, -1
+         READ (iuo+10,100) k, space, (ch(j), j = 1, nlon)
+         DO j = 1, nlon
+            IF (fractl(i,j) > epsl) THEN
+               ilabas(i,j) = ICHAR(ch(j)) - ias
+               IF (ilabas(i,j) < 1 .OR. ilabas(i,j) > 26) THEN
+                  WRITE (iuo+29,*) 'in lat-lon point ', i, j
+                  WRITE (iuo+29,*) ch(j), ilabas(i,j), fractl(i,j)
+                  CALL error(16)
+               END IF
+               IF (nbasins < ilabas(i,j)) nbasins = ilabas(i,j)
+            END IF
+         END DO
+      END DO
 
-! *** asci number of small letter a
-      do i=1,nlat
-       do j=1,nlon
-         iocbas(i,j)=0
-         ilabas(i,j)=0
-       enddo
-      enddo
-
-      nbasins=1
-      ias=ichar('a') - 1
-      iac=ichar('A') - 1
-      do i=nlat,1,-1
-        read (iuo+10,100) k,space,(ch(j),j=1,nlon)
-        do j=1,nlon
-          if (fractl(i,j).gt.epsl) then
-            ilabas(i,j)=ichar(ch(j)) - ias
-            if (ilabas(i,j).lt.1.or.ilabas(i,j).gt.26) then
-              write(iuo+29,*) 'in lat-lon point ',i,j
-              write(iuo+29,*) ch(j),ilabas(i,j),fractl(i,j)
-              call error(16)
-            endif
-	    if (nbasins.lt.ilabas(i,j)) nbasins=ilabas(i,j)
-          endif
-        enddo
-      enddo
-
-      if (nbasins.gt.mbasins) then
-        write(iuo+29,*) &
+      IF (nbasins > mbasins) THEN
+         WRITE (iuo+29,*) &
              & 'Error inirunoff: number of land basins greater than mbasins'
-        STOP
-      endif
+         STOP
+      END IF
 
-      do i=nlat,1,-1
-        read (iuo+10,100) k,space,(ch(j),j=1,nlon)
-        do j=1,nlon
-          if ((1d0-fractl(i,j)).gt.epsl) then
-            iocbas(i,j)=ichar(ch(j)) - ias
-            if (iocbas(i,j).lt.1.or.iocbas(i,j).gt.26) then
-              iocbas(i,j)=0
-            endif
-          endif
-        enddo
-      enddo
+      DO i = nlat, 1, -1
+         READ (iuo+10,100) k, space, (ch(j), j = 1, nlon)
+         DO j = 1, nlon
+            IF (1d0 - fractl(i,j) > epsl) THEN
+               iocbas(i,j) = ICHAR(ch(j)) - ias
+               IF (iocbas(i,j) < 1 .OR. iocbas(i,j) > 26) iocbas(i,j) = 0
+            END IF
+         END DO
+      END DO
 
-      do i=nlat,1,-1
-        do j=1,nlon
-          if (fractl(i,j).gt.epsl) then
-            ch(j)=char(ilabas(i,j)+ias)
-          else
-            if (iocbas(i,j).eq.0) iocbas(i,j)=ichar('0')-iac
-            ch(j)=char(iocbas(i,j)+iac)
-          endif
-        enddo
-        write(iuo+10,100) i-1,space,(ch(j),j=1,nlon)
-      enddo
+      DO i = nlat, 1, -1
+         DO j = 1, nlon
+            IF (fractl(i,j) > epsl) THEN
+               ch(j) = CHAR(ilabas(i,j) + ias)
+            ELSE
+               IF (iocbas(i,j) == 0) iocbas(i,j) = ichar('0') - iac
+               ch(j) = CHAR(iocbas(i,j) + iac)
+            END IF
+         END DO
+         WRITE (iuo+10,100) i - 1, space, (ch(j), j = 1, nlon)
+      END DO
 
-      rewind(iuo+10)
+      REWIND(iuo+10)
 
 ! *** computation of area of ocean runoff basins
 
-      do ibas=1,nbasins
-        arocbas(ibas)=0.
-      enddo
-      do i=1,nlat
-        do j=1,nlon
-          if (iocbas(i,j).gt.0) then
-            arocbas(iocbas(i,j))=arocbas(iocbas(i,j)) + &
-                 & dareas(i) *(1.-fractl(i,j))
-          endif
-          if (iocbas(i,j).gt.nbasins) then
-	    write(iuo+29,*) 'Error inirunof: iocbas out of range'
-	    STOP
-          endif
-        enddo
-      enddo
-      do ibas=1,nbasins
-        if (arocbas(ibas).eq.0.) then
-	  write(iuo+29,*) 'Error inirunof: ocean basin empty ',ibas
-	  STOP
-        endif
-      enddo
+      arocbas = 0.0
+      DO i = 1, nlat
+         DO j = 1, nlon
+            IF (iocbas(i,j) > 0) THEN
+               arocbas(iocbas(i,j)) = arocbas(iocbas(i,j)) + &
+                    & dareas(i) * (1.0 - fractl(i,j))
+            END IF
+            IF (iocbas(i,j) > nbasins) THEN
+               WRITE (iuo+29,*) 'Error inirunof: iocbas out of range'
+               STOP
+            END IF
+         END DO
+      END DO
+      DO ibas = 1, nbasins
+         IF (arocbas(ibas) == 0.0) THEN
+            WRITE (iuo+29,*) 'Error inirunof: ocean basin empty ', ibas
+            STOP
+         END IF
+      END DO
 
-
- 100  format(i4,65A1)
-      return
-      end
+ 100  FORMAT(i4, 65A1)
+      RETURN
+      END
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
@@ -507,71 +454,71 @@
 
 ! *** update once every 5 years
 
-      if (mod(istep,5*nstpyear).eq.1) then
+      if (mod(istep, 5 * nstpyear) .eq. 1) then
 
 ! *** scenario starts in 1970, after 2100 no updates
-        if (iyear.eq.0) then
-          scenyr=islndstrt
-	else
-	  scenyr=islndstrt+iyear-1
-	endif
-        if (scenyr.ge.1970.and.scenyr.le.2100) then
+         if (iyear.eq.0) then
+            scenyr=islndstrt
+         else
+            scenyr=islndstrt+iyear-1
+         endif
+         if (scenyr.ge.1970.and.scenyr.le.2100) then
 
 ! *** read seasonal albedo data
-	  read(iuo+31,90)yr
-	  read(iuo+31,*)
-	  if(yr.ne.scenyr) then
-	    rewind(iuo+31)
-	    read(iuo+31,90)yr
-	    read(iuo+31,*)
-	  endif
-	  if(yr.ne.scenyr) then
-	    call forwardfile(iuo+31,scenyr,yr)
-	  endif
-          do i=1,nlat
-            do j=1,nlon
-              read(iuo+31,100)(albland(i,j,is),is=1,4)
+            read(iuo+31,90)yr
+            read(iuo+31,*)
+            if(yr.ne.scenyr) then
+               rewind(iuo+31)
+               read(iuo+31,90)yr
+               read(iuo+31,*)
+            endif
+            if(yr.ne.scenyr) then
+               call forwardfile(iuo+31,scenyr,yr)
+            endif
+            do i=1,nlat
+               do j=1,nlon
+                  read(iuo+31,100)(albland(i,j,is),is=1,4)
+               enddo
             enddo
-          enddo
 
-          alblandR(:,:,:)=albland(:,:,:)
+            alblandR(:,:,:)=albland(:,:,:)
 
 ! *** read yearly forest fraction data
-	  read(iuo+32,90)yr
-	  if(yr.ne.scenyr) then
-	    rewind(iuo+32)
-	    read(iuo+32,90)yr
-	  endif
-	  if(yr.ne.scenyr) then
-	    call forwardfile(iuo+32,scenyr,yr)
-	  endif
-          do i=1,nlat
-            do j=1,nlon
-              read(iuo+32,110)forestfr(i,j)
+            read(iuo+32,90)yr
+            if(yr.ne.scenyr) then
+               rewind(iuo+32)
+               read(iuo+32,90)yr
+            endif
+            if(yr.ne.scenyr) then
+               call forwardfile(iuo+32,scenyr,yr)
+            endif
+            do i=1,nlat
+               do j=1,nlon
+                  read(iuo+32,110)forestfr(i,j)
+               enddo
             enddo
-          enddo
-        endif
+         endif
 
 
-        d=0d0
-        do j=2,25
-          d=d+albland(27,j,1)
-        enddo
-        d=d/24.
-        write(iuo+99,120) 'landcover update year: ',iyear,scenyr,yr,d
-        do i=1,nlat
-          do j=1,nlon
-	    if (fractl(i,j).gt.epsl) then
-	      do is=1,4
-                if (albland(i,j,is).lt.0.01.or.albland(i,j,is).gt.0.99) then
-                  write(iuo+99,130) &
-                       & 'Albedo of land out of range ',i,j,is,albland(i,j,is)
-                endif
-	      enddo
-	    endif
-          enddo
-        enddo
-
+         d=0d0
+         do j=2,25
+            d=d+albland(27,j,1)
+         enddo
+         d=d/24.
+         write(iuo+99,120) 'landcover update year: ',iyear,scenyr,yr,d
+         do i=1,nlat
+            do j=1,nlon
+               if (fractl(i,j).gt.epsl) then
+                  do is=1,4
+                     if (albland(i,j,is).lt.0.01.or. &
+                          &albland(i,j,is).gt.0.99) then
+                        write(iuo+99,130) 'Albedo of land out of range ', &
+                             & i,j,is,albland(i,j,is)
+                     endif
+                  enddo
+               endif
+            enddo
+         enddo
       endif
       call flush(iuo+99)
 ! *** FORMATS:

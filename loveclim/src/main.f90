@@ -70,11 +70,6 @@
 
          !!! CHECK!
          call writestate(iday)
-
-         if (flgveg) then
-            call veget(istep,dtime,epss,patmCO2,fractn(1,1,nld), &
-                 & darea,tempsgn(1,1,nld))
-         endif
       enddo
 
       call writestate(ntotday)
@@ -112,7 +107,6 @@
 
 ! *** open emic.param
 
-      flgveg = .TRUE.
       lradCO2 = .TRUE.
       lferCO2 = .TRUE.
 

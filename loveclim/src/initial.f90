@@ -207,8 +207,8 @@
       include 'comunit.h'
       include 'comrunlabel.h'
 
-      NAMELIST /runatctl/ iadyn,iaphys,ipert,initfield,initdate
-      NAMELIST /dispar/   tdis,addisl,addish,trel,tdif,idif,initfield,initdate
+      NAMELIST /runatctl/ iadyn,iaphys,initdate
+      NAMELIST /dispar/   tdis,addisl,addish,trel,tdif,idif,initdate
       NAMELIST /dfmpar/  rrdef1,rrdef2,h0
       NAMELIST /moipar/  ihavm,ivavm,imsink,tdifq,gpm500,relhmax, &
      &                   hmoisr,umoisr,rainmax
@@ -316,8 +316,6 @@
 
       iadyn    = 1
       iaphys   = 1
-      ipert    = 0
-      initfield= 1
       initdate = 0
 
       tdis   = 3.0
@@ -427,8 +425,6 @@
 
       write(iuo+30, 900) 'iaphys   =', iaphys
       write(iuo+30, 900) 'iadyn    =', iadyn
-      write(iuo+30, 900) 'ipert    =', ipert
-      write(iuo+30, 900) 'initfield=', initfield
       write(iuo+30, 900) 'initdate =', initdate
 
       irunlabelf=irunlabel-initdate
@@ -580,64 +576,60 @@
 !** Here following are default values for above mentioned parameters.
 !** These parameters can be updated in the namelist.
 
-      itel=0
-      instcount=0
-
-      ixout  = 30
+      itel = 0
+      instcount = 0
+      ixout = 30
       ioutdaily = 0
       ioutyearly = 0
       meantype = 0
-      meantot  = 0
-      meanyl   = 0
-      irad     = 1
-      thirdd(:)= 0
+      meantot = 0
+      meanyl = 0
+      irad = 1
+      thirdd(:) = 0
 
-      open(iuo+65,file='outp_atmos.param')
-      read(iuo+65,'(/,/,/,/,/,/,/,/)')
-      read(iuo+65,*) numtotvar,fill_value,missing_value
-      read(iuo+65,*)
+      open(iuo+65, file='outp_atmos.param')
+      read (iuo+65, '(/,/,/,/,/,/,/,/)')
+      read (iuo+65,*) numtotvar, fill_value, missing_value
+      read (iuo+65,*)
 
-      do i=1,numtotvar
+      do i = 1, numtotvar
+         read (iuo+65, "(A)") part1
+         nametotvar(i, 1) = trim(part1)
+         read (iuo+65,*) (nametotvar(i, l), l = 2, 5)
+         read (iuo+65,*) (newtotvar(i, l), l = 1, 7)
+         do l = 1, 6
+            newtotvar(i,l) = newtotvar(i, l + 1)
+         end do
+         IF (newtotvar(i,4) == 1) ioutyearly = 1
+         IF (newtotvar(i,3)==1 .OR. newtotvar(i,2)==1) meantype = 1
+         IF (newtotvar(i,2)==1) meanyl = 1
+         IF (newtotvar(i,3)==1) meantot = 1
+         IF (newtotvar(i,1)==1) ioutdaily = 1
 
-         read(iuo+65,"(A)") part1
-         nametotvar(i,1)=trim(part1)
-         read(iuo+65,*) (nametotvar(i,l),l=2,5)
-         read(iuo+65,*) (newtotvar(i,l),l=1,7)
-         do l=1,6
-            newtotvar(i,l)=newtotvar(i,l+1)
-         enddo
-
-         IF ( newtotvar(i,4)==1 ) ioutyearly = 1
-         IF ((newtotvar(i,3)==1).OR.(newtotvar(i,2)==1) ) meantype = 1
-         IF ( newtotvar(i,2)==1 ) meanyl     = 1
-         IF ( newtotvar(i,3)==1 ) meantot    = 1
-         IF ( newtotvar(i,1)==1 ) ioutdaily  = 1
-
-         IF ((newtotvar(i,2)==1).OR.(newtotvar(i,3)==1) &
-     &                          .OR.(newtotvar(i,4)==1) ) THEN
-	         SELECT CASE ( nametotvar(i,5) )
-	         CASE ("T2")
-	            thirdd(1)=1
-	         CASE ("T3")
-	            thirdd(2)=1
-	         CASE ("T4")
-	            thirdd(3)=1
-	         CASE ("U3")
-	            thirdd(4)=1
-	         CASE ("N")
-	            l=0
-	         CASE DEFAULT
-	            call error(123)
-	         END SELECT
-	      END IF
-
+         IF (newtotvar(i,2)==1 .OR. newtotvar(i,3)==1 .OR. &
+              & newtotvar(i,4)==1) THEN
+            SELECT CASE ( nametotvar(i,5) )
+            CASE ("T2")
+               thirdd(1)=1
+            CASE ("T3")
+               thirdd(2)=1
+            CASE ("T4")
+               thirdd(3)=1
+            CASE ("U3")
+               thirdd(4)=1
+            CASE ("N")
+               l=0
+            CASE DEFAULT
+               call error(123)
+            END SELECT
+         END IF
       enddo
 
       close(iuo+65)
 
-      read(iuo+15, NML = outatctl)
+      read (iuo+15, NML = outatctl)
 !      read(iuo+15, NML = wratpar)
-      read(iuo+15, NML = flgout)
+      read (iuo+15, NML = flgout)
 
       return
       end

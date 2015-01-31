@@ -124,7 +124,7 @@
 !-----------------------------------------------------------------------
 
 
-      integer nshm(0:nm),ll(nsh),ipert
+      integer nshm(0:nm),ll(nsh)
       real*8  rm(nsh),rinhel(nsh2,0:5),diss(nsh2,2)
       real*8  pp(nlat,nsh),pd(nlat,nsh),pw(nlat,nsh)
       real*8  rdiss(nlat,nlon),ddisdx(nlat,nlon),ddisdy(nlat,nlon)
@@ -151,7 +151,7 @@
 
       logical lgdiss,inf
 
-      common /intpar/ nshm, ll, ipert
+      common /intpar/ nshm, ll
       common /linopr/ rm, rinhel, diss
       common /logpar/ lgdiss,inf
       common /metras/ pp, pd, pw
