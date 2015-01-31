@@ -17,13 +17,12 @@
       include 'comrunlabel.h'
       include 'netcdf.inc'
 
-      real*8 fvolcan
       integer ios
 
       integer i,j,k,l,ireg,im,nn,is,j1,i1,ii,jj,ism
       real*8  beta,draganr,draglar,dum(2),asum,spv
-      integer jyear,kyear,ilat,jmonth,m,indxvol,indxtsi,status
-      real*8 tsi,ksw,valVolc1,valVolc2,valVolc3,valVolc4
+      integer jyear,kyear,ilat,jmonth,m,status
+      real*8 ksw
       character*6 numyear
       character*3 numday
       integer tmp_imonth
@@ -78,9 +77,6 @@
      &        form='unformatted')
         read(iuo+95) tsurfn,tempm,temp0g
         read(iuo+95) rmoisg,torain,tosnow
-   99   if (ios .ne. 0 .and. iscenghg .ne. 3 .and. iscenghg .ne. 0) &
-     &              print *,'CO2 ref from value in emic.f:',PCO2ref
-        close(iuo+95)
       endif
 
       do j=1,nlon
@@ -130,8 +126,6 @@
       read(iuo+16) irn,ipl,pisccp,pncep,z500ncep
       read(iuo+16) tncep,qancep,ghgipcc,ccisccp
       read(iuo+16) lwrref
-
-! *** UPDATE land surface each year
 
       read(iuo+17) lwrt,lwrts,lwrqts,lwrqa,lwrghg
 
@@ -189,126 +183,12 @@
       enddo
 
 
-!read GHG concentrations
-      ghgscen(:,:) = 0.0
-      i = 1
-      k = 1
-      do
-         read (iuo+33, *, iostat=k) (ghgscen(j, i), j = 1, 20)
-         if (k .lt. 0) exit
-         i = i + 1
-      end do
-      y1scenghg = ghgscen(1,1)
-      nyscenmaxghg = i - 1
-      if (nyscenmaxghg .eq. 0) nyscenmaxghg = 1
-
-      if (iscenghg .eq. 2) then
-!2 times CO2 concentrations
-!-> other GHGs at their "standard" concentrations (1st line of file)
-         i = iscenghg2s
-         k = 1
-         do
-            read (iuo+39, *, iostat=k) j, ghgscen(2, i)
-            if (k .lt. 0) exit
-            i = i + 1
-         end do
-         do k = i, nyscenmaxghg
-            ghgscen(2, k) = ghgscen(2, i - 1)
-         end do
-         i = iscenghg2s + 1
-         do k = i, nyscenmaxghg
-            do j = 3, 20
-               ghgscen(j, k) = ghgscen(j, iscenghg2s)
-            end do
-         end do
-      end if
-      write (iuo+99,*) 'scen GHG start=', y1scenghg, "AD nbline=", nyscenmaxghg
-
-!read O3 concentrations
-      o3scen(1, :) = 0 !year
-      o3scen(2, :) = 25.0 !value
-      if (isceno3 .eq. 1) then
-         i = 1
-         k = 1
-         do
-            read (iuo+37, *, iostat=k) (o3scen(j, i), j = 1, 2)
-            if (k .lt. 0) exit
-            i = i + 1
-         end do
-         y1sceno3 = o3scen(1, 1)
-         nyscenmaxo3 = i - 1
-         if (nyscenmaxo3 .eq. 0) nyscenmaxo3 = 1
-         write (iuo+99,*) 'scen O3 start=', y1sceno3, "AD nbline=", nyscenmaxo3
-      end if
-
 !read sulfates optical depths
-      sulopt(:, :, :) = 0.0
-      if (iscensul .eq. 1) then
-         status = nf_open("inputdata/SUL.nc", nf_nowrite, ireg)
-         status = nf_inq_dimid(ireg, 'time', i)
-         status = nf_inq_dimlen(ireg, i, nyscenmaxsul)
-         status = nf_inq_varid(ireg, 'time', i)
-         status = nf_get_vara_double(ireg, i, &
-              & (/1/), (/nyscenmaxsul/), suloptTime)
-         issulstrt = int(suloptTime(1))
-         status = nf_inq_varid(ireg, "Sul", j)
-         status = nf_get_vara_real(ireg, j, &
-              & (/1,1,1/), (/64,32,nyscenmaxsul/), sulopt)
-         oldmonth = -1
-         write(iuo+99,*) 'scen Sul start=',issulstrt, &
-              & "AD nbline(month)=",nyscenmaxsul
-      end if
+      status = nf_open("inputdata/SUL.nc", nf_nowrite, ireg)
+      status = nf_inq_varid(ireg, "Sul", j)
+      status = nf_get_vara_real(ireg, j, (/1,1/), (/64,32/), sulopt)
 
-!***  read 0-2000 TSI anomalies
-
-      if (iscentsi .eq. 1) then
-         tsiscen(:, :) = 0.0
-         i = 1
-         k = 1
-         do
-            read (iuo+34, *, iostat=k) (tsiscen(j, i), j = 1, 2)
-            if (k .lt. 0) exit
-            i = i + 1
-         end do
-         y1scentsi = tsiscen(1, 1)
-         nyscenmaxtsi = i - 1
-         if (nyscenmaxtsi .eq. 0) nyscenmaxtsi = 1
-         write (iuo+99,*) 'scen TSI start=', y1scentsi, &
-              & "AD nbline=", nyscenmaxtsi
-      else
-         tsiscen(:, :) = 0.0
-      end if
-
-!***  read 0-2000 anomalies associated with volcanos
-      solarvol(:,:,:) = 0.
-      if (iscenvol .eq. 1) then
-!       changement fait par Yoann Sallaz-Damaz pour permettre l'utilisation
-!       d'un fichier de forçage volcanique évolutif au cours d'une assimilation
-         i = 1
-         k = 1
-         do
-            read (iuo+35,'(I5,I3,1X,4(F8.3,1X))', iostat=k) &
-                 & jyear,jmonth,valVolc1,valVolc2,valVolc3,valVolc4
-            solarvol(i,jmonth,1)=valVolc1
-            solarvol(i,jmonth,2)=valVolc2
-            solarvol(i,jmonth,3)=valVolc3
-            solarvol(i,jmonth,4)=valVolc4
-            if (i .eq. 1) then
-               y1scenvol=jyear
-               m1scenvol=jmonth
-            end if
-            if (k .lt. 0) exit
-            if (jmonth .eq. 12) i = i + 1
-         end do
-         nyscenmaxvol = i - 1
-         if (nyscenmaxvol .eq. 0) nyscenmaxvol = 1
-         write (iuo+99,*) 'scen VOLC starty=',y1scenvol, &
-              & "AD startm=",m1scenvol, "nbline=",nyscenmaxvol
-      end if
-100   FORMAT(5X,3(X,F7.2),9(2X,F6.2),X,F7.2,6(2X,F6.2))
-
-      i = 1
-      call ghgupdate(i)
+      call ghgupdate
 
 !* set reference value for CO2 concentration
 
@@ -362,162 +242,63 @@
       evfac=1d0
       ksw=0.042
 
-      do i=1,32
-         solarcl(i)=solarm
-      enddo
-      indxtsi=1
-      indxvol=1
-      if (iscentsi .eq. 1) then
-         indxtsi = irunlabelf + iyear - y1scentsi + 1
-         if (initialization .eqv. .true. .and. &
-              & irunlabeld .eq. 360) indxtsi = indxtsi + 1
-         if (indxtsi .gt. nyscenmaxtsi) indxtsi = nyscenmaxtsi
-         if (indxtsi .lt. 1) indxtsi = 1
-         do i = 1, 32
-            solarcl(i) = solarcl(i) + tsiscen(2, indxtsi) * facttsi
-         enddo
-         write (iuo+99,*) 'TSI y=',tsiscen(1,indxtsi), &
-              & "AD values=",tsiscen(1:2,indxtsi)
+      solarcl = solarm + tsi
+      solarcl(1:10)  = solarcl(1:10)  + solarvol(imonth,1)
+      solarcl(11:16) = solarcl(11:16) + solarvol(imonth,2)
+      solarcl(17:22) = solarcl(17:22) + solarvol(imonth,3)
+      solarcl(23:32) = solarcl(23:32) + solarvol(imonth,4)
+      IF (o3 /= 25.0) THEN
+         solarcl(1:16)  = solarcl(1:16)  + (4 * 0.247 * ksw * (o3 - 25.0))
+         solarcl(17:32) = solarcl(17:32) + (4 * 0.324 * ksw * (o3 - 25.0))
       endif
 
-      if (iscenvol .eq. 1) then
-         tmp_imonth=imonth
-         !indxvol=irunlabelf
-         indxvol=irunlabelf+iyear-y1scenvol+1
-         if (initialization.eqv..true.) then
-            if (irunlabeld.eq.360) then
-               indxvol=indxvol+1
-               imonth=1
-            else
-               if ((mod(irunlabeld,30)).eq.0) imonth=imonth+1
-            endif
-         endif
-
-         if (indxvol.gt.nyscenmaxvol) indxvol=nyscenmaxvol
-         if (indxvol.lt.1) indxvol=1
-         do i=1,10
-            solarcl(i)=solarcl(i)+solarvol(indxvol,imonth,1)
-         enddo
-         do i=11,16
-            solarcl(i)=solarcl(i)+solarvol(indxvol,imonth,2)
-         enddo
-         do i=17,22
-            solarcl(i)=solarcl(i)+solarvol(indxvol,imonth,3)
-         enddo
-         do i=23,32
-            solarcl(i)=solarcl(i)+solarvol(indxvol,imonth,4)
-         enddo
-         imonth=tmp_imonth
-      endif
-
-      if (isceno3.eq.1) then
-         do i=1,16
-            solarcl(i)=solarcl(i)+(4*0.247*ksw*(o3-25.))
-         enddo
-         do i=17,32
-            solarcl(i)=solarcl(i)+(4*0.324*ksw*(o3-25.))
-         enddo
-      endif
-
-      return
-      end
+      RETURN
+    END SUBROUTINE iatmphys
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine ghgupdate(istep)
+      SUBROUTINE ghgupdate
 !-----------------------------------------------------------------------
-! *** updates ghg concentrations: indxghg 1 corresponds to y1scenghg AD
+! *** Setup from GHG concentrations
 !-----------------------------------------------------------------------
-      implicit none
+      IMPLICIT NONE
 
+      INCLUDE 'comatm.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comemic.h'
 
-      include 'comatm.h'
-      include 'comphys.h'
-      include 'comemic.h'
-      include 'comunit.h'
-      include 'comrunlabel.h'
+      INTEGER s, r, k, l, m, h
+      REAL*8 logco2, sqrch4, sqrn2o
+      REAL*8 alpho3lw(2)
 
-
-      integer i,istep,indxghg,s,r,k,l,m,indxo3,h
-      real*8  logco2,sqrch4,sqrn2o
-      real*8 alpho3lw(2)
-
-      if (mod(nint(day*real(iatm)), nstpyear) .eq. 0 .or. &
-           & initialization .eqv. .true.) then
-         write(iuo+99,*) 'iscenghg',iscenghg
-
-         indxghg=0
-         if (iscenghg .eq. 1 .or. iscenghg .eq. 2) then
-            indxghg = irunlabelf + iyear - y1scenghg + 1
-            if (initialization .eqv. .true. .and. &
-                 & irunlabeld .eq. 360) indxghg = indxghg + 1
-            if (indxghg .gt. nyscenmaxghg) indxghg = nyscenmaxghg
-         else
-            indxghg=1
-         endif
-         if (indxghg.lt.1) then
-            write(*,*) "GHG error :"
-            write(*,*) "your GHG.dat file doesn't include the simulation period"
-            stop
-         endif
-         write(iuo+99,*) 'GHG y=', ghgscen(1, indxghg), &
-              & "AD values=", ghgscen(2:4, indxghg)
-
-         ghg(1:19) = ghgscen(2:20, indxghg)
-         PGACO2 = ghg(1)
-
-         indxo3 = 1
-         if (isceno3 .eq. 1) then
-            indxo3 = irunlabelf + iyear - y1sceno3 + 1
-            if (initialization .eqv. .true. .and. &
-                 & irunlabeld .eq. 360) indxo3 = indxo3 + 1
-            if (indxo3 .gt. nyscenmaxo3) indxo3 = nyscenmaxo3
-         endif
-
-         if (indxo3 .lt. 1) indxo3 = 1
-
-         o3 = o3scen(2, indxo3)
-         write (iuo+99,*) 'O3 value', o3-25.
-         call flush(iuo+99)
+      PGACO2 = ghg(1)
 !*** Update LW reference radiation fluxes using new GHG concentrations
-         logco2 = log(ghg(1) / ghgipcc(1))
-         !write(*,*) "logco2=log(",ghg(1),"/",ghgipcc(1),")"
-         if (ghg(1) .eq. 0) stop
-         sqrch4 = sqrt(ghg(2)) - sqrt(ghgipcc(2))
-         sqrn2o = sqrt(ghg(3)) - sqrt(ghgipcc(3))
-         alpho3lw(1) = 153.6
-         alpho3lw(2) = 201.2
-         do h=1,2
-            do l=0,1
-               do s=1,4
-                  do r=1,27
-                     do k=1,7
-                        lwrflux(k,r,s,l,h)=lwrref(k,r,s,l)+ &
-                             & lwrghg(k,1,r,s,l)*logco2+ &
-                             & lwrghg(k,2,r,s,l)*sqrch4+ &
-                             & lwrghg(k,3,r,s,l)*sqrn2o
-                        ! write(*,*) "lwrfluxA+=",lwrref(k,r,s,l),"+", &
-                        !      & lwrghg(k,1,r,s,l),"*",logco2,"+", &
-                        !      & lwrghg(k,2,r,s,l),"*",sqrch4,"+", &
-                        !      & lwrghg(k,3,r,s,l),"*",sqrn2o
-                        do m=4,19
-                           lwrflux(k,r,s,l,h)=lwrflux(k,r,s,l,h)+ &
-                                & lwrghg(k,m,r,s,l)*(ghg(m)-ghgipcc(m))
-                           ! write(*,*) "lwrfluxB+=",lwrflux(k,r,s,l,h),"+", &
-                           !      & lwrghg(k,m,r,s,l),"*(",ghg(m),"-", &
-                           !      & ghgipcc(m),")"
-                        enddo
-                        lwrflux(k,r,s,l,h)=lwrflux(k,r,s,l,h)+ &
-                             & lwrghg(k,4,r,s,l)*alpho3lw(h)*(o3-25.)
-                        ! write(*,*) "lwrfluxC+=",lwrghg(k,4,r,s,l),"*", &
-                        !      & alpho3lw(h),"*(",o3,"-",25.,")"
-                        ! write(iuo+99,*) 'Aure2 - o3 moins 25', o3-25.
-                     enddo
-                  enddo
-               enddo
-            enddo
-         enddo
-      endif
-      end
+      logco2 = LOG(ghg(1) / ghgipcc(1))
+      IF (ghg(1) == 0) STOP
+      sqrch4 = SQRT(ghg(2)) - SQRT(ghgipcc(2))
+      sqrn2o = SQRT(ghg(3)) - SQRT(ghgipcc(3))
+      alpho3lw(1) = 153.6
+      alpho3lw(2) = 201.2
+      DO h = 1, 2
+         DO l = 0, 1
+            DO s = 1, 4
+               DO r = 1, 27
+                  DO k = 1, 7
+                     lwrflux(k,r,s,l,h) = lwrref(k,r,s,l) + &
+                          & lwrghg(k,1,r,s,l) * logco2 + &
+                          & lwrghg(k,2,r,s,l) * sqrch4 + &
+                          & lwrghg(k,3,r,s,l) * sqrn2o
+                     DO m = 4, 19
+                        lwrflux(k,r,s,l,h) = lwrflux(k,r,s,l,h) + &
+                             & lwrghg(k,m,r,s,l) * (ghg(m) - ghgipcc(m))
+                     END DO
+                     lwrflux(k,r,s,l,h) = lwrflux(k,r,s,l,h) + &
+                          & lwrghg(k,4,r,s,l) * alpho3lw(h) * (o3 - 25.0)
+                  END DO
+               END DO
+            END DO
+         END DO
+      END DO
+    END SUBROUTINE ghgupdate
 
 
 
@@ -653,9 +434,9 @@
       real*8 rkosz, rkosha1, ha1
       real*8 deg2rad, day2rad
       real*8 solard, solarcf(nlat)
-      real*8 tsi,ksw
+      real*8 ksw
       real*8 alpho3sw(2)
-      integer indxvol,istep,indxtsi
+      integer istep
 
       deg2rad=pi/180.d0
       day2rad=pi/180.d0
@@ -750,55 +531,21 @@
       ksw=0.042
       alpho3sw(1)=0.247
       alpho3sw(2)=0.324
-      solarcl(:)=solarm
-      indxtsi=1
-      indxvol=1
-      if (iscentsi.eq.1) then
-        indxtsi=irunlabelf+iyear-y1scentsi+1
-        if ((initialization.eqv..true.).and.(irunlabeld.eq.360)) indxtsi=indxtsi+1
-        if (indxtsi.gt.nyscenmaxtsi) indxtsi=nyscenmaxtsi
-        if (indxtsi.lt.1) indxtsi=1
-        solarc=solarm+tsiscen(2,indxtsi)*facttsi
-        solarcl(:)=solarc
-      endif
-
-        if((mod(nint(day*real(iatm)),nstpyear).eq.0).or.(initialization.eqv..true.)) then
-          write(iuo+99,*) 'tsi year=', tsiscen(1,indxtsi), "val=", tsiscen(2,indxtsi)
-          write(iuo+99,11) ' sol forcing ',iyear,indxtsi,solarcl(15), tsiscen(2,indxtsi)*facttsi
-        endif
-
-
-      if (iscenvol.eq.1) then
-!         write(*,*) "yo", nyears, ndays,  iyear, imonth, irunlabelf, irunlabel, irunlabeld
-        indxvol=irunlabelf+iyear-y1scenvol+1
-        if ((initialization.eqv..true.).and.(irunlabeld.eq.360)) indxvol=indxvol+1
-
-        if (indxvol.gt.nyscenmaxvol) indxvol=nyscenmaxvol
-        if (indxvol.lt.1) indxvol=1
-        do i=1,10
-          solarcl(i)=solarcl(i)+solarvol(indxvol,imonth,1)
-        enddo
-        do i=11,16
-          solarcl(i)=solarcl(i)+solarvol(indxvol,imonth,2)
-        enddo
-        do i=17,22
-          solarcl(i)=solarcl(i)+solarvol(indxvol,imonth,3)
-        enddo
-        do i=23,32
-          solarcl(i)=solarcl(i)+solarvol(indxvol,imonth,4)
-        enddo
-      endif
-      if (isceno3.eq.1) then
-        do i=1,16
-        solarcl(i)=solarcl(i)+(4*alpho3sw(1)*ksw*(o3-25.))
-        enddo
-        do i=17,32
-        solarcl(i)=solarcl(i)+(4*alpho3sw(2)*ksw*(o3-25.))
-        enddo
-      endif
+      solarc = solarm + tsi
+      solarcl(:) = solarc
+      solarcl(1:10)  = solarcl(1:10)  + solarvol(imonth,1)
+      solarcl(11:16) = solarcl(11:16) + solarvol(imonth,2)
+      solarcl(17:22) = solarcl(17:22) + solarvol(imonth,3)
+      solarcl(23:32) = solarcl(23:32) + solarvol(imonth,4)
+      IF (o3 /= 25.0) THEN
+        solarcl(1:16)  = solarcl(1:16)  + (4 * alpho3sw(1) * ksw * (o3 - 25.0))
+        solarcl(17:32) = solarcl(17:32) + (4 * alpho3sw(2) * ksw * (o3 - 25.0))
+      END IF
       !write(*,*) day, iatm, nstpyear, initialization
-      if((mod(nint(day*real(iatm)),30*iatm).eq.0).or.(initialization.eqv..true.)) then
-       write(iuo+99,12) 'vol forcing ',iyear,imonth,indxvol,solarcl(15), solarvol(indxvol,imonth,:)
+      if((mod(nint(day*real(iatm)),30*iatm).eq.0).or. &
+           & (initialization.eqv..true.)) then
+       write(iuo+99,12) 'vol forcing ',iyear,imonth, &
+            & solarcl(15), solarvol(imonth,:)
       endif
 11      format(A12,2i6,2f12.3)
 12      format(A12,3i6,5f12.3)
@@ -899,7 +646,7 @@
       real*8 fswutoa_diff,fswutoaG,df_test,fswdtoa_diff,fswdtoaG
 
 
-      integer nreg(2),indxsul
+      integer nreg(2)
       real*8 zac(2),asup
 !     real*8 zac(2),asup,bup
       common /rad_sul0 /fswutoaG,df_test,fswdtoaG
@@ -922,24 +669,9 @@
       if (nn.eq.noc.or.nn.eq.nse) nol=1
       if (nn.eq.nld) nol=2
 
-      indxsul=irunlabelf+iyear-issulstrt+1
-      if ((initialization.eqv..true.).and.(irunlabeld.eq.360)) then
-        indxsul=indxsul+1
-        indxsul=12*(indxsul-1)+1
-      else
-        indxsul=12*(indxsul-1)+imonth
-      endif
-      if (indxsul.gt.nyscenmaxsul) indxsul=nyscenmaxsul
-
-
       do j=1,nlon
        do i=1,nlat
-         if(indxsul.lt.1) then
-          tas1(i,j) =0.
-         else
-           tas1(i,j) = sulopt(j,i,indxsul)
-         endif
-
+         tas1(i,j) = sulopt(j,i)
          nreg(nol)=irn(i,j,nol)
          zac(nol)=dble(costref(nreg(nol),imonth))
          if (zac(nol).GT.0.) then
@@ -953,8 +685,6 @@
 !          alb2esn(i,j,nn) = albesn(i,j,nn)
 !        endif
           if (alb2esn(i,j,nn).ge.1.) then
-!           write(*,*)alb2esn(i,j,nn),i,j,iyear,imonth,iday,zac(nol),
-!    &       asup,albesn(i,j,nn),iscensul,tas1(i,j)
             alb2esn(i,j,nn)=1.
           endif
           df=dayfr(i)*solarf(i)
@@ -1026,10 +756,6 @@
          endif
         enddo
       enddo
-      if((nn.eq.1).and.(oldmonth.ne.imonth)) then
-        if(indxsul.ge.1) write(iuo+99, *) "Sulfate(25,2,",suloptTime(indxsul),")=", tas1(2,25)
-        oldmonth=imonth
-      endif
 
       if (irad.eq.1) then
        if (nn.eq.3) then
@@ -3807,7 +3533,7 @@
 
         ghgz(1)=280.
         do igas=2,20
-         ghgz(igas)=ghgscen(igas,1)
+         ghgz(igas)=ghg(igas)
         enddo
         logco2T=log(ghgz(1)/ghgipcc(1))
         sqrch4T=sqrt(ghgz(2))-sqrt(ghgipcc(2))
@@ -3947,7 +3673,7 @@
       real*8 fswutoaG,fswdtoa2,fswdtoaG
 
 
-      integer nreg(2),indxsul
+      integer nreg(2)
 !     real*8 zac(2),asup,bup
       real*8 zac(2),asup
       real*8  globalmean
@@ -4698,15 +4424,15 @@
 !0 variable
 !      INTEGER, DIMENSION(nlat, nlon):: icemask
 !      REAL(KIND=4) :: totalprecipcases
-      INTEGER :: idd_time, idf_imsk, idv_time, idv_imsk, istatus        ! id netcdf file 0 icemask
-      INTEGER :: ntime_lgm, itime_lgm                                   ! time dimension of icemask file
-      INTEGER, DIMENSION(:)  , ALLOCATABLE :: nvtime_lgm                ! time of each icemask data
+      INTEGER :: idd_time, idf_imsk, idv_time, idv_imsk, istatus
+      INTEGER :: ntime_lgm, itime_lgm
+      INTEGER, DIMENSION(:)  , ALLOCATABLE :: nvtime_lgm
 
 !      common /lev_tarasov_forcing/icemask,totalprecipcases
 
 ! temporary variable
-      INTEGER :: i                                                      ! Loop index
-      INTEGER, DIMENSION(:,:), ALLOCATABLE :: zicemask                  ! temporary icemask data
+      INTEGER :: i
+      INTEGER, DIMENSION(:,:), ALLOCATABLE :: zicemask
       integer zipl(27)
       real*4  zpisccp(27),zpncep(17),zz500ncep(27,12)
 
@@ -4716,11 +4442,11 @@
 !dmr 0--- With use of the T21 ICE-5G icemask ...
 
 ! LOAD netcdf icemask file
-      istatus=NF90_OPEN("inputdata/icemask.nc", NF90_NOWRITE, idf_imsk) !ouvre le fichier
-      istatus=NF90_INQ_DIMID(idf_imsk, 'time', idd_time) !recupère l'id du temps
-      istatus=NF90_INQUIRE_DIMENSION(idf_imsk, idd_time, len = ntime_lgm) !recupère à partir de l'id, le nombre de pas de temps
-      istatus=nf90_inq_varid(idf_imsk, 'time', idv_time) !recupère l'id du temps
-      istatus=nf90_inq_varid(idf_imsk, "imask", idv_imsk) !récupère l'id de la variable Sul
+      istatus=NF90_OPEN("inputdata/icemask.nc", NF90_NOWRITE, idf_imsk)
+      istatus=NF90_INQ_DIMID(idf_imsk, 'time', idd_time)
+      istatus=NF90_INQUIRE_DIMENSION(idf_imsk, idd_time, len = ntime_lgm)
+      istatus=nf90_inq_varid(idf_imsk, 'time', idv_time)
+      istatus=nf90_inq_varid(idf_imsk, "imask", idv_imsk)
 
 ! ALLOCATE variable
       ALLOCATE(nvtime_lgm(ntime_lgm), zicemask(nlon, nlat))
@@ -4731,7 +4457,8 @@
 ! SELECT right time
       itime_lgm=0
       DO i=1,ntime_lgm
-         IF (INT(ABS((nvtime_lgm(i)-(irunlabelf+iyear)))) == INT(MINVAL(ABS(nvtime_lgm(:)-(irunlabelf+iyear))))) itime_lgm=i
+         IF (INT(ABS((nvtime_lgm(i)-(irunlabelf+iyear)))) == &
+              & INT(MINVAL(ABS(nvtime_lgm(:)-(irunlabelf+iyear))))) itime_lgm=i
       END DO
       IF (itime_lgm==0) THEN
          PRINT *, "ic_irn : error in detection time slide = ", itime_lgm
@@ -4739,7 +4466,8 @@
       END IF
 
 ! READ icemask variable
-      istatus=nf90_get_var(idf_imsk, idv_imsk, zicemask, start = (/1,1,itime_lgm/), count = (/nlon,nlat,1/)) !charge les valeurs dans la variable sulopt
+      istatus=nf90_get_var(idf_imsk, idv_imsk, zicemask, &
+           & start = (/1,1,itime_lgm/), count = (/nlon,nlat,1/))
       icemask=TRANSPOSE(zicemask)
 ! 6 is not to take antarctica, but the World Everywhere otherwise
       WHERE (fracto(6:nlat,:) .GT. 0.99)

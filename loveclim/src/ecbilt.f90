@@ -75,7 +75,6 @@
       integer istep
 
       call mdldate(istep)
-      call ghgupdate(istep)
       call solar(istep)
       call atmstate
       call vortfor

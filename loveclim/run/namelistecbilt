@@ -50,13 +50,10 @@
  eccf      = 0.016724
  oblf      = 23.446
  omwebf    = 102.04
- iscenghg  = 0
- iscenghg2s= 1850
- iscentsi  = 0
- iscenvol  = 0
- iscensul  = 0
+ ghg = 286.43, 796.60, 275.40, 16*0
+ ozone = 25.0
+ tsi       = 0.7698
  bup       = 0.13
- isceno3   = 0
  emisoc    = 0.99
  emisse    = 0.96
  emisld    = 0.99
@@ -80,8 +77,21 @@
  AMPANIR   = 0.5
  HPROFAN2  = 0.75
  AMPANIR2  = 0.5
+ $end
 
-
+ $volcfor
+ volc1  = 0, 0, 0, 0
+ volc2  = 0, 0, 0, 0
+ volc3  = 0, 0, 0, 0
+ volc4  = 0, 0, 0, 0
+ volc5  = 0, 0, 0, 0
+ volc6  = 0, 0, 0, 0
+ volc7  = 0, 0, 0, 0
+ volc8  = 0, 0, 0, 0
+ volc9  = 0, 0, 0, 0
+ volc10 = 0, 0, 0, 0
+ volc11 = 0, 0, 0, 0
+ volc11 = 0, 0, 0, 0
  $end
 
  $satfor
@@ -118,3 +128,5 @@
 $flgout
  irad     = 1
  $end
+
+$radforcing

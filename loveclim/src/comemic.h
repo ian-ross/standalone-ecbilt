@@ -48,7 +48,6 @@
       integer     iyear,imonth,iday,iseason
       integer     is_ism,if_ism,kism,tstartism
       character*10 fini
-      logical     flgtsi,flgvol,flgghg,flgsul
       logical     lferCO2,lradCO2
       logical     initialization
       character*6 num_startyear
@@ -62,7 +61,6 @@
       common /globaldef/undef,fracto,dareafac
 
       common /couplint/ is_ism,if_ism,kism,tstartism
-      common /trans/ flgtsi,flgvol,flgghg,flgsul
 
       common /dioxid/lferCO2,lradCO2
 

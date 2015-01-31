@@ -20,11 +20,4 @@
 
       open(iuo+15,file = 'namelistecbilt',status='old',form='formatted')
 
-      open(iuo+33,file='inputdata/GHG.dat')
-      open(iuo+34,file='inputdata/TSI.dat')
-      open(iuo+35,file='inputdata/VOLC.dat')
-      open(iuo+36,file='inputdata/SUL.dat',form='unformatted')
-      open(iuo+37,file='inputdata/OZONE.dat')
-
       open(iuo+38,file='inputdata/mbcs2_cor')
-      open(iuo+39,file='inputdata/scenario2Xco2.dat')

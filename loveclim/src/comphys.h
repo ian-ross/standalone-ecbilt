@@ -218,10 +218,8 @@
      &        tqmkmin,tqmk(0:kqmtab),dtqmk,rdtqmk
       real*4  qmtabel(0:iqmtab,0:jqmtab,0:kqmtab)
       real*8  tcc(nlat,nlon),tccd(nlat,nlon)
-      integer ndayws,iradcloud,iscenghg,iscenghg2s,iscentsi,iscenvol, &
-     &        iscensul,issulstrt,isceno3, &
-     &        iscencel,iens,numens
-      real*8  facttsi,bup
+      integer ndayws,iradcloud,iscencel,iens,numens
+      real*8  bup
       real*8  eccf,oblf,omwebf
       real*8  relhcrit, relhfac, emisoc,emisse,emisld
       real*8 albin,albis,albice,alphd,alphdi,alphs,cgren
@@ -259,9 +257,7 @@
       real*8 kosz(nlat)
       real*8 solarf(nlat)
       real*8 tas1(nlat,nlon)
-      real*4 sulopt(nlon,nlat,6000)
-      double precision :: suloptTime(6000)
-      integer :: oldmonth
+      real*4 sulopt(nlon,nlat)
 
 !***  common lwrscheme/tncep,qancep,ghgipcc,lwrref,lwrt,lwrts,lwrqa,lwrghg,irn
 
@@ -355,12 +351,9 @@
 !***  pisccp: surface pressure anual mean, region averaged
 
       real*4  tncep(19,27,12),qancep(27,12)
-      real*4  ghgipcc(19),tsiscen(2,0:12000), ghgscen(20,0:12000), o3scen(2,0:12000)
-      integer y1scenghg,nyscenmaxghg,y1scentsi,nyscenmaxtsi,y1sceno3,nyscenmaxo3
-      integer y1scenvol,m1scenvol,nyscenmaxvol,nyscenmaxsul
+      real*4  ghgipcc(19),tsi
       real*8  dtemp(18,nlat,nlon,2),ghg(19),o3, rlogtl(17),rlogts(27)
       real*4  pisccp(27),pncep(17),z500ncep(27,12)
-!     real*4  o3echam4(20,27,12)
       real*4  ccisccp(32,64,12),tncep12(2,27,12)
       real*4  lwrref(7,27,4,0:1),lwrflux(7,27,4,0:1,2)
       real*4  lwrt(7,18,27,4,0:1),lwrts(7,4,27,4,0:1)
@@ -370,18 +363,14 @@
       real*8  AMPWIR,AMPEQIR,EXPIR,HPROFTROP,HPROFEQ,HPROFW
       real*8  HPROFAN,AMPANIR,HPROFAN2,AMPANIR2
 
-      real*8  solartsi(2101),solarvol(0:12000,12,4)
-      real*8  solarm
-      real*8  solarcl(nlat)
+      real*8  solarvol(12,4),solarm,solarcl(nlat)
 
       common /cgamma/ gamgr
       common /ctemag/ temp2g,temp4g,tempm,temp0g
-      common /sunfr/  solarc,q0,omweb,ecc,obl,solartsi,solarvol, &
+      common /sunfr/  solarc,q0,omweb,ecc,obl,solarvol, &
      &                   solarm,solarcl,ecc2,so,perh,solardref
-      common /irad/  iradcloud,iscenghg,iscenghg2s,iscentsi, &
-     &                  iscenvol,iscensul,issulstrt,isceno3, &
-     &                  iscencel,iens,numens, &
-     &                  emisoc,emisse,emisld,facttsi,bup, &
+      common /irad/  iradcloud,iscencel,iens,numens, &
+     &                  emisoc,emisse,emisld,bup, &
      &                  albin,albis,albice,alphd,alphdi,alphs,cgren, &
      &                  eccf,oblf,omwebf
 
@@ -411,11 +400,9 @@
       common /dumout/ dumt1,dumt2,dumu1,dumu2
 
       common /swrscheme/costref,salbref,swrref,swrcost,swrsalb &
-     &          ,dayfr,kosz,solarf,dso4,sulopt,suloptTime,tas1,oldmonth
-      common /lwrscheme/tncep,qancep,ghgipcc,ghgscen,o3scen,tsiscen, &
-           & ccisccp,lwrref,lwrflux,lwrt,lwrts,lwrqts,lwrqa,lwrghg,irn,ipl &
-           & ,y1scenghg,nyscenmaxghg,y1scentsi,nyscenmaxtsi, &
-           & y1sceno3,nyscenmaxo3,y1scenvol,m1scenvol,nyscenmaxvol,nyscenmaxsul
+     &          ,dayfr,kosz,solarf,dso4,sulopt,tas1
+      common /lwrscheme/tncep,qancep,ghgipcc, &
+           & ccisccp,lwrref,lwrflux,lwrt,lwrts,lwrqts,lwrqa,lwrghg,irn,ipl
       common /modlwr/AMPWIR,AMPEQIR,EXPIR,HPROFTROP,HPROFEQ,HPROFW, &
      &                  HPROFAN,AMPANIR,HPROFAN2,AMPANIR2
 

@@ -207,6 +207,9 @@
       include 'comunit.h'
       include 'comrunlabel.h'
 
+      REAL*8  volc1(4), volc2(4), volc3(4), volc4(4), volc5(4), volc6(4)
+      REAL*8  volc7(4), volc8(4), volc9(4), volc10(4), volc11(4), volc12(4)
+
       NAMELIST /runatctl/ iadyn,iaphys,initdate
       NAMELIST /dispar/   tdis,addisl,addish,trel,tdif,idif,initdate
       NAMELIST /dfmpar/  rrdef1,rrdef2,h0
@@ -214,19 +217,19 @@
      &                   hmoisr,umoisr,rainmax
       NAMELIST /cloudpar/ relhcrit,relhfac
       NAMELIST /forpar/  ipvf1,ipvf2,ipvf3,ipvf4,ipvf5
-      NAMELIST /radpar/    solarc,iradcloud,iscenghg,iscenghg2s, &
-     &                     iscentsi,iscenvol, &
-     &                     iscensul,isceno3, &
+      NAMELIST /radpar/    solarc,iradcloud,ghg,o3, &
      &                     iscencel,iens,numens,emisoc,emisse,emisld, &
      &                     albin,albis,albice,alphd,alphdi,alphs,cgren, &
-     &                     albocef,facttsi,bup,AMPWIR,EXPIR,HPROFTROP, &
+     &                     albocef,tsi,bup,AMPWIR,EXPIR,HPROFTROP, &
      &                     HPROFEQ,HPROFW,AMPEQIR,HPROFAN,AMPANIR, &
      &                     eccf,oblf,omwebf,AMPANIR2,HPROFAN2
       NAMELIST /satfor/   isatfor,nbsatfor,nafyear,iclimflux
       NAMELIST /fluxpar/ cdrag,cwdrag,dragan,dragla,uv10rfx,uv10m, &
      &                   uv10rws,ndayws
       NAMELIST /fluxcorw/ corAN,corPN,corAC,corID,corAS,corPS, &
-     &                   corAA
+           &                   corAA
+      NAMELIST /volcfor/ volc1, volc2, volc3, volc4, volc5, volc6, &
+           & volc7, volc8, volc9, volc10, volc11, volc12
 
 
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -370,12 +373,11 @@
       solarc = 1365
       solarm=solarc
       iradcloud= 0
-      iscenghg = 0
-      iscentsi = 0
-      facttsi =1.0
-      iscenvol = 0
-      iscensul = 0
-      isceno3 = 0
+      ! 1850 GHG defaults
+      ghg = 0.0
+      ghg(1:3) = (/ 286.43, 796.60, 275.40 /)
+      tsi = 0.0
+      o3 = 25.0
       iscencel = 0
       eccf   = 0.016724
       oblf   = 23.446
@@ -422,6 +424,21 @@
       read(iuo+15, NML = satfor)
       read(iuo+15, NML = fluxpar)
       read(iuo+15, NML = fluxcorw)
+
+      solarvol = 0
+      READ(iuo+15, NML=volcfor)
+      solarvol(1,:) = volc1
+      solarvol(2,:) = volc2
+      solarvol(3,:) = volc3
+      solarvol(4,:) = volc4
+      solarvol(5,:) = volc5
+      solarvol(6,:) = volc6
+      solarvol(7,:) = volc7
+      solarvol(8,:) = volc8
+      solarvol(9,:) = volc9
+      solarvol(10,:) = volc10
+      solarvol(11,:) = volc11
+      solarvol(12,:) = volc12
 
       write(iuo+30, 900) 'iaphys   =', iaphys
       write(iuo+30, 900) 'iadyn    =', iadyn
@@ -480,11 +497,8 @@
 
       write(iuo+30, 910) 'solarc   =', solarc
       write(iuo+30, 900) 'iradcloud=', iradcloud
-      write(iuo+30, 900) 'iscenghg =', iscenghg
-      write(iuo+30, 900) 'iscentsi =', iscentsi
-      write(iuo+30, 910) 'facttsi  =', facttsi
-      write(iuo+30, 900) 'iscenvol =', iscenvol
-      write(iuo+30, 900) 'iscensul =', iscensul
+      write(iuo+30, 900) 'ghg =',      ghg
+      write(iuo+30, 900) 'tsi =',      tsi
       write(iuo+30, 910) 'bup      =', bup
 
       write(iuo+30, 900) 'isatfor  =', isatfor
