@@ -169,13 +169,6 @@
      &        sxdu22(nlat,nlon,12),sydu22(nlat,nlon,12), &
      &        sxdu21(nlat,nlon,12),sydu21(nlat,nlon,12)
 
-      integer nbasa
-      parameter (nbasa=8)
-      real*8  precan(nbasa),evapan(nbasa),runoan(nbasa), &
-     &        arocbasa(nbasa),hfmeanan(nlat,nbasa)
-      integer iocbasa(nlat,nlon)
-      common /outan/precan,evapan,runoan,arocbasa,iocbasa,hfmeanan
-
       common /outxx/ s1u200,s2u200,s1u500,s2u500,s1u800,s2u800, &
      &        s1omeg,s2omeg, &
      &        s1temp4g,s2temp4g,s1temp2g,s2temp2g,s1tempsg,s2tempsg, &

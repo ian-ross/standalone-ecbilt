@@ -100,8 +100,7 @@
       NAMELIST /tstepctl/nyears,ndays,irunlabel,irunlabeld,iatm, &
            & nwrskip,nwrskip_days
 
-      include 'openemicinfiles.h'
-      include 'openatoutfiles.h'
+      include 'openfiles.h'
 
       write(iuo+99,*) 'Initialize'
 
@@ -111,8 +110,6 @@
       lferCO2 = .TRUE.
 
 ! *** open namelist
-
-      include 'openemicinfiles.h'
 
       nyears=10
       ndays=0
@@ -137,8 +134,6 @@
       kism=1
       if_ism=15
       is_ism=15
-
-      include 'openemicoutfiles.h'
 
       write(iuo+30, 900) 'nyears       =', nyears
       write(iuo+30, 900) 'ndays        =', ndays

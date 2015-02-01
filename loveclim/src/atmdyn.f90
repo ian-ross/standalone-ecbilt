@@ -15,7 +15,7 @@
       include 'comphys.h'
       include 'comcoup.h'
       include 'comunit.h'
-      INCLUDE 'comrunlabel.h'  ! usefull to detect the right position in berg.nc
+      INCLUDE 'comrunlabel.h'
 
       integer i,j,k1,k2,k,l,m,n,ifail,ii,jj,i1,j1,nn
       real*8  pigr4,dis,dif,rll,ininag(nlat,nlon),asum

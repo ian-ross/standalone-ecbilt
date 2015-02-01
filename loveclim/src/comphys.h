@@ -218,7 +218,7 @@
      &        tqmkmin,tqmk(0:kqmtab),dtqmk,rdtqmk
       real*4  qmtabel(0:iqmtab,0:jqmtab,0:kqmtab)
       real*8  tcc(nlat,nlon),tccd(nlat,nlon)
-      integer ndayws,iradcloud,iscencel,iens,numens
+      integer ndayws,iradcloud,iens,numens
       real*8  bup
       real*8  eccf,oblf,omwebf
       real*8  relhcrit, relhfac, emisoc,emisse,emisld
@@ -369,7 +369,7 @@
       common /ctemag/ temp2g,temp4g,tempm,temp0g
       common /sunfr/  solarc,q0,omweb,ecc,obl,solarvol, &
      &                   solarm,solarcl,ecc2,so,perh,solardref
-      common /irad/  iradcloud,iscencel,iens,numens, &
+      common /irad/  iradcloud,iens,numens, &
      &                  emisoc,emisse,emisld,bup, &
      &                  albin,albis,albice,alphd,alphdi,alphs,cgren, &
      &                  eccf,oblf,omwebf

@@ -296,28 +296,26 @@
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine initseaalb
+    SUBROUTINE initseaalb
+      IMPLICIT NONE
+      INCLUDE 'comcouphelp.h'
+      INCLUDE 'comunit.h'
 
-      implicit none
-
-      include 'comcouphelp.h'
-      include 'comunit.h'
-
-      integer i,is
-      real*8  albsea(nlat,4)
-      common /albedoclio/albsea
+      INTEGER i, is
+      REAL*8  albsea(nlat, 4)
+      COMMON /albedoclio/ albsea
 
 ! *** read climatological zonal mean albedos for each season
 
-      open (iuo+49,file='inputdata/albedo.dat')
+      OPEN(iuo+49, file='inputdata/sea_albedo.dat')
 
-      read(iuo+49,*)
-      do i=1,nlat
-	read(iuo+49,45)(albsea(i,is),is=1,4)
-      enddo
-45    format(4(2x,f7.4))
-      close(iuo+49)
-      end
+      READ (iuo+49,*)
+      DO i = 1, nlat
+         READ (iuo+49,45) (albsea(i, is), is = 1, 4)
+      END DO
+45    FORMAT(4(2x,f7.4))
+      CLOSE(iuo+49)
+    END SUBROUTINE initseaalb
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       function fluxsumice(stice)

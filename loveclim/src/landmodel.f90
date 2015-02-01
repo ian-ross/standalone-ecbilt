@@ -21,9 +21,9 @@
 
       common /ctstep/ dt,dtime,dtt,rdtime
 
-      NAMELIST /landpar/ bmoismfix,dsnm,lhcap,iscenland,islndstrt
+      NAMELIST /landpar/ bmoismfix,dsnm,lhcap
 
-      include 'openlainpfiles.h'
+      include 'openfiles.h'
 
       write(numyear,'(i6.6)') irunlabel
       write(numday,'(i3.3)') irunlabeld
@@ -45,16 +45,12 @@
       bmoismfix = 0.15
       dsnm      = 1000.
       lhcap     = 2e6
-      iscenland = 0
-      islndstrt = 1990
 
-      read (iuo+47, NML = landpar)
+      read (iuo+46, NML = landpar)
 
       write(iuo+30, 910) 'bmoism    =', bmoismfix
       write(iuo+30, 910) 'dsnm      =', dsnm
       write(iuo+30, 910) 'lhcap     =', lhcap
-      write(iuo+30, 900) 'iscenland =', iscenland
-      write(iuo+30, 900) 'islndstrt =', islndstrt
 
       call flush(iuo+30)
 
@@ -99,7 +95,7 @@
         read (iuo+4,*) albsnow(i)
       enddo
 
-      call landcoverupdate(1)
+      call landcoverupdate
       call landalbedoR(1)
       call landalbedo(1)
       call inirunoff
@@ -125,7 +121,7 @@
       INCLUDE 'comland.h'
       INCLUDE 'comunit.h'
 
-      INTEGER     i,j,k,ias,ibas,iac
+      INTEGER     i, j, k, ias, ibas, iac
       CHARACTER*1 ch(nlon), space
 
       iocbas = 0
@@ -216,7 +212,6 @@
 
       integer istep
 
-      if (iscenland.eq.1) call landcoverupdate(istep)
       call landtemp
       call landprecip
       call runoff(istep)
@@ -359,8 +354,6 @@
           endif
         enddo
       enddo
-!      write(iuo+28,*) 'heatsnow 1',heatsnown,heatsnows,
-!    &                 heatsnows*betam
 
       return
       end
@@ -418,7 +411,6 @@
         enddo
       enddo
 ! outputs for Greenland and Antarctica
-!     write(iuo+28,*) runo(5),runo(23)
       if (mod(istep,nstpyear).eq.1) then
        runo_yn=0.
        runo_ys=0.
@@ -426,101 +418,52 @@
        runo_yn=runo_yn+(runo(5)*dtland)
        runo_ys=runo_ys+(runo(23)*dtland)
 
-!      if (mod(istep,nstpyear).eq.0.) then
-!        write(iuo+28,'(A25,I3,2E15.5)')'runoff land (m**3/y)',
-!    &   iyear,runo_yn,runo_ys
-!      endif
-
       return
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine landcoverupdate(istep)
+    SUBROUTINE landcoverupdate
 !-----------------------------------------------------------------------
-! *** updates land surface albedo and forest fraction
-! *** once every 5 years
-! *** starts when simulation year is equivalent to 1970, remains
-! *** unchanged if simulation year exceeds 2100
+! *** Reads land surface albedo and forest fraction
 !-----------------------------------------------------------------------
-      implicit none
+      IMPLICIT NONE
 
-      include 'comland.h'
-      include 'comemic.h'
-      include 'comunit.h'
+      INCLUDE 'comland.h'
+      INCLUDE 'comemic.h'
+      INCLUDE 'comunit.h'
 
-      integer i,j,is,scenyr,yr,istep,iy
-      real*8  d
+      INTEGER i, j, is
+      REAL*8 d
 
+      ! Read seasonal albedo data.
+      READ (iuo+31,*)
+      DO i = 1, nlat
+         DO j = 1, nlon
+            READ(iuo+31,100) (albland(i,j,is), is=1,4)
+         END DO
+      END DO
+      alblandR(:,:,:) = albland(:,:,:)
 
-! *** update once every 5 years
-
-      if (mod(istep, 5 * nstpyear) .eq. 1) then
-
-! *** scenario starts in 1970, after 2100 no updates
-         if (iyear.eq.0) then
-            scenyr=islndstrt
-         else
-            scenyr=islndstrt+iyear-1
-         endif
-         if (scenyr.ge.1970.and.scenyr.le.2100) then
-
-! *** read seasonal albedo data
-            read(iuo+31,90)yr
-            read(iuo+31,*)
-            if(yr.ne.scenyr) then
-               rewind(iuo+31)
-               read(iuo+31,90)yr
-               read(iuo+31,*)
-            endif
-            if(yr.ne.scenyr) then
-               call forwardfile(iuo+31,scenyr,yr)
-            endif
-            do i=1,nlat
-               do j=1,nlon
-                  read(iuo+31,100)(albland(i,j,is),is=1,4)
-               enddo
-            enddo
-
-            alblandR(:,:,:)=albland(:,:,:)
-
-! *** read yearly forest fraction data
-            read(iuo+32,90)yr
-            if(yr.ne.scenyr) then
-               rewind(iuo+32)
-               read(iuo+32,90)yr
-            endif
-            if(yr.ne.scenyr) then
-               call forwardfile(iuo+32,scenyr,yr)
-            endif
-            do i=1,nlat
-               do j=1,nlon
-                  read(iuo+32,110)forestfr(i,j)
-               enddo
-            enddo
-         endif
-
-
-         d=0d0
-         do j=2,25
-            d=d+albland(27,j,1)
+      ! Read yearly forest fraction.
+      DO i = 1, nlat
+         DO j = 1, nlon
+            READ (iuo+32,110) forestfr(i,j)
          enddo
-         d=d/24.
-         write(iuo+99,120) 'landcover update year: ',iyear,scenyr,yr,d
-         do i=1,nlat
-            do j=1,nlon
-               if (fractl(i,j).gt.epsl) then
-                  do is=1,4
-                     if (albland(i,j,is).lt.0.01.or. &
-                          &albland(i,j,is).gt.0.99) then
-                        write(iuo+99,130) 'Albedo of land out of range ', &
-                             & i,j,is,albland(i,j,is)
-                     endif
-                  enddo
-               endif
-            enddo
-         enddo
-      endif
-      call flush(iuo+99)
+      enddo
+
+      DO i = 1, nlat
+         DO j = 1, nlon
+            IF (fractl(i,j) > epsl) THEN
+               DO is = 1, 4
+                  IF (albland(i,j,is) < 0.01 .OR. albland(i,j,is) > 0.99) THEN
+                     WRITE(iuo+99,130) 'Albedo of land out of range ', &
+                          & i, j, is, albland(i,j,is)
+                  END IF
+               END DO
+            END IF
+         END DO
+      END DO
+      CALL flush(iuo+99)
 ! *** FORMATS:
 
 90    FORMAT(I5)
@@ -529,44 +472,8 @@
 120   FORMAT(A23,3I8,F12.5)
 130   FORMAT(A28,3I4,F12.5)
 
-
-      return
-      end
-
-!23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine forwardfile(filenr,year,yr)
-!-----------------------------------------------------------------------
-! *** forwards scenario ASCII file to find scenario year in
-! *** file with number filenr
-!-----------------------------------------------------------------------
-      implicit none
-
-      include 'comland.h'
-      include 'comunit.h'
-
-      integer year,filenr,yr,i,j
-
-      do i=1,nlat
-        do j=1,nlon
-          read(filenr,*)
-        enddo
-      enddo
-      read(filenr,90)yr
-      if (filenr.eq.iuo+31) read(filenr,*)
-      do while (yr.ne.year.and.yr.lt.2100)
-        do i=1,nlat
-          do j=1,nlon
-            read(filenr,*)
-          enddo
-        enddo
-        read(filenr,90)yr
-        if (filenr.eq.iuo+31) read(filenr,*)
-      enddo
-
-90    FORMAT(I5)
-
-      return
-      end
+      RETURN
+    END SUBROUTINE landcoverupdate
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine landalbedo(istep)

@@ -15,8 +15,7 @@ SRCOCEAN=oceanfixed.f90 root.f
 SRCLAND=landmodel.f90
 
 INCALL=comatfor.h comatm.h comcoup.h comcouphelp.h comdiag.h comdyn.h \
-       comemic.h comland.h comoutlocal.h comphys.h openatinpfiles.h \
-       openatoutfiles.h comocfix.h
+       comemic.h comland.h comoutlocal.h comphys.h openfiles.h comocfix.h
 
 SRCALL=$(SRCmain) $(SRCATMOS) $(SRCLAND) $(SRCOCEAN)
 OBJALL1=$(SRCALL:.f90=.o)

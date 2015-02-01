@@ -108,8 +108,6 @@
         tareas=tareas + nlon*dareas(i)
       enddo
 
-      call iniocbas
-
       call la2co
       call lae2co
       call at2co

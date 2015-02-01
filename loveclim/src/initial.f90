@@ -14,15 +14,9 @@
 
 ! *** open files
 
-      include 'openatinpfiles.h'
+      include 'openfiles.h'
 
       call iniparameterat
-
-
-!******change H. Renssen, 25-02-2003
-      if (iscencel.eq.1) call celest
-      if (iscencel.eq.2) call bretagnon
-!******end of change
 
       call inierror
       call inimdldate
@@ -218,7 +212,7 @@
       NAMELIST /cloudpar/ relhcrit,relhfac
       NAMELIST /forpar/  ipvf1,ipvf2,ipvf3,ipvf4,ipvf5
       NAMELIST /radpar/    solarc,iradcloud,ghg,o3, &
-     &                     iscencel,iens,numens,emisoc,emisse,emisld, &
+     &                     iens,numens,emisoc,emisse,emisld, &
      &                     albin,albis,albice,alphd,alphdi,alphs,cgren, &
      &                     albocef,tsi,bup,AMPWIR,EXPIR,HPROFTROP, &
      &                     HPROFEQ,HPROFW,AMPEQIR,HPROFAN,AMPANIR, &
@@ -378,7 +372,6 @@
       ghg(1:3) = (/ 286.43, 796.60, 275.40 /)
       tsi = 0.0
       o3 = 25.0
-      iscencel = 0
       eccf   = 0.016724
       oblf   = 23.446
       omwebf = 102.04
@@ -414,19 +407,19 @@
       iclimflux = 0
 
 
-      read(iuo+15, NML = runatctl)
-      read(iuo+15, NML = dispar)
-      read(iuo+15, NML = dfmpar)
-      read(iuo+15, NML = moipar)
-      read(iuo+15, NML = cloudpar)
-      read(iuo+15, NML = forpar)
-      read(iuo+15, NML = radpar)
-      read(iuo+15, NML = satfor)
-      read(iuo+15, NML = fluxpar)
-      read(iuo+15, NML = fluxcorw)
+      read(iuo+46, NML = runatctl)
+      read(iuo+46, NML = dispar)
+      read(iuo+46, NML = dfmpar)
+      read(iuo+46, NML = moipar)
+      read(iuo+46, NML = cloudpar)
+      read(iuo+46, NML = forpar)
+      read(iuo+46, NML = radpar)
+      read(iuo+46, NML = satfor)
+      read(iuo+46, NML = fluxpar)
+      read(iuo+46, NML = fluxcorw)
 
       solarvol = 0
-      READ(iuo+15, NML=volcfor)
+      READ(iuo+46, NML=volcfor)
       solarvol(1,:) = volc1
       solarvol(2,:) = volc2
       solarvol(3,:) = volc3
@@ -641,9 +634,8 @@
 
       close(iuo+65)
 
-      read (iuo+15, NML = outatctl)
-!      read(iuo+15, NML = wratpar)
-      read (iuo+15, NML = flgout)
+      read (iuo+46, NML = outatctl)
+      read (iuo+46, NML = flgout)
 
       return
       end
