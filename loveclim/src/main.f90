@@ -31,9 +31,8 @@
       include 'comatm.h'
       include 'comsurf.h'
       include 'comemic.h'
-      integer ittt
       double precision patmCO2
-      integer istep,k
+      integer istep
 
 
       PCO2ref=277.4D0
@@ -90,12 +89,11 @@
       include 'comemic.h'
       include 'comunit.h'
 
-      integer   ijatm,ija,i,j,k,ismfile
+      integer   ijatm,ija,i,j,ismfile
       parameter (ijatm=nlat*nlon)
       real*8    fractocn(ijatm)
       parameter (ismfile = 400)
       character*3 num_startday
-      logical dummy
 
       NAMELIST /tstepctl/nyears,ndays,irunlabel,irunlabeld,iatm, &
            & nwrskip,nwrskip_days
@@ -168,7 +166,6 @@
       enddo
 
 900   format(a14,1x,i6)
-901   format(a14,1x,l6)
 
       return
       end
@@ -305,9 +302,8 @@
         implicit none
         integer :: date
         character*255 prog,oldprog
-        double precision oldtime,hires_time,tl
         integer ndone,ntotal,i
-        save oldprog,oldtime
+        save oldprog
 
         write(prog,'(I6,''['')') date
         do i=1,40

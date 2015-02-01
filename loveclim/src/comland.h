@@ -12,7 +12,7 @@
         real*8    lhcap,rlhcap,dtland,rdtland
         real*8    pi,radius,tareas,bmoismfix
         real*8    tzero,nethfxland(nlat,nlon),landheat(nlat,nlon)
-        real*8    meltheat(nlat,nlon),evapl(nlat,nlon),evapoc(nlat,nlon)
+        real*8    meltheat(nlat,nlon),evapl(nlat,nlon)
         real*8    dsnow(nlat,nlon),dsnm,tland(nlat,nlon)
         integer   ilabas(nlat,nlon),iocbas(nlat,nlon)
         real*8    runofl(nlat,nlon),runofo(nlat,nlon),arocbas(mbasins)
@@ -25,7 +25,7 @@
         real*8    heatsnown,heatsnows
         real*8    runo_yn,runo_ys
 
-        common /lbmbmois/ bmoisg,bmoism,rainf,snowf
+        common /lbmbmois/ bmoisg,bmoism,rainf,snowf,bmoismfix
         common /lbmheat/ tland,lhcap,rlhcap,dtland,rdtland,tzero
         common /lbmflux/ nethfxland,landheat,meltheat,evapl
         common /lbmwater/rlatfus,rlatsub,rlatvap,rowat

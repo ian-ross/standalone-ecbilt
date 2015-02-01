@@ -104,7 +104,6 @@
       enddo
 
 100   format(i4,65A1)
-310   format(i4,i2,90i1)
 
       call initseaalb
 
@@ -128,7 +127,7 @@
       include 'comice.h'
 
       integer index,i,j
-      real*8 dum, facwin, facsum
+      real*8 facwin, facsum
       real*8 seaalb(nlat, nlon)
       real*8 zalb,zalbp
 
@@ -238,7 +237,7 @@
             endif
 
             if (tijs(i,j).gt.tzero) then
-	      tijs(i,j)=tzero
+               tijs(i,j)=tzero
             endif
 
           endif
@@ -373,11 +372,10 @@
 !  hnbq   : snow thickness
 !  zalb   : ice/snow albedo for overcast sky
 !  zalbp  : ice/snow albedo for clear sky
-
+      IMPLICIT NONE
       include 'comatm.h'
       include 'comphys.h'
-      integer ih
-      real*8 tfsn,tfsg,ts,hgbq,hnbq,zalb,zalbp
+      real*8 tfsn,tfsg,ts,hgbq,hnbq,zalb,zalbp,al
 !     real*8 albin,albis,albice,alphd,alphdi,alphs,cgren
 
 
@@ -454,11 +452,11 @@
           if (hgbq.gt.1.5) then
             zalbp = alphdi
           else if (hgbq.gt.1..and.hgbq.le.1.5) then
-	         zalbp = 0.472+2.*(alphdi-0.472)*(hgbq-1.)
+             zalbp = 0.472+2.*(alphdi-0.472)*(hgbq-1.)
           else if (hgbq.gt.0.05.and.hgbq.le.1.) then
-                 zalbp = 0.2467+ &
-     &                   (0.7049*hgbq)-(0.8608*(hgbq*hgbq))+ &
-     &                   (0.3812*(hgbq*hgbq*hgbq))
+             zalbp = 0.2467+ &
+                  & (0.7049*hgbq)-(0.8608*(hgbq*hgbq))+ &
+                  & (0.3812*(hgbq*hgbq*hgbq))
           else
             zalbp = 0.1+3.6*hgbq
           endif

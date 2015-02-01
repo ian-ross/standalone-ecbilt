@@ -437,22 +437,6 @@
       END FUNCTION output
 
 !     -------------------------------------------------------------------------
-!     outputStdDev
-!
-!     This function checks whether the output flags of a field indicate that
-!     the standard deviation should be written to any of the output files.
-
-      FUNCTION outputStdDev(flag) RESULT(result)
-      LOGICAL :: result
-      INTEGER, INTENT(in) :: flag
-
-      result = ( flag == 2 )
-
-      RETURN
-      END FUNCTION outputStdDev
-
-
-!     -------------------------------------------------------------------------
 !     PRIVATE FUNCTIONS AND SUBROUTINES
 !     -------------------------------------------------------------------------
 
@@ -817,9 +801,9 @@
 
       SELECT CASE (how_to_compute_time)
       CASE (Compute_Time_in_Days)
-         result = realyear*360.0 + (imonth-1)*30.0 + iday
+         result = NINT(realyear*360.0 + (imonth-1)*30.0 + iday)
       CASE (Compute_Time_in_Months_Only)
-         result = realyear*12.0 + imonth - realmonth
+         result = NINT(realyear*12.0 + imonth - realmonth)
       CASE (Compute_Time_in_Years_Months)
          result = imonth
       CASE (Compute_Time_in_Years_Only)

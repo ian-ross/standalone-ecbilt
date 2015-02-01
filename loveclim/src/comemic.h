@@ -44,7 +44,7 @@
       real*8      PCO2ref,PGACO2
       integer     nyears,ndays,irunlabel,irunlabeld,iatm, &
            & nwrskip,nwrskip_days,end_year,end_day
-      integer     ntstep,nstpyear,isatfor,ntotday
+      integer     ntstep,nstpyear,ntotday
       integer     iyear,imonth,iday,iseason
       integer     is_ism,if_ism,kism,tstartism
       character*10 fini

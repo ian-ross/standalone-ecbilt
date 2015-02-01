@@ -1,51 +1,4 @@
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      function newton(func,x,iter)
-      implicit none
-
-      integer   j,itmax,iter
-      real*8    tol,dx
-      parameter (tol=0.1,itmax=100,dx=0.01)
-      real*8    f,df,x,func,dfdx,delx,newton
-      external  func
-
-      iter=0
-10    continue
-        iter=iter+1
-        f=func(x)
-        df=func(x+dx)
-        dfdx=(df-f)/dx
-        delx=f/dfdx
-
-15      if (abs(delx).gt.10.) then
-          write(100,*) 'converg. problem in surfacetemp of icemodel'
-          write(100,*) iter,f,dfdx,delx
-          write(100,*) 'icemodel',iter,x
-          delx=0.5*delx
-          write(100,*) iter,f,dfdx,delx
-          goto 15
-        endif
-        x=x-delx
-        if (iter.lt.2) then
-          goto 10
-        else
-          if (iter.gt.5) then
-            write(100,*) 'icemodel',iter,x
-          endif
-          if (iter.gt.100) then
-            call error(9)
-          else
-	    if (abs(delx).lt.tol) then
-	      goto 20
-            else
-              goto 10
-            endif
-          endif
-        endif
-20    continue
-      return
-      end
-
-c23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine zbrac(func,x1,x2,iter)
 c-----------------------------------------------------------------------
 c *** this routine from numerical recipes determines an interval with
@@ -82,7 +35,7 @@ c23456789012345678901234567890123456789012345678901234567890123456789012
       function zbrent(func,x1,x2,tol,iter)
 c-----------------------------------------------------------------------
 c *** this routine from numerical recipes determines the root of  the
-c *** function func which is contained in the interval with bounds 
+c *** function func which is contained in the interval with bounds
 c *** x1 and x2
 c-----------------------------------------------------------------------
 

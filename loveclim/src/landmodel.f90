@@ -11,10 +11,7 @@
       include 'comunit.h'
       include 'comsurf.h'
 
-      integer     i,j,ija,is
-      real*8      ds,db,dumwei
-      real*8  phi(nlat)
-      real*8  cosfi(nlat),sinfi(nlat),tanfi(nlat)
+      integer     i,j
       real*8  dt,dtime,dtt,rdtime
       character*6 numyear
       character*3 numday
@@ -96,8 +93,8 @@
       enddo
 
       call landcoverupdate
-      call landalbedoR(1)
-      call landalbedo(1)
+      call landalbedoR
+      call landalbedo
       call inirunoff
 
 ! *** land time step
@@ -105,7 +102,6 @@
       dtland=3600.*24./iatm
       rdtland=1d0/dtland
 
-900   format(a12,1x,i6)
 910   format(a12,1x,e12.5)
 
       return
@@ -215,8 +211,8 @@
       call landtemp
       call landprecip
       call runoff(istep)
-      call landalbedoR(istep)
-      call landalbedo(istep)
+      call landalbedoR
+      call landalbedo
       call landcheck(istep)
 
       return
@@ -247,9 +243,9 @@
 ! *** surface temperature to meltpoint
 
             if (dsnow(i,j).gt.0d0.and.tland(i,j).gt.tzero) then
-	      meltheat(i,j)=min(dsnow(i,j)/betam,lhcap*(tland(i,j)-tzero))
-	      tland(i,j)=tland(i,j)-meltheat(i,j)/lhcap
-	      meltheat(i,j)=meltheat(i,j)*rdtland
+              meltheat(i,j)=min(dsnow(i,j)/betam,lhcap*(tland(i,j)-tzero))
+              tland(i,j)=tland(i,j)-meltheat(i,j)/lhcap
+              meltheat(i,j)=meltheat(i,j)*rdtland
             endif
           endif
         enddo
@@ -273,7 +269,6 @@
 
       integer i,j
       real*8  betam,dsnomel,dsnovap
-      real*8  qsat
 
       betam=1./(rlatfus*rowat)
       heatsnows=0.0
@@ -289,7 +284,7 @@
             if (dsnow(i,j).le.0.) then
               bmoisg(i,j)=bmoisg(i,j)-dtland*evapl(i,j)
             else
-	      dsnovap=dtland*evapl(i,j)
+              dsnovap=dtland*evapl(i,j)
 
               if (dsnovap.gt.dsnow(i,j)) then
                 bmoisg(i,j)=bmoisg(i,j)-(dsnovap-dsnow(i,j))
@@ -339,7 +334,7 @@
               endif
 
             if (bmoisg(i,j).lt.0d0) then
-	      if (bmoisg(i,j).lt.-1e-10) then
+              if (bmoisg(i,j).lt.-1e-10) then
                 write(iuo+99,*) 'bottom moisture less than zero '
                 write(iuo+99,*) i,j,bmoisg(i,j)
                 write(iuo+99,*) dtland*betam*meltheat(i,j)
@@ -433,7 +428,6 @@
       INCLUDE 'comunit.h'
 
       INTEGER i, j, is
-      REAL*8 d
 
       ! Read seasonal albedo data.
       READ (iuo+31,*)
@@ -466,17 +460,15 @@
       CALL flush(iuo+99)
 ! *** FORMATS:
 
-90    FORMAT(I5)
 100   FORMAT(4(2X,F8.4))
 110   FORMAT(F8.4)
-120   FORMAT(A23,3I8,F12.5)
 130   FORMAT(A28,3I4,F12.5)
 
       RETURN
     END SUBROUTINE landcoverupdate
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine landalbedo(istep)
+      subroutine landalbedo
 !-----------------------------------------------------------------------
 ! *** calculates albedos as a function of the time of the year, linearly
 ! *** interpolating between seasonal mean values
@@ -491,13 +483,8 @@
       include 'comemic.h'
       include 'comunit.h'
 
-      integer i,j,id1,is1,is2,istep
+      integer i,j,id1,is1,is2
       real*8  sfrac,albforfac,asnow,anosnow,snm,rsnm,snd
-
-      integer imonth2,ktype,spv
-      real*8  fracm,snowfrac,wcontent,forestfrac,hsnow
-      real*8  albvec,albvecnosnow,albvecsnow,sndism
-!     real*8  albsnow2
 
 ! *** reduction factor of snow albedo over forests
 
@@ -526,7 +513,7 @@
 
       do j=1,nlon
         do i=1,nlat
-	  anosnow=albland(i,j,is1)+(albland(i,j,is2)-albland(i,j,is1))*sfrac
+          anosnow=albland(i,j,is1)+(albland(i,j,is2)-albland(i,j,is1))*sfrac
           asnow=albsnow(i)*(1.-forestfr(i,j))+forestfr(i,j)*albsnow(i)*albforfac
           snd=min(dsnow(i,j),snm)
 
@@ -550,11 +537,9 @@
       include 'comemic.h'
       include 'comunit.h'
 
-      integer i,j,istep,nn
+      integer i,j,istep
       real*8 iflux,oflux,labufch,labufcht,moisbdif
-      real*8 totrunl,totruno,difrun,dum1,dum2,dum3
-      real*8 ifluxt,ofluxt,abufchn,abufchnt,facmois,totrain,totevap
-      real*8 difatmois,obufchnt,ocbud,totcor,totmois,globalmean
+      real*8 totrunl,totruno,difrun
 
       real*8 bmoisgo(nlat,nlon),dsnowo(nlat,nlon),tlando(nlat,nlon)
 
@@ -592,9 +577,9 @@
                   write(iuo+99,*) 'error in landmoisture budget',fractl(i,j)
                   write(iuo+99,*) 'latlon',i,j,moisbdif,labufch, &
                        & dtland*(iflux-oflux)
-          	  write(iuo+99,*) rainf(i,j),evapl(i,j),runofl(i,j)
-		  write(iuo+99,*) moisbdif/dtland,bmoisg(i,j)
-		  write(iuo+99,*)
+                    write(iuo+99,*) rainf(i,j),evapl(i,j),runofl(i,j)
+                  write(iuo+99,*) moisbdif/dtland,bmoisg(i,j)
+                  write(iuo+99,*)
                 endif
               else
                 if (abs(moisbdif).gt.1d-5) then
@@ -616,8 +601,8 @@
           do i=1,nlat
             if (fractl(i,j).gt.epsl) then
               totrunl=totrunl + runofl(i,j)*dareas(i)*fractl(i,j)
-	    endif
-	    if ((1d0-fractl(i,j)).gt.epsl) then
+            endif
+            if ((1d0-fractl(i,j)).gt.epsl) then
               totruno=totruno + runofo(i,j)*dareas(i)*(1-fractl(i,j))
             endif
           enddo
@@ -656,9 +641,9 @@
 !     &                        fractl(i,j)
 !                  write(iuo+99,*) 'latlon',i,j,moisbdif,labufch,
 !     &                     dtland*(iflux-oflux)
-!          	  write(iuo+99,*) rainf(i,j),evapl(i,j),runofl(i,j)
-!		  write(iuo+99,*) moisbdif/dtland,bmoisg(i,j)
-!		  write(iuo+99,*)
+!                    write(iuo+99,*) rainf(i,j),evapl(i,j),runofl(i,j)
+!                  write(iuo+99,*) moisbdif/dtland,bmoisg(i,j)
+!                  write(iuo+99,*)
                 endif
               else
                 if (abs(moisbdif).gt.1d-5) then
@@ -674,10 +659,10 @@
 
        do j=1,nlon
          do i=1,nlat
-	   bmoisgo(i,j)=bmoisg(i,j)
-	   dsnowo(i,j)=dsnow(i,j)
-	   tlando(i,j)=tland(i,j)
-	 enddo
+           bmoisgo(i,j)=bmoisg(i,j)
+           dsnowo(i,j)=dsnow(i,j)
+           tlando(i,j)=tland(i,j)
+         enddo
        enddo
 
        return
@@ -697,26 +682,22 @@
       include 'comemic.h'
 
       integer i,j
-      real*8 rsnrai
-      real*8 temp_pr,temp_ev,tot_pr,pr_ism,tot_prnet
       real*8 betam
 
       betam=1./(rlatfus*rowat)
 
-      evapoc(:,:)=evapn(:,:,noc)
-
       do j=1,nlon
         do i=1,nlat
-	  nethfxland(i,j)=(heswsn(i,j,nld)+dlradsn(i,j,nld) &
+          nethfxland(i,j)=(heswsn(i,j,nld)+dlradsn(i,j,nld) &
      &                    -ulradsn(i,j,nld)-efluxn(i,j,nld) &
      &                    -hfluxn(i,j,nld))
-	  evapl(i,j)=evapn(i,j,nld)
-	  rainf(i,j)=couprf(i,j)
-	  snowf(i,j)=coupsf(i,j)
+          evapl(i,j)=evapn(i,j,nld)
+          rainf(i,j)=couprf(i,j)
+          snowf(i,j)=coupsf(i,j)
 
 !-Only the precip not taken into account by 0 are considered here
 
-	enddo
+        enddo
       enddo
 
       end
@@ -738,14 +719,14 @@
 
       do j=1,nlon
         do i=1,nlat
-	  albesn(i,j,nld)=alblbm(i,j)
+          albesn(i,j,nld)=alblbm(i,j)
           albesnR(i,j)=alblbmR(i,j)
 
-	  tsurfn(i,j,nld)=tland(i,j)
-	  abmoisg(i,j)=bmoisg(i,j)
-	  abmoism(i,j)=bmoism(i,j)
-	  adsnow(i,j)=dsnow(i,j)
-	enddo
+          tsurfn(i,j,nld)=tland(i,j)
+          abmoisg(i,j)=bmoisg(i,j)
+          abmoism(i,j)=bmoism(i,j)
+          adsnow(i,j)=dsnow(i,j)
+        enddo
       enddo
       end
 
@@ -765,9 +746,9 @@
 
       do j=1,nlon
         do i=1,nlat
-	  coupruno(i,j)=runofo(i,j)
-	  couprunl(i,j)=runofl(i,j)
-	enddo
+          coupruno(i,j)=runofo(i,j)
+          couprunl(i,j)=runofl(i,j)
+        enddo
       enddo
       couphsnn=heatsnown
       couphsns=heatsnows
@@ -790,7 +771,7 @@
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine landalbedoR(istep)
+      subroutine landalbedoR
 !-----------------------------------------------------------------------
 ! *** calculates albedos as a function of the time of the year, linearly
 ! *** interpolating between seasonal mean values
@@ -805,12 +786,8 @@
       include 'comemic.h'
       include 'comunit.h'
 
-      integer i,j,id1,is1,is2,istep
+      integer i,j,id1,is1,is2
       real*8  sfrac,albforfac,asnow,anosnow,snm,rsnm,snd
-
-      integer imonth2,ktype,spv
-      real*8  fracm,snowfrac,wcontent,forestfrac,hsnow
-      real*8  albvec,albvecnosnow,albvecsnow,sndism
 
 ! *** reduction factor of snow albedo over forests
 

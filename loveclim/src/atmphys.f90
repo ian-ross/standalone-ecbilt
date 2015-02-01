@@ -19,14 +19,12 @@
 
       integer ios
 
-      integer i,j,k,l,ireg,im,nn,is,j1,i1,ii,jj,ism
-      real*8  beta,draganr,draglar,dum(2),asum,spv
-      integer jyear,kyear,ilat,jmonth,m,status
+      integer i,j,k,ireg,im,nn,j1,i1,ii,jj,ism
+      real*8  beta,draganr,draglar,asum
+      integer status
       real*8 ksw
       character*6 numyear
       character*3 numday
-      integer tmp_imonth
-      real*8 globalmean
 
       !write(numyear,'(i6.6)') irunlabel+int((irunlabeld)/360)
       !write(numday,'(i3.3)') mod(irunlabeld,360)
@@ -72,7 +70,7 @@
         enddo
         call atmphyszero
       else
-	ios=0
+        ios=0
         open(iuo+95,file='startdata/inatphy'//numyear//'_'//numday//'.dat', &
      &        form='unformatted')
         read(iuo+95) tsurfn,tempm,temp0g
@@ -216,10 +214,6 @@
       read(iuo+19) swrcost,swrsalb
 
       call detqmtabel
-
-310   format(9f7.2)
-330   format(2f5.2)
-340   format(f5.2)
 
 ! *** computation of the effective turning angle
 
@@ -409,7 +403,7 @@
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine solar(istep)
+      subroutine solar
 !-----------------------------------------------------------------------
 ! Calculates incoming solar radiation as a function of latitude
 ! for each day of the year, given the orbital parameters (see PMIP)
@@ -425,18 +419,17 @@
       include 'comunit.h'
       include 'comrunlabel.h'
 
-      integer i,j,l,NVE
+      integer i,l,NVE
 
 
       real*8 beta,alam,alam0,ala,ala0
-      real*8 fac1,fac2,fac3,ro,roref
+      real*8 fac1,fac2,fac3,ro
       real*8 deltal, sindl, cosdl, tandl
       real*8 rkosz, rkosha1, ha1
       real*8 deg2rad, day2rad
       real*8 solard, solarcf(nlat)
       real*8 ksw
       real*8 alpho3sw(2)
-      integer istep
 
       deg2rad=pi/180.d0
       day2rad=pi/180.d0
@@ -528,7 +521,6 @@
        write(iuo+99,12) 'vol forcing ',iyear,imonth, &
             & solarcl(15), solarvol(imonth,:)
       endif
-11      format(A12,2i6,2f12.3)
 12      format(A12,3i6,5f12.3)
       do i=1,nlat
 ! zonneconstante is 1370 in sw parameterisatie
@@ -583,7 +575,7 @@
       call surfmois(nn)
       call sensibheat(nn)
       call latentheat(nn)
-      if (nn.eq.noc) call momentflux(nn)
+      if (nn.eq.noc) call momentflux
 
       return
       end
@@ -613,13 +605,12 @@
 
 
       integer i,j,k,l,ireg
-      integer m, d, r, nn , nol
+      integer nn , nol
 
 
       real*8 f0,f1,ftot(8),fn(8,0:1)
       real*8 drs, drs2, drs3
       real*8 dcost, df,sk,sr,x,y,dfs,smsc
-      real*8 fswdtoa,fswutoa,fswdsfc(nlat,nlon),fswusfc
       real*8 fswutoa2(nlat,nlon),fswutoa0(nlat,nlon)
       real*8 fswdtoa0(nlat,nlon)
       real*8 globalmean
@@ -807,12 +798,9 @@
       integer i,j,l,k,m,is,ism,nol,nn,ireg,h
       real*8  lwr(7,0:1),dumts
       real*8  dqa,dqreg(27)
-      real*8  ulrad0nm,ulrad1nm,ulrad2nm,ulradsnm,dlradsnm
       real*8  globalmean
       real*8  ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
-      real*8  ulrad0nz(nlat,nlon),ulrad1nz(nlat,nlon)
-      real*8  ulrad2nz(nlat,nlon),ulradsnz(nlat,nlon)
-      real*8  dlradsnz(nlat,nlon), ulrad0nUz(nlat,nlon)
+      real*8  ulrad0nUz(nlat,nlon)
       real*8  ulrad1nUz(nlat,nlon)
       common / radO3 / ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
       common / radO32 / ulrad0nUz,ulrad1nUz
@@ -879,7 +867,7 @@
           ulrad2n(i,j,nn)=(lwr(3,0)+lwr(6,0))*(1-tcc(i,j)) + &
                & (lwr(3,1)+lwr(6,1))*tcc(i,j)
 
-	  ulradsn(i,j,nn)=emisn(nn)*sboltz*tsurfn(i,j,nn)**4
+          ulradsn(i,j,nn)=emisn(nn)*sboltz*tsurfn(i,j,nn)**4
           dlradsn(i,j,nn)=-lwr(7,0)*(1-tcc(i,j))-lwr(7,1)*tcc(i,j)
 
 
@@ -1015,7 +1003,7 @@
 
 
       integer i,j,nn,n,NSTAT
-      real*8  qsat,db,emois,esubf,evapf,esnow,sfrac,edum,psilai
+      real*8  qsat,emois,esubf,evapf,esnow,sfrac,edum,psilai
 
       real*8    bmoisg(nlat,nlon),resist(3),lai(2),k0(2)
       real*8    bmoism(nlat,nlon),rs
@@ -1141,7 +1129,7 @@
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine momentflux(nn)
+      subroutine momentflux
 !-----------------------------------------------------------------------
 ! *** computation of windstress
 !-----------------------------------------------------------------------
@@ -1155,8 +1143,8 @@
       include 'comrunlabel.h'
 
 
-      integer i,j,nn
-      real*8  uv,costt,sintt,facstr
+      integer i,j
+      real*8  costt,sintt,facstr
 
       facstr=roair * uv10rws
 
@@ -1194,7 +1182,7 @@
       include 'comrunlabel.h'
 
 
-      integer i,j,k
+      integer i,j
       real*8  uv
 
 ! *** bug fix 27 march 97: uv was declared integer
@@ -1277,29 +1265,16 @@
 
 
       integer i,j,nn
-      real*8  qsat,pmount,tmount,qmax,dqmdt
+      real*8  qsat,tmount,qmax,dqmdt
 
       do j=1,nlon
         do i=1,nlat
-
-
-          call ptmoisgp(pmount,tmount,qmax,i,j,dqmdt)
-
-
+          call ptmoisgp(tmount,qmax,i,j,dqmdt)
           if (qmax.gt.0d0) then
-
-
             relhum(i,j)=min(1d0,rmoisg(i,j)/qmax)
-
-
           else
-
             relhum(i,j)=0d0
-
-
           endif
-
-
           q10(i,j)= 0.d0
           do nn=1,ntyps
             q10n(i,j,nn)=relhum(i,j) * qsat(pgroundn(i,j,nn),tempsgn(i,j,nn))
@@ -1420,31 +1395,16 @@
 !***  the maximum water content in [m] is given by qmtabel
 !-----------------------------------------------------------------------
       implicit none
-
-
       include 'comatm.h'
       include 'comphys.h'
       include 'comrunlabel.h'
 
-
       integer i,j,k
       real*8  tmount,t500,b,qmax,expint,z1,z2,bz1,bz2,hulpx
       real*8  t350,t650,rlogp500,alpha
-      real*8  detqmax,detqmaxexact
-      real*4  hulp(0:iqmtab,0:jqmtab,0:kqmtab)
-
 
       rlogp500=log(500d0/650d0)
       b=cc2*cc3-cc2*tzero
-
-
-!      call system('rm outputdata/atmos/qmtabel.dat')
-
-
-!      open(88,file='qmtabel.dat')
-!      open(89,file='qmtabel.test')
-!     *  form='unformatted',access='direct',recl=51*21*21)
-
 
       do i=0,iqmtab
         tqmi(i)=tqmimin + i*dtqmi
@@ -1456,74 +1416,28 @@
         tqmk(k)=tqmkmin + k*dtqmk
       enddo
 
-
       hulpx=cc1*exp(cc2)/(rowat*grav)
-
 
       do i=0,iqmtab
         t650=tqmi(i)
-
-
         do j=0,jqmtab
           tmount=tqmj(j)+t650
-
-
           do k=0,kqmtab
             t350=t650-tqmk(k)
-
-
             alpha=(t350-t650)*rlogtl12
-
-
             t500=t650+alpha*rlogp500
-
-
             z1=1/(tmount-cc3)
             z2=1/(t500-cc3)
-
-
             bz1=b*z1
             bz2=b*z2
-
-
             qmax=(exp(bz1)+expint(1,-bz1)*bz1)/z1 - &
                  & (exp(bz2)+expint(1,-bz2)*bz2)/z2
-
-
             qmax=qmax*hulpx/alpha
-
-
             if (qmax.lt.0d0) qmax=0d0
             qmtabel(i,j,k)=qmax
-!            write(88,111) tqmi(i),tqmj(j),tqmk(k),qmtabel(i,j,k)
           enddo
         enddo
       enddo
-
-
-!      write(89) (((qmtabel(i,j,k),i=0,iqmtab),j=0,jqmtab),k=0,kqmtab)
-
-
-
-!      do i=0,iqmtab
-!        temp4g(1,1)=tqmi(i)
-!        do j=0,jqmtab
-!          tmount=tqmj(j)+temp4g(1,1)
-!          do k=0,kqmtab
-!            temp2g(1,1)=temp4g(1,1)-tqmk(k)
-!            hulp(i,j,k)=detqmaxexact(tmount,1,1)
-!            write(89,111) tqmi(i),tqmj(j),tqmk(k),hulp(i,j,k)
-!          enddo
-!        enddo
-!      enddo
-
-
-
- 111  format(4F14.7)
-!      close(88)
-!      close(89)
-!      stop
-
 
       return
       end
@@ -1770,9 +1684,9 @@
 
 
       integer i,j
-      real*8  hdmoisg(nlat,nlon),d1(nlat,nlon),d3(nlat,nlon)
-      real*8  d2(nlat,nlon),qstar,hdivmg(nlat,nlon),globalmean
-      real*8  levtempgp,factemv,factems,omegg500,t500,qsat,gm1,gm2
+      real*8  hdmoisg(nlat,nlon)
+      real*8  qstar,hdivmg(nlat,nlon)
+      real*8  levtempgp,factemv,factems,omegg500,t500,qsat
 
       factemv=rlatvap*grav*rowat/cpair
       factems=rlatsub*grav*rowat/cpair
@@ -1893,8 +1807,8 @@
       include 'comrunlabel.h'
 
 
-      integer i,j,k
-      real*8  ctrasp(nsh2),vv(nsh2),ww(nsh2)
+      integer i,j
+      real*8  ctrasp(nsh2),vv(nsh2)
       real*8  dcdl(nlat,nlon),dcdm(nlat,nlon)
       real*8  tfdiv(nlat,nlon),ctra(nlat,nlon)
 
@@ -1953,7 +1867,6 @@
       real*8  hduvg(nlat,nlon),ug(nlat,nlon),vg(nlat,nlon)
       real*8  dugdl(nlat,nlon),dvgdm(nlat,nlon)
       real*8  usp(nsh2),vv(nsh2),vsp(nsh2)
-      real*8  dx,dy(nlat)
 
 
       do j=1,nlon
@@ -1995,9 +1908,9 @@
       include 'comrunlabel.h'
 
 
-      integer idifq,k
+      integer k
       real*8  hdmoiss(nsh2),hdmg(nlat,nlon)
-      real*8  difq,rll
+      real*8  difq
 
       difq=max(0.d0,1.d0/(tdifq*24d0*3600d0))
 
@@ -2040,11 +1953,11 @@
 
 
       integer ncmax,iconvn,i,j
-      real*8  qsatcr,tsatcr,pref,t500,qsat500,pot2g,pot4g,dcmoisg
-      real*8  fachulp,facteta,factemv,factems,pmount,tmount
+      real*8  t500,qsat500,pot2g,pot4g,dcmoisg
+      real*8  fachulp,facteta,factemv,factems,tmount
       real*8  qmax,qsat,hulp,redrain
-      real*8  temp2go,temp4go,levtempgp
-      real*8  detqmax,drainm,crainm,dqmdt
+      real*8  temp2go,temp4go
+      real*8  drainm,crainm,dqmdt
 
 
       fachulp=0.622d0*(rlatvap**2)/(cpair*rgas)
@@ -2055,54 +1968,34 @@
       crainm=0.5d0*rainmax
       drainm=rainmax-crainm
 
-
-
       do j=1,nlon
         do i=1,nlat
           iconvn=0
   10      continue
 
-
 ! ***     calculate pressure and temperature at the ground
 ! ***     and the maximum water content
-
-
-            call ptmoisgp(pmount,tmount,qmax,i,j,dqmdt)
-
+            call ptmoisgp(tmount,qmax,i,j,dqmdt)
 
 ! ***     relhmax defines the relative humidity at which oversaturation
 ! ***     occurs
-
-
             qmax=relhmax*qmax
-
-
             pot2g=temp2g(i,j)/potfac1
             pot4g=temp4g(i,j)/potfac2
             teta(i,j)=0.5d0*(pot2g-pot4g)
 ! ***       dry adiabatic lapse rate
             tetacr(i,j)=0d0
             dcmoisg=0d0
-
-
             if (rmoisg(i,j).gt.qmax) then
-
-
 ! ***     calculate rain reduction factor to account for increased
 ! ***     moisture capacity due to latent heat release
-
-
               redrain=1d0+dqmdt*relhmax*rowat*rlatvap*grav/(cpair*dp2)
-
-
               dcmoisg=(rmoisg(i,j)-qmax)/(redrain*dtime)
-
 
 ! ***         if the air is supersaturated initially, this is due to
 ! ***         large scale convergence of moisture and large scale
 ! ***         temperature changes. Excessive moisture
 ! ***         is then removed as dynamic rain
-
               if (iconvn.eq.0) then
                 if (tsurf(i,j).ge.tzero) then
                   dyrain(i,j)=dyrain(i,j) + dcmoisg
@@ -2260,7 +2153,7 @@
       include 'comrunlabel.h'
 
 
-      integer i,j,nn
+      integer i,j
       real*8  gmc,gmm,gfac
 
 
@@ -2417,7 +2310,7 @@
 
 
       integer i,j,k,it,ipd
-      real*8  temp0sp(nsh2),tdifc,globalmean,tstep,tdifday
+      real*8  temp0sp(nsh2),tdifc,tstep,tdifday
 
       tdifday=100d0
       tdifc=1.0d0/(tdifday*24.*3600.)
@@ -2473,10 +2366,8 @@
       include 'comemic.h'
       include 'comrunlabel.h'
 
-      integer i,j,k,l,ireg(2),is,ism,nn,k1,k2,k2_tmp
+      integer i,j,k,l,ireg(2),is,ism,nn,k1,k2
       real*8 ro,ro1,ro2,z,z0,dt350,dt650(2),beta(2),tsref,dt100,z1,z2
-      real*8 dtemp_tmp, pground_tmp,tsref_tmp,z_tmp,ro_tmp,z0_tmp
-      real*8 beta_tmp
 
 ! *** Example reference profile for
 ! *** zonal band between 15s and 15n
@@ -2631,7 +2522,7 @@
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-       subroutine ptmoisgp(pmount,tmount,qmax,i,j,dqmdt)
+       subroutine ptmoisgp(tmount,qmax,i,j,dqmdt)
 !-----------------------------------------------------------------------
 ! *** computation of ground pressure and temperature in order to
 ! *** to calculate the maximum precipitable water content in latlon i,j
@@ -2649,8 +2540,8 @@
 
 
       integer i,j
-      real*8  t500,levtempgp,hmount,hred,z500,dqmdt
-      real*8  alpha,pfac,hfac,pmount,tmount,qmax,detqmax
+      real*8  t500,hmount,hred,z500,dqmdt
+      real*8  alpha,pfac,hfac,tmount,qmax,detqmax
 
 
       z500=gpm500*grav
@@ -2847,7 +2738,6 @@
 
       integer i,j,k,l
       real*8  vforg(nlat,nlon,nvl)
-      real*8  forcgg(nlat,nlon),forcgg2(nlat,nlon)
       real*8  zetas(nsh2,3),zetag(nlat,nlon,3)
       real*8  dimfac
 
@@ -3021,7 +2911,7 @@
       include 'comrunlabel.h'
 
 
-      integer i,j,k,l
+      integer i,j,l
       real*8  vforg(nlat,nlon,nvl)
 
       do l=1,nvl
@@ -3053,7 +2943,7 @@
       include 'comrunlabel.h'
 
 
-      integer i,j,k,l
+      integer i,j,l
       real*8  vforg(nlat,nlon,nvl),zetag(nlat,nlon,nvl)
 
 
@@ -3228,18 +3118,16 @@
       integer i,j,l,k,m,is,ism,nol,nn,ireg,h,r,s,igas
       real*8  lwrz(7,0:1),dumts
       real*8  dqa,dqreg(27)
-      real*8  ulrad0nm,ulrad1nm,ulrad2nm,ulradsnm,dlradsnm
-      real*8  ulrad0nmm,ulrad1nmm
+      real*8  ulrad1nm
+      real*8  ulrad1nmm
       real*8  ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
       real*8  ulrad0nz(nlat,nlon),ulrad1nz(nlat,nlon)
       real*8  ulrad1nzz(nlat,nlon,3)
-      real*8  ulrad2nz(nlat,nlon),ulradsnz(nlat,nlon)
-      real*8  dlradsnz(nlat,nlon)
-      real*8  ulrad0nT,ulrad1nT,ulrad2nT,ulradsnT,dlradsnT
+      real*8  ulrad0nT,ulrad1nT
       real*8  globalmean
       real*8  logco2T,sqrch4T,sqrn2oT,ghgz(20)
       real*8  alpho3lw(2)
-      real*4  lwrfluxz(7,27,4,0:1,2)
+      real*8  lwrfluxz(7,27,4,0:1,2)
       real*8  moc,tmc,tmc0,tsurfmean,cland,thex
       common / radO3 / ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
       common /rad031/ulrad0nz,ulrad1nz,ulrad0nT,ulrad1nT
@@ -3378,23 +3266,20 @@
       include 'comunit.h'
 
       integer i,j,k,l,ireg
-      integer m, d, r, nn , nol
+      integer nn , nol
 
 
       real*8 f0,f1,ftot(8),fn(8,0:1)
       real*8 drs, drs2, drs3
       real*8 dcost, df,sk,sr,x,y,dfs,smsc,df2
-      real*8 fswutoa(nlat,nlon),fswdsfc(nlat,nlon),fswusfc
+      real*8 fswutoa(nlat,nlon),fswdsfc(nlat,nlon)
       real*8 fswutoa2(nlat,nlon),fswdtoa(nlat,nlon)
       real*8 fswutoaG,fswdtoa2,fswdtoaG
 
 
-      integer nreg(2)
 !     real*8 zac(2),asup,bup
-      real*8 zac(2),asup
       real*8  globalmean
-      real*8 fswutoaGA,fswutoaG0
-      real*8 fswutoa_diff,df_test
+      real*8 df_test
       common /rad_sul2 /fswutoa,fswdtoa
       common /rad_sul0 /fswutoaG,df_test,fswdtoaG
       common /pr_evap /fswdsfc

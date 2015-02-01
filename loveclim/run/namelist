@@ -56,12 +56,11 @@ $end
 
 $radpar
 iradcloud = 0
-iscencel  = 0
 eccf      = 0.016724
 oblf      = 23.446
 omwebf    = 102.04
 ghg = 286.43, 796.60, 275.40, 16*0
-ozone = 25.0
+o3 = 25.0
 tsi       = 0.7698
 bup       = 0.13
 emisoc    = 0.99
@@ -89,26 +88,9 @@ HPROFAN2  = 0.75
 AMPANIR2  = 0.5
 $end
 
-$volcfor
-volc1  = 0, 0, 0, 0
-volc2  = 0, 0, 0, 0
-volc3  = 0, 0, 0, 0
-volc4  = 0, 0, 0, 0
-volc5  = 0, 0, 0, 0
-volc6  = 0, 0, 0, 0
-volc7  = 0, 0, 0, 0
-volc8  = 0, 0, 0, 0
-volc9  = 0, 0, 0, 0
-volc10 = 0, 0, 0, 0
-volc11 = 0, 0, 0, 0
-volc11 = 0, 0, 0, 0
-$end
-
 $satfor
-isatfor   = 0
 nbsatfor  = 191
 nafyear   = 10
-iclimflux = 0
 $end
 
 $fluxpar
@@ -143,6 +125,19 @@ $landpar
 bmoismfix = 0.15
 dsnm      = 10.0
 lhcap     = 2e6
-iscenland = 0
-islndstrt = 1990
+$end
+
+$volcfor
+volc1  = 0, 0, 0, 0
+volc2  = 0, 0, 0, 0
+volc3  = 0, 0, 0, 0
+volc4  = 0, 0, 0, 0
+volc5  = 0, 0, 0, 0
+volc6  = 0, 0, 0, 0
+volc7  = 0, 0, 0, 0
+volc8  = 0, 0, 0, 0
+volc9  = 0, 0, 0, 0
+volc10 = 0, 0, 0, 0
+volc11 = 0, 0, 0, 0
+volc11 = 0, 0, 0, 0
 $end

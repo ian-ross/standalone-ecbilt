@@ -19,7 +19,7 @@
 !     instcount: counter used for output instantaneous fields.
 !     irad =1 if calculation of radiative forcings
 !-----------------------------------------------------------------------
-      integer     ixout,ioutdaily,ioutyearly,itel,minterv,ntotdays, &
+      integer     ixout,ioutdaily,ioutyearly,itel,minterv, &
      &            meantype,meantot,meanyl,ifrendat,instcount,irad
 
       common /writectl/ixout,ioutdaily,ioutyearly,itel,minterv, &

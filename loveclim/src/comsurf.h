@@ -3,7 +3,7 @@
 ! *** File:     comsurf.h
 ! *** Contents: Common declarations for surface dependent variables
 
-      integer noc,nse,nld,ntyps,iclimflux
+      integer noc,nse,nld,ntyps
       parameter (noc=1,nse=2,nld=3,ntyps=3)
       real*8  tsurf(nlat,nlon),tsurfn(nlat,nlon,ntyps)
       real*8  fractoc(nlat,nlon),fractn(nlat,nlon,ntyps)
@@ -45,5 +45,4 @@
      &                qsurf,qsurfn,rmountn,tempsg,tempsgn,           &
      &                pground,pgroundn,evfacan,abmoisg,abmoism,adsnow, &
      &                arunofo,arunofl,ahic,hficof,albesnR
-      common /isurf/  iclimflux
       common /emis/ emisn, albocef

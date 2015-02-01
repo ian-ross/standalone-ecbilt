@@ -13,7 +13,7 @@
       real*8  rfluxt,rfluxs
       real*8  tb,tnull,rks,rki,qs,qi,qb,abottom,ho,hsnmax
       real*8  hic(nlat,nlon),hsn(nlat,nlon),brine(nlat,nlon)
-      real*8  tmixed,tsice,tatm,hice,hsnow,tflux,sflux
+      real*8  tmixed,tsice,hice,hsnow,tflux,sflux
       real*8  dtice,dtis
       real*8  uvs,alpi,alps,alpv,tster,qgi,cdi
       real*8  tijs(nlat,nlon),Fbtfx(nlat,nlon)

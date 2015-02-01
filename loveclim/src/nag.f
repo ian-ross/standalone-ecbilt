@@ -621,7 +621,7 @@ C     .. Local Scalars ..
      *                  T3I, T3R, T4, T4I, T4R, T5, T5I, T5R, T6, T6I,
      *                  T6R, T7, T7I, T7R, T8I, T8R, T9I, T9R, X1P, X2P,
      *                  X3P, X4P, Y1P, Y2P, Y3P, Y4P
-      INTEGER           I, K, KP, R2
+      INTEGER           I, K, KP
 C     .. Intrinsic Functions ..
       INTRINSIC         MOD
 C     .. Executable Statements ..
@@ -912,7 +912,7 @@ C     .. Array Arguments ..
 C     .. Local Scalars ..
       DOUBLE PRECISION  C2K, CK, S2K, SK, T1, T1I, T1R, T2I, T2R, T3I,
      *                  T3R, X1P, X2P, Y1P, Y2P
-      INTEGER           I, K, KP, R2
+      INTEGER           I, K, KP
 C     .. Intrinsic Functions ..
       INTRINSIC         MOD
 C     .. Executable Statements ..
@@ -1010,7 +1010,7 @@ C     .. Array Arguments ..
      *                  COSINE(0:R-1), SINE(0:R-1)
 C     .. Local Scalars ..
       DOUBLE PRECISION  CK, SK, X1, Y1
-      INTEGER           I, K, KP, R2
+      INTEGER           I, K, KP
 C     .. Intrinsic Functions ..
       INTRINSIC         MOD
 C     .. Executable Statements ..
@@ -1175,7 +1175,7 @@ C     .. External Functions ..
 C     .. Intrinsic Functions ..
       INTRINSIC         COS, SIN, DBLE
 C     .. Executable Statements ..
-      TWOPI = 2.0D0*X01AAF(0.0D0)
+      TWOPI = 2.0D0*X01AAF()
       Z = TWOPI/DBLE(N)
 C
       R = N
@@ -1886,7 +1886,7 @@ C     .. Local Scalars ..
      *                  T6, T6I, T6R, T7, T7I, T7R, T8, T8I, T8R, T9,
      *                  T9I, T9R, X0P, X1P, X2P, X3P, X4P, Y0P, Y1P,
      *                  Y2P, Y3P, Y4P
-      INTEGER           I, K, KP, R2
+      INTEGER           I, K, KP
 C     .. Intrinsic Functions ..
       INTRINSIC         MOD
 C     .. Executable Statements ..
@@ -2191,7 +2191,7 @@ C     .. Array Arguments ..
 C     .. Local Scalars ..
       DOUBLE PRECISION  C2K, CK, S2K, SK, T1, T1I, T1R, T2, T2I, T2R,
      *                  T3, T3I, T3R, X0P, X1P, X2P, Y0P, Y1P, Y2P
-      INTEGER           I, K, KP, R2
+      INTEGER           I, K, KP
 C     .. Intrinsic Functions ..
       INTRINSIC         MOD
 C     .. Executable Statements ..
@@ -2297,7 +2297,7 @@ C     .. Array Arguments ..
      *                  COSINE(0:R-1), SINE(0:R-1)
 C     .. Local Scalars ..
       DOUBLE PRECISION  CK, SK, X1HAT, Y1HAT
-      INTEGER           I, K, KP, R2
+      INTEGER           I, K, KP
 C     .. Intrinsic Functions ..
       INTRINSIC         MOD
 C     .. Executable Statements ..
@@ -2538,7 +2538,7 @@ C     *************************************************************
 C     .. Executable Statements ..
       STOP
       END
-      DOUBLE PRECISION FUNCTION X01AAF(X)
+      DOUBLE PRECISION FUNCTION X01AAF()
 C     MARK 8 RE-ISSUE. NAG COPYRIGHT 1980.
 C     MARK 11.5(F77) REVISED. (SEPT 1985.)
 C
@@ -2556,20 +2556,16 @@ C     .             POINT NUMBERS
 C     . AND  IT  IS THE NUMBER OF IB-ARY DIGITS IN THE MANTISSA OF
 C     .             A FLOATING-POINT NUMBER.
 C
-C     .. Scalar Arguments ..
-      DOUBLE PRECISION                 X
 C     .. Executable Statements ..
       X01AAF = 3.14159265358979323846264338328D0
       RETURN
       END
-      DOUBLE PRECISION FUNCTION X02ABF(X)
+      DOUBLE PRECISION FUNCTION X02ABF()
 C     MARK 12 RE-ISSUE. NAG COPYRIGHT 1986.
 C
 C     RETURNS  B**(EMIN-1)  (THE SMALLEST POSITIVE MODEL NUMBER)
 C     I.E. RETURNS THE SAME VALUE AS X02AKF
 C
-C     .. Scalar Arguments ..
-      DOUBLE PRECISION          X
 C     .. External Functions ..
       DOUBLE PRECISION          X02AKF
       EXTERNAL                  X02AKF
@@ -2640,7 +2636,7 @@ C     .. Executable Statements ..
       X02BJF =    53
       RETURN
       END
-      LOGICAL FUNCTION X02DAF(X)
+      LOGICAL FUNCTION X02DAF()
 C     MARK 8 RELEASE. NAG COPYRIGHT 1980.
 C     MARK 11.5(F77) REVISED. (SEPT 1985.)
 C
@@ -2653,8 +2649,6 @@ C     (USUALLY AT SOME COST IN EFFICIENCY).
 C
 C     X IS A DUMMY ARGUMENT
 C
-C     .. Scalar Arguments ..
-      DOUBLE PRECISION        X
 C     .. Executable Statements ..
       X02DAF = .FALSE.
       RETURN
@@ -2741,7 +2735,7 @@ C     .. Data statements ..
 C     .. Executable Statements ..
       Y = DBLE(M)
       Z = DBLE(N)
-      X = MIN(Y,Z) + (ABS(Z-Y)+ONE)*G05CAF(X)
+      X = MIN(Y,Z) + (ABS(Z-Y)+ONE)*G05CAF()
       I = INT(X)
       IF (DBLE(I).GT.X) I = I - 1
 C     ON A MACHINE WHICH OVERFLOWS WHEN COMPARING THE LARGEST (MOST
@@ -2809,7 +2803,7 @@ C     .. Executable Statements ..
       Q = DBLE(N)
       J = 1
       DO 40 I = 1, N
-         IF (Q*G05CAF(0.0D0).GT.P) GO TO 20
+         IF (Q*G05CAF().GT.P) GO TO 20
          IZ(J) = IA(I)
          J = J + 1
          P = P - ONE
@@ -3268,7 +3262,7 @@ C
 C
       RETURN
       END
-      DOUBLE PRECISION FUNCTION G05CAF(X)
+      DOUBLE PRECISION FUNCTION G05CAF()
 C     MARK 14 RE-ISSUE. NAG COPYRIGHT 1989.
 C
 C     Returns a pseudo-random number uniformly distributed between
@@ -3288,8 +3282,6 @@ C
 C     .. Parameters ..
       INTEGER                          LV
       PARAMETER                        (LV=63)
-C     .. Scalar Arguments ..
-      DOUBLE PRECISION                 X
 C     .. Scalars in Common ..
       INTEGER                          KV
 C     .. Arrays in Common ..
@@ -3318,4 +3310,3 @@ C
       G05CAF = RV(KV)
       RETURN
       END
-

@@ -39,8 +39,7 @@
       include 'comdiag.h'
       include 'comoutlocal.h'
 
-      integer i,j,k,l,istep
-      integer idmean,idstd
+      integer i,j,k,istep
       real*8  facstr,costt,sintt,pfac,psifac,qpfac
 
       ivlevel(1) = 200
@@ -69,14 +68,14 @@
         costt=cos(dragane(i))
         sintt=sin(dragane(i))
         do j=1,nlon
-	  do k=1,3
-            qgpv(i,j,k) = qgpv(i,j,k)*qpfac
-            psig(i,j,k) = psig(i,j,k)*psifac
-	  enddo
+          do k=1,3
+             qgpv(i,j,k) = qgpv(i,j,k)*qpfac
+             psig(i,j,k) = psig(i,j,k)*psifac
+          enddo
           dyrain1(i,j) = (dyrain(i,j)+dysnow(i,j))*pfac
           corain1(i,j) = (corain(i,j)+cosnow(i,j))*pfac
           torain1(i,j) = (torain(i,j)+tosnow(i,j))*pfac
-	  snow1(i,j)   = tosnow(i,j)*pfac
+          snow1(i,j)   = tosnow(i,j)*pfac
           evap1(i,j)   = evap(i,j)*pfac
           runofl1(i,j) = arunofl(i,j)*pfac
           runofo1(i,j) = arunofo(i,j)*pfac
@@ -363,13 +362,13 @@
       INCLUDE 'comoutlocal.h'
 
       INTERFACE
-         SUBROUTINE totstat(xx,sumxx,sumxxsq,xxm,xxdev,compute)
+         SUBROUTINE wtotstat(xx,sumxx,sumxxsq,xxm,xxdev,compute)
          IMPLICIT NONE
          REAL*8, DIMENSION(:,:),   INTENT(in)    :: xx
          REAL*8, DIMENSION(:,:,:), INTENT(inout) :: sumxx, sumxxsq
          REAL*8, DIMENSION(:,:),   INTENT(out)   :: xxm, xxdev
          LOGICAL,                  INTENT(in)    :: compute
-         END SUBROUTINE totstat
+         END SUBROUTINE wtotstat
       END INTERFACE
 
       INTEGER, PARAMETER :: IOFlag = 3
@@ -396,7 +395,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Temperature,IOFlag))) THEN
-         CALL totstat(tsurf1(1:nlat,1:nlon), &
+         CALL wtotstat(tsurf1(1:nlat,1:nlon), &
      &        sxtsurf(1:nlat,1:nlon,1:12), sytsurf(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,1),    stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -406,19 +405,19 @@
       END IF
 
       IF (output(newtotvar(Temperature,IOFlag))) THEN
-         CALL totstat(temp0g1(1:nlat,1:nlon), &
+         CALL wtotstat(temp0g1(1:nlat,1:nlon), &
      &        sxtstrat(1:nlat,1:nlon,1:12),sytstrat(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(temp2g1(1:nlat,1:nlon), &
+         CALL wtotstat(temp2g1(1:nlat,1:nlon), &
      &        sxtemp2g(1:nlat,1:nlon,1:12),sytemp2g(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,2),   stddev  (1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(temp4g1(1:nlat,1:nlon), &
+         CALL wtotstat(temp4g1(1:nlat,1:nlon), &
      &        sxtemp4g(1:nlat,1:nlon,1:12),sytemp4g(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,3),   stddev  (1:nlat,1:nlon,3), &
      &        need_to_write)
-         CALL totstat(tempsg1(1:nlat,1:nlon), &
+         CALL wtotstat(tempsg1(1:nlat,1:nlon), &
      &        sxtempsg(1:nlat,1:nlon,1:12),sytempsg(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,4),   stddev  (1:nlat,1:nlon,4), &
      &        need_to_write)
@@ -428,7 +427,7 @@
       END IF
 
       IF (output(newtotvar(Stratospheric_Temperature,IOFlag))) THEN
-         CALL totstat(temp0g1(1:nlat,1:nlon), &
+         CALL wtotstat(temp0g1(1:nlat,1:nlon), &
      &        sxtstrat(1:nlat,1:nlon,1:12), sytstrat(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),    stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -438,7 +437,7 @@
       END IF
 
       IF (output(newtotvar(Two_Meter_Temperature,IOFlag))) THEN
-         CALL totstat(tempsg1(1:nlat,1:nlon), &
+         CALL wtotstat(tempsg1(1:nlat,1:nlon), &
      &        sxt2m(1:nlat,1:nlon,1:12),syt2m (1:nlat,1:nlon,1:12), &
      &        mean (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -448,15 +447,15 @@
       END IF
 
       IF (output(newtotvar(Wind_U,IOFlag))) THEN
-         CALL totstat(u200(1:nlat,1:nlon), &
+         CALL wtotstat(u200(1:nlat,1:nlon), &
      &        sxu200(1:nlat,1:nlon,1:12),syu200(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(u500(1:nlat,1:nlon), &
+         CALL wtotstat(u500(1:nlat,1:nlon), &
      &        sxu500(1:nlat,1:nlon,1:12),syu500(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,2),   stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(u800(1:nlat,1:nlon), &
+         CALL wtotstat(u800(1:nlat,1:nlon), &
      &        sxu800(1:nlat,1:nlon,1:12),syu800(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,3),   stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -466,15 +465,15 @@
       END IF
 
       IF (output(newtotvar(Wind_V,IOFlag))) THEN
-         CALL totstat(v200(1:nlat,1:nlon), &
+         CALL wtotstat(v200(1:nlat,1:nlon), &
      &        sxv200(1:nlat,1:nlon,1:12),syv200(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(v500(1:nlat,1:nlon), &
+         CALL wtotstat(v500(1:nlat,1:nlon), &
      &        sxv500(1:nlat,1:nlon,1:12),syv500(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,2),   stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(v800(1:nlat,1:nlon), &
+         CALL wtotstat(v800(1:nlat,1:nlon), &
      &        sxv800(1:nlat,1:nlon,1:12),syv800(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,3),   stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -484,7 +483,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Pressure,IOFlag))) THEN
-         CALL totstat(pground(1:nlat,1:nlon), &
+         CALL wtotstat(pground(1:nlat,1:nlon), &
      &        sxpground(1:nlat,1:nlon,1:12),sypground(1:nlat,1:nlon,1:12), &
      &        mean     (1:nlat,1:nlon,1),   stddev   (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -494,15 +493,15 @@
       END IF
 
       IF (output(newtotvar(Vertical_Pressure_Wind,IOFlag))) THEN
-         CALL totstat(omegg(1:nlat,1:nlon,1), &
+         CALL wtotstat(omegg(1:nlat,1:nlon,1), &
      &        sxomeg1(1:nlat,1:nlon,1:12),syomeg1(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,1),   stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(omegg(1:nlat,1:nlon,2), &
+         CALL wtotstat(omegg(1:nlat,1:nlon,2), &
      &        sxomeg2(1:nlat,1:nlon,1:12),syomeg2(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,2),   stddev (1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(omegg(1:nlat,1:nlon,3), &
+         CALL wtotstat(omegg(1:nlat,1:nlon,3), &
      &        sxomeg3(1:nlat,1:nlon,1:12),syomeg3(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,3),   stddev (1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -512,7 +511,7 @@
       END IF
 
       IF (output(newtotvar(U_Stress,IOFlag))) THEN
-         CALL totstat(winstu1(1:nlat,1:nlon), &
+         CALL wtotstat(winstu1(1:nlat,1:nlon), &
      &        sxwinstu1(1:nlat,1:nlon,1:12),sywinstu1(1:nlat,1:nlon,1:12), &
      &        mean     (1:nlat,1:nlon,1),   stddev   (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -522,7 +521,7 @@
       END IF
 
       IF (output(newtotvar(V_Stress,IOFlag))) THEN
-         CALL totstat(winstv1(1:nlat,1:nlon), &
+         CALL wtotstat(winstv1(1:nlat,1:nlon), &
      &        sxwinstv1(1:nlat,1:nlon,1:12),sywinstv1(1:nlat,1:nlon,1:12), &
      &        mean     (1:nlat,1:nlon,1),   stddev   (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -532,7 +531,7 @@
       END IF
 
       IF (output(newtotvar(Wind_at_10_Meter,IOFlag))) THEN
-         CALL totstat(uv10(1:nlat,1:nlon), &
+         CALL wtotstat(uv10(1:nlat,1:nlon), &
      &        sxuv10(1:nlat,1:nlon,1:12),syuv10(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -542,15 +541,15 @@
       END IF
 
       IF (output(newtotvar(Ageostrophic_Wind_U,IOFlag))) THEN
-         CALL totstat(udivg(1:nlat,1:nlon,1), &
+         CALL wtotstat(udivg(1:nlat,1:nlon,1), &
      &        sxudivg1(1:nlat,1:nlon,1:12),syudivg1(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(udivg(1:nlat,1:nlon,2), &
+         CALL wtotstat(udivg(1:nlat,1:nlon,2), &
      &        sxudivg2(1:nlat,1:nlon,1:12),syudivg2(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,2),   stddev  (1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(udivg(1:nlat,1:nlon,3), &
+         CALL wtotstat(udivg(1:nlat,1:nlon,3), &
      &        sxudivg3(1:nlat,1:nlon,1:12),syudivg3(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,3),   stddev  (1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -560,15 +559,15 @@
       END IF
 
       IF (output(newtotvar(Ageostrophic_Wind_V,IOFlag))) THEN
-         CALL totstat(vdivg(1:nlat,1:nlon,1), &
+         CALL wtotstat(vdivg(1:nlat,1:nlon,1), &
      &        sxvdivg1(1:nlat,1:nlon,1:12),syvdivg1(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(vdivg(1:nlat,1:nlon,2), &
+         CALL wtotstat(vdivg(1:nlat,1:nlon,2), &
      &        sxvdivg2(1:nlat,1:nlon,1:12),syvdivg2(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,2),   stddev  (1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(vdivg(1:nlat,1:nlon,3), &
+         CALL wtotstat(vdivg(1:nlat,1:nlon,3), &
      &        sxvdivg3(1:nlat,1:nlon,1:12),syvdivg3(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,3),   stddev  (1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -578,15 +577,15 @@
       END IF
 
       IF (output(newtotvar(Stream_Function,IOFlag))) THEN
-         CALL totstat(psig(1:nlat,1:nlon,1), &
+         CALL wtotstat(psig(1:nlat,1:nlon,1), &
      &        sxgrpsi1(1:nlat,1:nlon,1:12),sygrpsi1(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(psig(1:nlat,1:nlon,2), &
+         CALL wtotstat(psig(1:nlat,1:nlon,2), &
      &        sxgrpsi2(1:nlat,1:nlon,1:12),sygrpsi2(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,2),   stddev  (1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(psig(1:nlat,1:nlon,3), &
+         CALL wtotstat(psig(1:nlat,1:nlon,3), &
      &        sxgrpsi3(1:nlat,1:nlon,1:12),sygrpsi3(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,3),   stddev  (1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -596,15 +595,15 @@
       END IF
 
       IF (output(newtotvar(Velocity_Potential,IOFlag))) THEN
-         CALL totstat(chig(1:nlat,1:nlon,1), &
+         CALL wtotstat(chig(1:nlat,1:nlon,1), &
      &        sxchi1(1:nlat,1:nlon,1:12),sychi1(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(chig(1:nlat,1:nlon,1), &
+         CALL wtotstat(chig(1:nlat,1:nlon,1), &
      &        sxchi2(1:nlat,1:nlon,1:12),sychi2(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,2),   stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(chig(1:nlat,1:nlon,1), &
+         CALL wtotstat(chig(1:nlat,1:nlon,1), &
      &        sxchi3(1:nlat,1:nlon,1:12),sychi3(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,3),   stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -614,15 +613,15 @@
       END IF
 
       IF (output(newtotvar(QG_Potential_Vorticity,IOFlag))) THEN
-         CALL totstat(qgpv(1:nlat,1:nlon,1), &
+         CALL wtotstat(qgpv(1:nlat,1:nlon,1), &
      &        sxqgpv1(1:nlat,1:nlon,1:12),syqgpv1(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,1),   stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(qgpv(1:nlat,1:nlon,2), &
+         CALL wtotstat(qgpv(1:nlat,1:nlon,2), &
      &        sxqgpv2(1:nlat,1:nlon,1:12),syqgpv2(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,2),   stddev (1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(qgpv(1:nlat,1:nlon,3), &
+         CALL wtotstat(qgpv(1:nlat,1:nlon,3), &
      &        sxqgpv3(1:nlat,1:nlon,1:12),syqgpv3(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,3),   stddev (1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -632,15 +631,15 @@
       END IF
 
       IF (output(newtotvar(Geopotential_Height,IOFlag))) THEN
-         CALL totstat(geopg(1:nlat,1:nlon,1), &
+         CALL wtotstat(geopg(1:nlat,1:nlon,1), &
      &        sxgh1(1:nlat,1:nlon,1:12),sygh1 (1:nlat,1:nlon,1:12), &
      &        mean (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(geopg(1:nlat,1:nlon,2), &
+         CALL wtotstat(geopg(1:nlat,1:nlon,2), &
      &        sxgh2(1:nlat,1:nlon,1:12),sygh2 (1:nlat,1:nlon,1:12), &
      &        mean (1:nlat,1:nlon,2),   stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(geopg(1:nlat,1:nlon,3), &
+         CALL wtotstat(geopg(1:nlat,1:nlon,3), &
      &        sxgh3(1:nlat,1:nlon,1:12),sygh3 (1:nlat,1:nlon,1:12), &
      &        mean (1:nlat,1:nlon,3),   stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -650,11 +649,11 @@
       END IF
 
       IF (output(newtotvar(Heating_Force,IOFlag))) THEN
-         CALL totstat(vhforg1(1:nlat,1:nlon), &
+         CALL wtotstat(vhforg1(1:nlat,1:nlon), &
      &        sxvhforg1(1:nlat,1:nlon,1:12),syvhforg1(1:nlat,1:nlon,1:12), &
      &        mean     (1:nlat,1:nlon,1),   stddev   (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(vhforg2(1:nlat,1:nlon), &
+         CALL wtotstat(vhforg2(1:nlat,1:nlon), &
      &        sxvhforg2(1:nlat,1:nlon,1:12),syvhforg2(1:nlat,1:nlon,1:12), &
      &        mean     (1:nlat,1:nlon,2),   stddev   (1:nlat,1:nlon,2), &
      &        need_to_write)
@@ -664,15 +663,15 @@
       END IF
 
       IF (output(newtotvar(Potential_Vorticity_Forcing,IOFlag))) THEN
-         CALL totstat(vforg1(1:nlat,1:nlon), &
+         CALL wtotstat(vforg1(1:nlat,1:nlon), &
      &        sxvforg1(1:nlat,1:nlon,1:12),syvforg1(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(vforg2(1:nlat,1:nlon), &
+         CALL wtotstat(vforg2(1:nlat,1:nlon), &
      &        sxvforg2(1:nlat,1:nlon,1:12),syvforg2(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,2),   stddev  (1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(vforg3(1:nlat,1:nlon), &
+         CALL wtotstat(vforg3(1:nlat,1:nlon), &
      &        sxvforg3(1:nlat,1:nlon,1:12),syvforg3(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,3),   stddev  (1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -682,7 +681,7 @@
       END IF
 
       IF (output(newtotvar(Large_Scale_Precipitation,IOFlag))) THEN
-         CALL totstat(dyrain1(1:nlat,1:nlon), &
+         CALL wtotstat(dyrain1(1:nlat,1:nlon), &
      &        sxdyrain(1:nlat,1:nlon,1:12),sydyrain(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -692,7 +691,7 @@
       END IF
 
       IF (output(newtotvar(Convective_Precipitation,IOFlag))) THEN
-         CALL totstat(corain1(1:nlat,1:nlon), &
+         CALL wtotstat(corain1(1:nlat,1:nlon), &
      &        sxcorain(1:nlat,1:nlon,1:12),sycorain(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -702,7 +701,7 @@
       END IF
 
       IF (output(newtotvar(Total_Precipitation,IOFlag))) THEN
-         CALL totstat(torain1(1:nlat,1:nlon), &
+         CALL wtotstat(torain1(1:nlat,1:nlon), &
      &        sxtorain(1:nlat,1:nlon,1:12),sytorain(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -712,7 +711,7 @@
       END IF
 
       IF (output(newtotvar(Total_Snow_Fall,IOFlag))) THEN
-         CALL totstat(snow1(1:nlat,1:nlon), &
+         CALL wtotstat(snow1(1:nlat,1:nlon), &
      &        sxsnow(1:nlat,1:nlon,1:12),sysnow(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -722,7 +721,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Evaporation,IOFlag))) THEN
-         CALL totstat(evap1(1:nlat,1:nlon), &
+         CALL wtotstat(evap1(1:nlat,1:nlon), &
      &        sxevap(1:nlat,1:nlon,1:12),syevap(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -732,7 +731,7 @@
       END IF
 
       IF (output(newtotvar(Evap_Minus_Precip,IOFlag))) THEN
-         CALL totstat(eminp1(1:nlat,1:nlon), &
+         CALL wtotstat(eminp1(1:nlat,1:nlon), &
      &        sxeminp(1:nlat,1:nlon,1:12),syeminp(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,1),   stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -742,7 +741,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Sensible_Heat_Flux,IOFlag))) THEN
-         CALL totstat(hflux(1:nlat,1:nlon), &
+         CALL wtotstat(hflux(1:nlat,1:nlon), &
      &        sxhflux(1:nlat,1:nlon,1:12),syhflux(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,1),   stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -752,7 +751,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Latent_Heat_Flux,IOFlag))) THEN
-         CALL totstat(eflux(1:nlat,1:nlon), &
+         CALL wtotstat(eflux(1:nlat,1:nlon), &
      &        sxeflux(1:nlat,1:nlon,1:12),syeflux(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,1),   stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -762,7 +761,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Solar_Radiation,IOFlag))) THEN
-         CALL totstat(hesws(1:nlat,1:nlon), &
+         CALL wtotstat(hesws(1:nlat,1:nlon), &
      &        sxhesws(1:nlat,1:nlon,1:12),syhesws(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,1),   stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -772,7 +771,7 @@
       END IF
 
       IF (output(newtotvar(Top_Solar_Radiation,IOFlag))) THEN
-         CALL totstat(hesw(1:nlat,1:nlon), &
+         CALL wtotstat(hesw(1:nlat,1:nlon), &
      &        sxhesw(1:nlat,1:nlon,1:12),syhesw(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -782,7 +781,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Albedo,IOFlag))) THEN
-         CALL totstat(alb2es(1:nlat,1:nlon), &
+         CALL wtotstat(alb2es(1:nlat,1:nlon), &
      &        sxalbes(1:nlat,1:nlon,1:12),syalbes(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,1),   stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -792,7 +791,7 @@
       END IF
 
       IF (output(newtotvar(Planetary_Albedo,IOFlag))) THEN
-         CALL totstat(albep(1:nlat,1:nlon), &
+         CALL wtotstat(albep(1:nlat,1:nlon), &
      &        sxalbep(1:nlat,1:nlon,1:12),syalbep(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,1),   stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -802,7 +801,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Thermal_Radiation,IOFlag))) THEN
-         CALL totstat(nlrads(1:nlat,1:nlon), &
+         CALL wtotstat(nlrads(1:nlat,1:nlon), &
      &        sxnlrads(1:nlat,1:nlon,1:12),synlrads(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -812,7 +811,7 @@
       END IF
 
       IF (output(newtotvar(Top_Thermal_Radiation,IOFlag))) THEN
-         CALL totstat(ulrad0(1:nlat,1:nlon), &
+         CALL wtotstat(ulrad0(1:nlat,1:nlon), &
      &        sxulrad1(1:nlat,1:nlon,1:12),syulrad1(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -822,7 +821,7 @@
       END IF
 
       IF (output(newtotvar(Bottom_Moisture,IOFlag))) THEN
-         CALL totstat(abmoisg(1:nlat,1:nlon), &
+         CALL wtotstat(abmoisg(1:nlat,1:nlon), &
      &        sxbmoisg(1:nlat,1:nlon,1:12),sybmoisg(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -832,7 +831,7 @@
       END IF
 
       IF (output(newtotvar(Land_Snow_Depth,IOFlag))) THEN
-         CALL totstat(adsnow(1:nlat,1:nlon), &
+         CALL wtotstat(adsnow(1:nlat,1:nlon), &
      &        sxdsnow(1:nlat,1:nlon,1:12),sydsnow(1:nlat,1:nlon,1:12), &
      &        mean   (1:nlat,1:nlon,1),   stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -842,7 +841,7 @@
       END IF
 
       IF (output(newtotvar(Sea_Ice_Thickness,IOFlag))) THEN
-         CALL totstat(ahic(1:nlat,1:nlon), &
+         CALL wtotstat(ahic(1:nlat,1:nlon), &
      &        sxhic(1:nlat,1:nlon,1:12),syhic (1:nlat,1:nlon,1:12), &
      &        mean (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -852,7 +851,7 @@
       END IF
 
       IF (output(newtotvar(Land_Surface_Runoff,IOFlag))) THEN
-         CALL totstat(runofl1(1:nlat,1:nlon), &
+         CALL wtotstat(runofl1(1:nlat,1:nlon), &
      &        sxrunofl(1:nlat,1:nlon,1:12),syrunofl(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -862,7 +861,7 @@
       END IF
 
       IF (output(newtotvar(Ocean_Surface_Runoff,IOFlag))) THEN
-         CALL totstat(runofo1(1:nlat,1:nlon), &
+         CALL wtotstat(runofo1(1:nlat,1:nlon), &
      &        sxrunofo(1:nlat,1:nlon,1:12),syrunofo(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -872,7 +871,7 @@
       END IF
 
       IF (output(newtotvar(Specific_Humidity,IOFlag))) THEN
-         CALL totstat(rmoisg(1:nlat,1:nlon), &
+         CALL wtotstat(rmoisg(1:nlat,1:nlon), &
      &        sxrmoisgw3(1:nlat,1:nlon,1:12),syrmoisgw3(1:nlat,1:nlon,1:12), &
      &        mean      (1:nlat,1:nlon,1),   stddev    (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -882,7 +881,7 @@
       END IF
 
       IF (output(newtotvar(Relative_Humidity,IOFlag))) THEN
-         CALL totstat(relhum(1:nlat,1:nlon), &
+         CALL wtotstat(relhum(1:nlat,1:nlon), &
      &        sxrelhum(1:nlat,1:nlon,1:12),syrelhum(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -892,7 +891,7 @@
       END IF
 
       IF (output(newtotvar(Drag_Coefficient_W,IOFlag))) THEN
-         CALL totstat(cdragw(1:nlat,1:nlon), &
+         CALL wtotstat(cdragw(1:nlat,1:nlon), &
      &        sxcdragw(1:nlat,1:nlon,1:12),sycdragw(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -902,7 +901,7 @@
       END IF
 
       IF (output(newtotvar(Drag_Coefficient_V,IOFlag))) THEN
-         CALL totstat(cdragv(1:nlat,1:nlon), &
+         CALL wtotstat(cdragv(1:nlat,1:nlon), &
      &        sxcdragv(1:nlat,1:nlon,1:12),sycdragv(1:nlat,1:nlon,1:12), &
      &        mean    (1:nlat,1:nlon,1),   stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -912,7 +911,7 @@
       END IF
 
       IF (output(newtotvar(Total_Cloud_Cover,IOFlag))) THEN
-         CALL totstat(tccd(1:nlat,1:nlon), &
+         CALL wtotstat(tccd(1:nlat,1:nlon), &
      &        sxtcc(1:nlat,1:nlon,1:12),sytcc (1:nlat,1:nlon,1:12), &
      &        mean (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -922,15 +921,15 @@
       END IF
 
       IF (output(newtotvar(User_Assigned_T1,IOFlag))) THEN
-         CALL totstat(dumt1(1:nlat,1:nlon,1), &
+         CALL wtotstat(dumt1(1:nlat,1:nlon,1), &
      &        sxdt11(1:nlat,1:nlon,1:12),sydt11(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(dumt1(1:nlat,1:nlon,2), &
+         CALL wtotstat(dumt1(1:nlat,1:nlon,2), &
      &        sxdt12(1:nlat,1:nlon,1:12),sydt12(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,2),   stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(dumt1(1:nlat,1:nlon,3), &
+         CALL wtotstat(dumt1(1:nlat,1:nlon,3), &
      &        sxdt13(1:nlat,1:nlon,1:12),sydt13(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,3),   stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -940,15 +939,15 @@
       END IF
 
       IF (output(newtotvar(User_Assigned_T2,IOFlag))) THEN
-         CALL totstat(dumt2(1:nlat,1:nlon,1), &
+         CALL wtotstat(dumt2(1:nlat,1:nlon,1), &
      &        sxdt21(1:nlat,1:nlon,1:12),sydt21(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(dumt2(1:nlat,1:nlon,2), &
+         CALL wtotstat(dumt2(1:nlat,1:nlon,2), &
      &        sxdt22(1:nlat,1:nlon,1:12),sydt22(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,2),   stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(dumt2(1:nlat,1:nlon,3), &
+         CALL wtotstat(dumt2(1:nlat,1:nlon,3), &
      &        sxdt23(1:nlat,1:nlon,1:12),sydt23(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,3),   stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -958,15 +957,15 @@
       END IF
 
       IF (output(newtotvar(User_Assigned_U1,IOFlag))) THEN
-         CALL totstat(dumu1(1:nlat,1:nlon,1), &
+         CALL wtotstat(dumu1(1:nlat,1:nlon,1), &
      &        sxdu11(1:nlat,1:nlon,1:12),sydu11(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(dumu1(1:nlat,1:nlon,2), &
+         CALL wtotstat(dumu1(1:nlat,1:nlon,2), &
      &        sxdu12(1:nlat,1:nlon,1:12),sydu12(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,2),   stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(dumu1(1:nlat,1:nlon,3), &
+         CALL wtotstat(dumu1(1:nlat,1:nlon,3), &
      &        sxdu13(1:nlat,1:nlon,1:12),sydu13(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,3),   stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -976,15 +975,15 @@
       END IF
 
       IF (output(newtotvar(User_Assigned_U2,IOFlag))) THEN
-         CALL totstat(dumu2(1:nlat,1:nlon,1), &
+         CALL wtotstat(dumu2(1:nlat,1:nlon,1), &
      &        sxdu21(1:nlat,1:nlon,1:12),sydu21(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,1),   stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL totstat(dumu2(1:nlat,1:nlon,2), &
+         CALL wtotstat(dumu2(1:nlat,1:nlon,2), &
      &        sxdu22(1:nlat,1:nlon,1:12),sydu22(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,2),   stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL totstat(dumu2(1:nlat,1:nlon,3), &
+         CALL wtotstat(dumu2(1:nlat,1:nlon,3), &
      &        sxdu23(1:nlat,1:nlon,1:12),sydu23(1:nlat,1:nlon,1:12), &
      &        mean  (1:nlat,1:nlon,3),   stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -999,7 +998,7 @@
       END
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      SUBROUTINE totstat(x,sumx1,sumy1,xmean,xstd,compute)
+      SUBROUTINE wtotstat(x,sumx1,sumy1,xmean,xstd,compute)
 ! *** --------------------------------------------------------------------
 ! *** This routine computes whole period monthly or seasonal mean and standard
 ! *** deviation around it.
@@ -1056,7 +1055,7 @@
       END IF
 
       RETURN
-      END SUBROUTINE totstat
+      END SUBROUTINE wtotstat
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       SUBROUTINE outputmyl
@@ -1078,13 +1077,13 @@
       INCLUDE 'comoutlocal.h'
 
       INTERFACE
-         SUBROUTINE stat(xx,sumxx,sumxxsq,xxm,xxdev,compute)
+         SUBROUTINE wstat(xx,sumxx,sumxxsq,xxm,xxdev,compute)
          IMPLICIT NONE
          REAL*8, DIMENSION(:,:), INTENT(in)    :: xx
          REAL*8, DIMENSION(:,:), INTENT(inout) :: sumxx, sumxxsq
          REAL*8, DIMENSION(:,:), INTENT(out)   :: xxm, xxdev
          LOGICAL,                INTENT(in)    :: compute
-         END SUBROUTINE stat
+         END SUBROUTINE wstat
       END INTERFACE
 
       INTEGER, PARAMETER :: IOFlag = 2
@@ -1105,7 +1104,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Temperature,IOFlag))) THEN
-         CALL stat(tsurf1(1:nlat,1:nlon), &
+         CALL wstat(tsurf1(1:nlat,1:nlon), &
      &        s1tsurf(1:nlat,1:nlon),  s2tsurf(1:nlat,1:nlon), &
      &        mean   (1:nlat,1:nlon,1),stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1115,19 +1114,19 @@
       END IF
 
       IF (output(newtotvar(Temperature,IOFlag))) THEN
-         CALL stat(temp0g1(1:nlat,1:nlon), &
+         CALL wstat(temp0g1(1:nlat,1:nlon), &
      &        s1tstrat(1:nlat,1:nlon),  s2tstrat(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(temp2g1(1:nlat,1:nlon), &
+         CALL wstat(temp2g1(1:nlat,1:nlon), &
      &        s1temp2g(1:nlat,1:nlon),  s2temp2g(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,2),stddev  (1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(temp4g1(1:nlat,1:nlon), &
+         CALL wstat(temp4g1(1:nlat,1:nlon), &
      &        s1temp4g(1:nlat,1:nlon),  s2temp4g(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,3),stddev  (1:nlat,1:nlon,3), &
      &        need_to_write)
-         CALL stat(tempsg1(1:nlat,1:nlon), &
+         CALL wstat(tempsg1(1:nlat,1:nlon), &
      &        s1tempsg(1:nlat,1:nlon),  s2tempsg(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,4),stddev  (1:nlat,1:nlon,4), &
      &        need_to_write)
@@ -1137,7 +1136,7 @@
       END IF
 
       IF (output(newtotvar(Stratospheric_Temperature,IOFlag))) THEN
-         CALL stat(temp0g1(1:nlat,1:nlon), &
+         CALL wstat(temp0g1(1:nlat,1:nlon), &
      &        s1tstrat(1:nlat,1:nlon),  s2tstrat(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1147,7 +1146,7 @@
       END IF
 
       IF (output(newtotvar(Two_Meter_Temperature,IOFlag))) THEN
-         CALL stat(tempsg1(1:nlat,1:nlon), &
+         CALL wstat(tempsg1(1:nlat,1:nlon), &
      &        s1t2m(1:nlat,1:nlon),  s2t2m (1:nlat,1:nlon), &
      &        mean (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1157,15 +1156,15 @@
       END IF
 
       IF (output(newtotvar(Wind_U,IOFlag))) THEN
-         CALL stat(u200(1:nlat,1:nlon), &
+         CALL wstat(u200(1:nlat,1:nlon), &
      &        s1u200(1:nlat,1:nlon),  s2u200(1:nlat,1:nlon), &
      &        mean  (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(u500(1:nlat,1:nlon), &
+         CALL wstat(u500(1:nlat,1:nlon), &
      &        s1u500(1:nlat,1:nlon),  s2u500(1:nlat,1:nlon), &
      &        mean  (1:nlat,1:nlon,2),stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(u800(1:nlat,1:nlon), &
+         CALL wstat(u800(1:nlat,1:nlon), &
      &        s1u800(1:nlat,1:nlon),  s2u800(1:nlat,1:nlon), &
      &        mean  (1:nlat,1:nlon,3),stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1175,15 +1174,15 @@
       END IF
 
       IF (output(newtotvar(Wind_V,IOFlag))) THEN
-         CALL stat(v200(1:nlat,1:nlon), &
+         CALL wstat(v200(1:nlat,1:nlon), &
      &        s1v200(1:nlat,1:nlon),  s2v200(1:nlat,1:nlon), &
      &        mean  (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(v500(1:nlat,1:nlon), &
+         CALL wstat(v500(1:nlat,1:nlon), &
      &        s1v500(1:nlat,1:nlon),  s2v500(1:nlat,1:nlon), &
      &        mean  (1:nlat,1:nlon,2),stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(v800(1:nlat,1:nlon), &
+         CALL wstat(v800(1:nlat,1:nlon), &
      &        s1v800(1:nlat,1:nlon),  s2v800(1:nlat,1:nlon), &
      &        mean  (1:nlat,1:nlon,3),stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1193,7 +1192,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Pressure,IOFlag))) THEN
-         CALL stat(pground(1:nlat,1:nlon), &
+         CALL wstat(pground(1:nlat,1:nlon), &
      &        s1pground(1:nlat,1:nlon),  s2pground(1:nlat,1:nlon), &
      &        mean     (1:nlat,1:nlon,1),stddev   (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1203,15 +1202,15 @@
       END IF
 
       IF (output(newtotvar(Vertical_Pressure_Wind,IOFlag))) THEN
-         CALL stat(omegg(1:nlat,1:nlon,1), &
+         CALL wstat(omegg(1:nlat,1:nlon,1), &
      &        s1omeg(1:nlat,1:nlon,1),s2omeg(1:nlat,1:nlon,1), &
      &        mean  (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(omegg(1:nlat,1:nlon,2), &
+         CALL wstat(omegg(1:nlat,1:nlon,2), &
      &        s1omeg(1:nlat,1:nlon,2),s2omeg(1:nlat,1:nlon,2), &
      &        mean  (1:nlat,1:nlon,2),stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(omegg(1:nlat,1:nlon,3), &
+         CALL wstat(omegg(1:nlat,1:nlon,3), &
      &        s1omeg(1:nlat,1:nlon,3),s2omeg(1:nlat,1:nlon,3), &
      &        mean  (1:nlat,1:nlon,3),stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1221,7 +1220,7 @@
       END IF
 
       IF (output(newtotvar(U_Stress,IOFlag))) THEN
-         CALL stat(winstu1(1:nlat,1:nlon), &
+         CALL wstat(winstu1(1:nlat,1:nlon), &
      &        s1winstu1(1:nlat,1:nlon),  s2winstu1(1:nlat,1:nlon), &
      &        mean     (1:nlat,1:nlon,1),stddev   (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1231,7 +1230,7 @@
       END IF
 
       IF (output(newtotvar(V_Stress,IOFlag))) THEN
-         CALL stat(winstv1(1:nlat,1:nlon), &
+         CALL wstat(winstv1(1:nlat,1:nlon), &
      &        s1winstv1(1:nlat,1:nlon),  s2winstv1(1:nlat,1:nlon), &
      &        mean     (1:nlat,1:nlon,1),stddev   (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1241,7 +1240,7 @@
       END IF
 
       IF (output(newtotvar(Wind_at_10_Meter,IOFlag))) THEN
-         CALL stat(uv10(1:nlat,1:nlon), &
+         CALL wstat(uv10(1:nlat,1:nlon), &
      &        s1uv10(1:nlat,1:nlon),  s2uv10(1:nlat,1:nlon), &
      &        mean  (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1251,15 +1250,15 @@
       END IF
 
       IF (output(newtotvar(Ageostrophic_Wind_U,IOFlag))) THEN
-         CALL stat(udivg(1:nlat,1:nlon,1), &
+         CALL wstat(udivg(1:nlat,1:nlon,1), &
      &        s1udivg(1:nlat,1:nlon,1),s2udivg(1:nlat,1:nlon,1), &
      &        mean   (1:nlat,1:nlon,1),stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(udivg(1:nlat,1:nlon,2), &
+         CALL wstat(udivg(1:nlat,1:nlon,2), &
      &        s1udivg(1:nlat,1:nlon,2),s2udivg(1:nlat,1:nlon,2), &
      &        mean   (1:nlat,1:nlon,2),stddev (1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(udivg(1:nlat,1:nlon,3), &
+         CALL wstat(udivg(1:nlat,1:nlon,3), &
      &        s1udivg(1:nlat,1:nlon,3),s2udivg(1:nlat,1:nlon,3), &
      &        mean   (1:nlat,1:nlon,3),stddev (1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1269,15 +1268,15 @@
       END IF
 
       IF (output(newtotvar(Ageostrophic_Wind_V,IOFlag))) THEN
-         CALL stat(vdivg(1:nlat,1:nlon,1), &
+         CALL wstat(vdivg(1:nlat,1:nlon,1), &
      &        s1vdivg(1:nlat,1:nlon,1),s2vdivg(1:nlat,1:nlon,1), &
      &        mean   (1:nlat,1:nlon,1),stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(vdivg(1:nlat,1:nlon,2), &
+         CALL wstat(vdivg(1:nlat,1:nlon,2), &
      &        s1vdivg(1:nlat,1:nlon,2),s2vdivg(1:nlat,1:nlon,2), &
      &        mean   (1:nlat,1:nlon,2),stddev (1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(vdivg(1:nlat,1:nlon,3), &
+         CALL wstat(vdivg(1:nlat,1:nlon,3), &
      &        s1vdivg(1:nlat,1:nlon,3),s2vdivg(1:nlat,1:nlon,3), &
      &        mean   (1:nlat,1:nlon,3),stddev (1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1287,15 +1286,15 @@
       END IF
 
       IF (output(newtotvar(Stream_Function,IOFlag))) THEN
-         CALL stat(psig(1:nlat,1:nlon,1), &
+         CALL wstat(psig(1:nlat,1:nlon,1), &
      &        s1psi(1:nlat,1:nlon,1),s2psi (1:nlat,1:nlon,1), &
      &        mean (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(psig(1:nlat,1:nlon,2), &
+         CALL wstat(psig(1:nlat,1:nlon,2), &
      &        s1psi(1:nlat,1:nlon,2),s2psi (1:nlat,1:nlon,2), &
      &        mean (1:nlat,1:nlon,2),stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(psig(1:nlat,1:nlon,3), &
+         CALL wstat(psig(1:nlat,1:nlon,3), &
      &        s1psi(1:nlat,1:nlon,3),s2psi (1:nlat,1:nlon,3), &
      &        mean (1:nlat,1:nlon,3),stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1305,15 +1304,15 @@
       END IF
 
       IF (output(newtotvar(Velocity_Potential,IOFlag))) THEN
-         CALL stat(chig(1:nlat,1:nlon,1), &
+         CALL wstat(chig(1:nlat,1:nlon,1), &
      &        s1chi(1:nlat,1:nlon,1),s2chi (1:nlat,1:nlon,1), &
      &        mean (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(chig(1:nlat,1:nlon,2), &
+         CALL wstat(chig(1:nlat,1:nlon,2), &
      &        s1chi(1:nlat,1:nlon,2),s2chi (1:nlat,1:nlon,2), &
      &        mean (1:nlat,1:nlon,2),stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(chig(1:nlat,1:nlon,3), &
+         CALL wstat(chig(1:nlat,1:nlon,3), &
      &        s1chi(1:nlat,1:nlon,3),s2chi (1:nlat,1:nlon,3), &
      &        mean (1:nlat,1:nlon,3),stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1323,15 +1322,15 @@
       END IF
 
       IF (output(newtotvar(QG_Potential_Vorticity,IOFlag))) THEN
-         CALL stat(qgpv(1:nlat,1:nlon,1), &
+         CALL wstat(qgpv(1:nlat,1:nlon,1), &
      &        s1qgpv(1:nlat,1:nlon,1),s2qgpv(1:nlat,1:nlon,1), &
      &        mean  (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(qgpv(1:nlat,1:nlon,2), &
+         CALL wstat(qgpv(1:nlat,1:nlon,2), &
      &        s1qgpv(1:nlat,1:nlon,2),s2qgpv(1:nlat,1:nlon,2), &
      &        mean  (1:nlat,1:nlon,2),stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(qgpv(1:nlat,1:nlon,3), &
+         CALL wstat(qgpv(1:nlat,1:nlon,3), &
      &        s1qgpv(1:nlat,1:nlon,3),s2qgpv(1:nlat,1:nlon,3), &
      &        mean  (1:nlat,1:nlon,3),stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1341,15 +1340,15 @@
       END IF
 
       IF (output(newtotvar(Geopotential_Height,IOFlag))) THEN
-         CALL stat(geopg(1:nlat,1:nlon,1), &
+         CALL wstat(geopg(1:nlat,1:nlon,1), &
      &        s1gh(1:nlat,1:nlon,1),s2gh  (1:nlat,1:nlon,1), &
      &        mean(1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(geopg(1:nlat,1:nlon,2), &
+         CALL wstat(geopg(1:nlat,1:nlon,2), &
      &        s1gh(1:nlat,1:nlon,2),s2gh  (1:nlat,1:nlon,2), &
      &        mean(1:nlat,1:nlon,2),stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(geopg(1:nlat,1:nlon,3), &
+         CALL wstat(geopg(1:nlat,1:nlon,3), &
      &        s1gh(1:nlat,1:nlon,3),s2gh  (1:nlat,1:nlon,3), &
      &        mean(1:nlat,1:nlon,3),stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1359,11 +1358,11 @@
       END IF
 
       IF (output(newtotvar(Heating_Force,IOFlag))) THEN
-         CALL stat(vhforg1(1:nlat,1:nlon), &
+         CALL wstat(vhforg1(1:nlat,1:nlon), &
      &        s1vhforg1(1:nlat,1:nlon),  s2vhforg1(1:nlat,1:nlon), &
      &        mean     (1:nlat,1:nlon,1),stddev   (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(vhforg2(1:nlat,1:nlon), &
+         CALL wstat(vhforg2(1:nlat,1:nlon), &
      &        s1vhforg2(1:nlat,1:nlon),  s2vhforg2(1:nlat,1:nlon), &
      &        mean     (1:nlat,1:nlon,2),stddev   (1:nlat,1:nlon,2), &
      &        need_to_write)
@@ -1373,15 +1372,15 @@
       END IF
 
       IF (output(newtotvar(Potential_Vorticity_Forcing,IOFlag))) THEN
-         CALL stat(vforg1(1:nlat,1:nlon), &
+         CALL wstat(vforg1(1:nlat,1:nlon), &
      &        s1vforg1(1:nlat,1:nlon),  s2vforg1(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(vforg2(1:nlat,1:nlon), &
+         CALL wstat(vforg2(1:nlat,1:nlon), &
      &        s1vforg2(1:nlat,1:nlon),  s2vforg2(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,2),stddev  (1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(vforg3(1:nlat,1:nlon), &
+         CALL wstat(vforg3(1:nlat,1:nlon), &
      &        s1vforg3(1:nlat,1:nlon),  s2vforg3(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,3),stddev  (1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1391,7 +1390,7 @@
       END IF
 
       IF (output(newtotvar(Large_Scale_Precipitation,IOFlag))) THEN
-         CALL stat(dyrain1(1:nlat,1:nlon), &
+         CALL wstat(dyrain1(1:nlat,1:nlon), &
      &        s1dyrain(1:nlat,1:nlon),  s2dyrain(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1401,7 +1400,7 @@
       END IF
 
       IF (output(newtotvar(Convective_Precipitation,IOFlag))) THEN
-         CALL stat(corain1(1:nlat,1:nlon), &
+         CALL wstat(corain1(1:nlat,1:nlon), &
      &        s1corain(1:nlat,1:nlon),  s2corain(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1411,7 +1410,7 @@
       END IF
 
       IF (output(newtotvar(Total_Precipitation,IOFlag))) THEN
-         CALL stat(torain1(1:nlat,1:nlon), &
+         CALL wstat(torain1(1:nlat,1:nlon), &
      &        s1torain(1:nlat,1:nlon),  s2torain(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1421,7 +1420,7 @@
       END IF
 
       IF (output(newtotvar(Total_Snow_Fall,IOFlag))) THEN
-         CALL stat(snow1(1:nlat,1:nlon), &
+         CALL wstat(snow1(1:nlat,1:nlon), &
      &        s1snow(1:nlat,1:nlon),  s2snow(1:nlat,1:nlon), &
      &        mean  (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1431,7 +1430,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Evaporation,IOFlag))) THEN
-         CALL stat(evap1(1:nlat,1:nlon), &
+         CALL wstat(evap1(1:nlat,1:nlon), &
      &        s1evap(1:nlat,1:nlon),  s2evap(1:nlat,1:nlon), &
      &        mean  (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1441,7 +1440,7 @@
       END IF
 
       IF (output(newtotvar(Evap_Minus_Precip,IOFlag))) THEN
-         CALL stat(eminp1(1:nlat,1:nlon), &
+         CALL wstat(eminp1(1:nlat,1:nlon), &
      &        s1eminp(1:nlat,1:nlon),  s2eminp(1:nlat,1:nlon), &
      &        mean   (1:nlat,1:nlon,1),stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1451,7 +1450,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Sensible_Heat_Flux,IOFlag))) THEN
-         CALL stat(hflux(1:nlat,1:nlon), &
+         CALL wstat(hflux(1:nlat,1:nlon), &
      &        s1hflux(1:nlat,1:nlon),  s2hflux(1:nlat,1:nlon), &
      &        mean   (1:nlat,1:nlon,1),stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1461,7 +1460,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Latent_Heat_Flux,IOFlag))) THEN
-         CALL stat(eflux(1:nlat,1:nlon), &
+         CALL wstat(eflux(1:nlat,1:nlon), &
      &        s1eflux(1:nlat,1:nlon),  s2eflux(1:nlat,1:nlon), &
      &        mean   (1:nlat,1:nlon,1),stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1471,7 +1470,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Solar_Radiation,IOFlag))) THEN
-         CALL stat(hesws(1:nlat,1:nlon), &
+         CALL wstat(hesws(1:nlat,1:nlon), &
      &        s1hesws(1:nlat,1:nlon),  s2hesws(1:nlat,1:nlon), &
      &        mean   (1:nlat,1:nlon,1),stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1481,7 +1480,7 @@
       END IF
 
       IF (output(newtotvar(Top_Solar_Radiation,IOFlag))) THEN
-         CALL stat(hesw(1:nlat,1:nlon), &
+         CALL wstat(hesw(1:nlat,1:nlon), &
      &        s1hesw(1:nlat,1:nlon),  s2hesw(1:nlat,1:nlon), &
      &        mean  (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1491,7 +1490,7 @@
       END IF
 
       IF (output(newtotvar(Top_Thermal_Radiation,IOFlag))) THEN
-         CALL stat(ulrad0(1:nlat,1:nlon), &
+         CALL wstat(ulrad0(1:nlat,1:nlon), &
      &        s1ulrad1(1:nlat,1:nlon),  s2ulrad1(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1501,7 +1500,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Thermal_Radiation,IOFlag))) THEN
-         CALL stat(nlrads(1:nlat,1:nlon), &
+         CALL wstat(nlrads(1:nlat,1:nlon), &
      &        s1nlrads(1:nlat,1:nlon),  s2nlrads(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1511,7 +1510,7 @@
       END IF
 
       IF (output(newtotvar(Surface_Albedo,IOFlag))) THEN
-         CALL stat(alb2es(1:nlat,1:nlon), &
+         CALL wstat(alb2es(1:nlat,1:nlon), &
      &        s1albes(1:nlat,1:nlon),  s2albes(1:nlat,1:nlon), &
      &        mean   (1:nlat,1:nlon,1),stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1521,7 +1520,7 @@
       END IF
 
       IF (output(newtotvar(Planetary_Albedo,IOFlag))) THEN
-         CALL stat(albep(1:nlat,1:nlon), &
+         CALL wstat(albep(1:nlat,1:nlon), &
      &        s1albep(1:nlat,1:nlon),  s2albep(1:nlat,1:nlon), &
      &        mean   (1:nlat,1:nlon,1),stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1531,7 +1530,7 @@
       END IF
 
       IF (output(newtotvar(Bottom_Moisture,IOFlag))) THEN
-         CALL stat(abmoisg(1:nlat,1:nlon), &
+         CALL wstat(abmoisg(1:nlat,1:nlon), &
      &        s1bmoisg(1:nlat,1:nlon),  s2bmoisg(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1541,7 +1540,7 @@
       END IF
 
       IF (output(newtotvar(Land_Snow_Depth,IOFlag))) THEN
-         CALL stat(adsnow(1:nlat,1:nlon), &
+         CALL wstat(adsnow(1:nlat,1:nlon), &
      &        s1dsnow(1:nlat,1:nlon),  s2dsnow(1:nlat,1:nlon), &
      &        mean   (1:nlat,1:nlon,1),stddev (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1551,7 +1550,7 @@
       END IF
 
       IF (output(newtotvar(Sea_Ice_Thickness,IOFlag))) THEN
-         CALL stat(ahic(1:nlat,1:nlon), &
+         CALL wstat(ahic(1:nlat,1:nlon), &
      &        s1hic(1:nlat,1:nlon),  s2hic (1:nlat,1:nlon), &
      &        mean (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1561,7 +1560,7 @@
       END IF
 
       IF (output(newtotvar(Land_Surface_Runoff,IOFlag))) THEN
-         CALL stat(runofl1(1:nlat,1:nlon), &
+         CALL wstat(runofl1(1:nlat,1:nlon), &
      &        s1runofl(1:nlat,1:nlon),  s2runofl(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1571,7 +1570,7 @@
       END IF
 
       IF (output(newtotvar(Ocean_Surface_Runoff,IOFlag))) THEN
-         CALL stat(runofo1(1:nlat,1:nlon), &
+         CALL wstat(runofo1(1:nlat,1:nlon), &
      &        s1runofo(1:nlat,1:nlon),  s2runofo(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1581,7 +1580,7 @@
       END IF
 
       IF (output(newtotvar(Specific_Humidity,IOFlag))) THEN
-         CALL stat(rmoisg(1:nlat,1:nlon), &
+         CALL wstat(rmoisg(1:nlat,1:nlon), &
      &        s1rmoisgw3(1:nlat,1:nlon),  s2rmoisgw3(1:nlat,1:nlon), &
      &        mean      (1:nlat,1:nlon,1),stddev    (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1591,7 +1590,7 @@
       END IF
 
       IF (output(newtotvar(Relative_Humidity,IOFlag))) THEN
-         CALL stat(relhum(1:nlat,1:nlon), &
+         CALL wstat(relhum(1:nlat,1:nlon), &
      &        s1relhum(1:nlat,1:nlon),  s2relhum(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1601,7 +1600,7 @@
       END IF
 
       IF (output(newtotvar(Drag_Coefficient_W,IOFlag))) THEN
-         CALL stat(cdragw(1:nlat,1:nlon), &
+         CALL wstat(cdragw(1:nlat,1:nlon), &
      &        s1cdragw(1:nlat,1:nlon),  s2cdragw(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1611,7 +1610,7 @@
       END IF
 
       IF (output(newtotvar(Drag_Coefficient_V,IOFlag))) THEN
-         CALL stat(cdragv(1:nlat,1:nlon), &
+         CALL wstat(cdragv(1:nlat,1:nlon), &
      &        s1cdragv(1:nlat,1:nlon),  s2cdragv(1:nlat,1:nlon), &
      &        mean    (1:nlat,1:nlon,1),stddev  (1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1621,7 +1620,7 @@
       END IF
 
       IF (output(newtotvar(Total_Cloud_Cover,IOFlag))) THEN
-         CALL stat(tccd(1:nlat,1:nlon), &
+         CALL wstat(tccd(1:nlat,1:nlon), &
      &        s1tcc(1:nlat,1:nlon),  s2tcc (1:nlat,1:nlon), &
      &        mean (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
@@ -1631,15 +1630,15 @@
       END IF
 
       IF (output(newtotvar(User_Assigned_T1,IOFlag))) THEN
-         CALL stat(dumt1(1:nlat,1:nlon,1), &
+         CALL wstat(dumt1(1:nlat,1:nlon,1), &
      &        s1dt1(1:nlat,1:nlon,1),s2dt1 (1:nlat,1:nlon,1), &
      &        mean (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(dumt1(1:nlat,1:nlon,2), &
+         CALL wstat(dumt1(1:nlat,1:nlon,2), &
      &        s1dt1(1:nlat,1:nlon,2),s2dt1 (1:nlat,1:nlon,2), &
      &        mean (1:nlat,1:nlon,2),stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(dumt1(1:nlat,1:nlon,3), &
+         CALL wstat(dumt1(1:nlat,1:nlon,3), &
      &        s1dt1(1:nlat,1:nlon,3),s2dt1 (1:nlat,1:nlon,3), &
      &        mean (1:nlat,1:nlon,3),stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1649,15 +1648,15 @@
       END IF
 
       IF (output(newtotvar(User_Assigned_T2,IOFlag))) THEN
-         CALL stat(dumt2(1:nlat,1:nlon,1), &
+         CALL wstat(dumt2(1:nlat,1:nlon,1), &
      &        s1dt2(1:nlat,1:nlon,1),s2dt2 (1:nlat,1:nlon,1), &
      &        mean (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(dumt2(1:nlat,1:nlon,2), &
+         CALL wstat(dumt2(1:nlat,1:nlon,2), &
      &        s1dt2(1:nlat,1:nlon,2),s2dt2 (1:nlat,1:nlon,2), &
      &        mean (1:nlat,1:nlon,2),stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(dumt2(1:nlat,1:nlon,3), &
+         CALL wstat(dumt2(1:nlat,1:nlon,3), &
      &        s1dt2(1:nlat,1:nlon,3),s2dt2 (1:nlat,1:nlon,3), &
      &        mean (1:nlat,1:nlon,3),stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1667,15 +1666,15 @@
       END IF
 
       IF (output(newtotvar(User_Assigned_U1,IOFlag))) THEN
-         CALL stat(dumu1(1:nlat,1:nlon,1), &
+         CALL wstat(dumu1(1:nlat,1:nlon,1), &
      &        s1du1(1:nlat,1:nlon,1),s2du1 (1:nlat,1:nlon,1), &
      &        mean (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(dumu1(1:nlat,1:nlon,2), &
+         CALL wstat(dumu1(1:nlat,1:nlon,2), &
      &        s1du1(1:nlat,1:nlon,2),s2du1 (1:nlat,1:nlon,2), &
      &        mean (1:nlat,1:nlon,2),stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(dumu1(1:nlat,1:nlon,3), &
+         CALL wstat(dumu1(1:nlat,1:nlon,3), &
      &        s1du1(1:nlat,1:nlon,3),s2du1 (1:nlat,1:nlon,3), &
      &        mean (1:nlat,1:nlon,3),stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1685,15 +1684,15 @@
       END IF
 
       IF (output(newtotvar(User_Assigned_U2,IOFlag))) THEN
-         CALL stat(dumu2(1:nlat,1:nlon,1), &
+         CALL wstat(dumu2(1:nlat,1:nlon,1), &
      &        s1du2(1:nlat,1:nlon,1),s2du2 (1:nlat,1:nlon,1), &
      &        mean (1:nlat,1:nlon,1),stddev(1:nlat,1:nlon,1), &
      &        need_to_write)
-         CALL stat(dumu2(1:nlat,1:nlon,2), &
+         CALL wstat(dumu2(1:nlat,1:nlon,2), &
      &        s1du2(1:nlat,1:nlon,2),s2du2 (1:nlat,1:nlon,2), &
      &        mean (1:nlat,1:nlon,2),stddev(1:nlat,1:nlon,2), &
      &        need_to_write)
-         CALL stat(dumu2(1:nlat,1:nlon,3), &
+         CALL wstat(dumu2(1:nlat,1:nlon,3), &
      &        s1du2(1:nlat,1:nlon,3),s2du2 (1:nlat,1:nlon,3), &
      &        mean (1:nlat,1:nlon,3),stddev(1:nlat,1:nlon,3), &
      &        need_to_write)
@@ -1708,7 +1707,7 @@
       END SUBROUTINE outputmyl
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      SUBROUTINE stat(xx,sumxx,sumxxsq,xxm,xxdev,compute)
+      SUBROUTINE wstat(xx,sumxx,sumxxsq,xxm,xxdev,compute)
 !-----------------------------------------------------------------------
 ! *** this function sums xx and its square and computes the means and
 ! *** standard deviation at the end of a summation interval. The return
@@ -1747,7 +1746,7 @@
       END IF
 
       RETURN
-      END SUBROUTINE stat
+      END SUBROUTINE wstat
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012

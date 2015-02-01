@@ -17,22 +17,10 @@
       include 'comunit.h'
       INCLUDE 'comrunlabel.h'
 
-      integer i,j,k1,k2,k,l,m,n,ifail,ii,jj,i1,j1,nn
-      real*8  pigr4,dis,dif,rll,ininag(nlat,nlon),asum
-      real*8  r1,a,b,c,d,e,sqn,rsqn
-      real*8  rnorm,rh0,dd
-      real*8  agg(nlat,nlon), agg1(nlat,nlon), agg2(nlat,nlon)
-      REAL(KIND=8), DIMENSION(:,:), ALLOCATABLE :: zagg1, zagg2
-      real*8  areafac
-      real*8  spv
+      integer i,j,k,l
+      real*8  sqn,rsqn
       character*6 numyear
       character*3 numday
-
-      ! netcdf file
-      !LGM variable
-      INTEGER :: idd_time, idf_berg, idv_time, idv_h, idv_sfric, istatus
-      INTEGER :: ntime_berg, itime_berg
-      INTEGER, DIMENSION(:)  , ALLOCATABLE :: nvtime_berg
 
       read (iuo+1) nshm, ll
 
@@ -102,8 +90,6 @@
         read(iuo+95) qprime,for
         close(iuo+95)
       endif
-
-  910 format(10e12.5)
 
       return
       end
@@ -302,7 +288,7 @@
       include 'comatm.h'
       include 'comdyn.h'
 
-      integer i,j,k
+      integer i,j
       real*8  psiloc(nsh2), pvor(nsh2), sjacob(nsh2),vv(nsh2)
       real*8  dpsidl(nlat,nlon), dpsidm(nlat,nlon), dvordl(nlat,nlon), &
            & dvordm(nlat,nlon), gjacob(nlat,nlon), dpsidls(nsh2)
@@ -345,8 +331,8 @@
       include 'comatm.h'
       include 'comdyn.h'
 
-      integer i,j,k
-      real*8  psiloc(nsh2), sjacob(nsh2),vv(nsh2)
+      integer i,j
+      real*8  psiloc(nsh2), sjacob(nsh2)
       real*8  dpsidl(nlat,nlon), dpsidm(nlat,nlon), &
            & gjacob(nlat,nlon), dpsidls(nsh2)
 
@@ -467,7 +453,7 @@
       include 'comatm.h'
       include 'comdyn.h'
 
-      integer ir,ifail,j,k,k1,k2,m,mi,mr,nlon1,i
+      integer ir,ifail,k,k1,k2,m,mi,mr,nlon1,i
       real*8  as(nsh,2), agg(nlat,nlon)
 !
 ! *** fourier transform
@@ -713,7 +699,7 @@
       include 'comatm.h'
       include 'comdyn.h'
 
-      real*8  qin(nsh2,nvl),tus(nsh2,ntl), r3,sfout(nsh2,nvl)
+      real*8  qin(nsh2,nvl),tus(nsh2,ntl),sfout(nsh2,nvl)
       integer k
 
       do k=1,nsh2
@@ -892,8 +878,8 @@
       include 'comdyn.h'
       include 'comphys.h'
 
-      integer i,j,l,k
-      real*8  dmu(nlat),cdim,sdim,tempfac(ntl)
+      integer i,j,l
+      real*8  dmu(nlat),cdim
       real*8  delpsis(nsh2),delpsig(nlat,nlon)
       real*8  dmupsig(nlat,nlon),delgeog(nlat,nlon)
       real*8  delgeos(nsh2),geos(nsh2)
@@ -952,7 +938,6 @@
       real*8  adoro(nsh2),adpsit(nsh2,ntl),dpsitdt(nsh2,ntl)
       real*8  facom(nvl),facoc
       real*8  facd1,facd2
-      real*8  facekm
       real*8  omegsd(nsh2)
 
       facom(1)=(dp*om)/(rrdef1**2*fzero)
@@ -1104,7 +1089,7 @@
          do k=1,nsh2
            x(k)=r2*divs(k,l)*rinhel(k,1)
            chi(k,l)=x(k)
-	 enddo
+        enddo
 
          call sptogg(x,chig(1,1,l),pp)
 
@@ -1201,7 +1186,7 @@
       include 'comatm.h'
       include 'comdyn.h'
 
-      integer i,j,k,l
+      integer i,j,l
 
       do l=1,nvl
 
@@ -1303,17 +1288,16 @@
       include'comunit.h'
       INCLUDE 'comrunlabel.h'
 
-      real*8 asum,spv
-      integer i,j,i1,j1,ii,jj
+      integer i,j
 
-      integer k1,k2,k,l,m,n,ifail,nn
+      integer k1,k2,k,m,ifail
       real*8  pigr4,dis,dif,rll,ininag(nlat,nlon)
-      real*8  r1,a,b,c,d,e,sqn,rsqn
+      real*8  r1,a,b,c,d,e
       real*8  rnorm,rh0,dd
       real*8  agg(nlat,nlon), agg1(nlat,nlon), agg2(nlat,nlon)
       REAL(KIND=8), DIMENSION(:,:), ALLOCATABLE :: zagg1, zagg2
       real*8  fmu(nlat,2)
-      real*8  wsx(nsh2),areafac
+      real*8  wsx(nsh2)
 
       INTEGER :: idd_time, idf_berg, idv_time, idv_h, idv_sfric, istatus
       INTEGER :: ntime_berg, itime_berg

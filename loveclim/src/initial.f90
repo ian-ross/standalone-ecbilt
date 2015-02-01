@@ -43,7 +43,7 @@
       real*8  ari(nlat/2)
       real*8  rj,rw,dumwei
 
-      integer ilat,k,ird,i,j
+      integer ilat,ird,i,j
 
 ! *** constants
 ! *** rlatvap: latent heat of condensation in J/kg
@@ -167,11 +167,11 @@
 
       do j=1,nlon
         do i=1,nlat
-	  fractoc(i,j)=fracto(i,j)
-          fractn(i,j,noc)=fractoc(i,j)
-          fractn(i,j,nld)=1-fractoc(i,j)
-          fractn(i,j,nse)=0.0
-	enddo
+           fractoc(i,j)=fracto(i,j)
+           fractn(i,j,noc)=fractoc(i,j)
+           fractn(i,j,nld)=1-fractoc(i,j)
+           fractn(i,j,nse)=0.0
+        enddo
       enddo
 
 !      do j=nlat,1,-1
@@ -217,7 +217,7 @@
      &                     albocef,tsi,bup,AMPWIR,EXPIR,HPROFTROP, &
      &                     HPROFEQ,HPROFW,AMPEQIR,HPROFAN,AMPANIR, &
      &                     eccf,oblf,omwebf,AMPANIR2,HPROFAN2
-      NAMELIST /satfor/   isatfor,nbsatfor,nafyear,iclimflux
+      NAMELIST /satfor/   nbsatfor,nafyear
       NAMELIST /fluxpar/ cdrag,cwdrag,dragan,dragla,uv10rfx,uv10m, &
      &                   uv10rws,ndayws
       NAMELIST /fluxcorw/ corAN,corPN,corAC,corID,corAS,corPS, &
@@ -308,7 +308,6 @@
 ! nbsatfor:   first year in the integrations to start saving nafyears  C
 !             of data                                                  C
 ! nafyear:    number of years of data to save                          C
-! iclimflux:  if (1) daily climatological sst and heatflux are output  C
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
       iadyn    = 1
@@ -400,12 +399,8 @@
       HPROFAN2  = 1.0
       AMPANIR2  = 1.0
 
-
-      isatfor = 0
       nbsatfor= 0
       nafyear = 0
-      iclimflux = 0
-
 
       read(iuo+46, NML = runatctl)
       read(iuo+46, NML = dispar)
@@ -490,14 +485,12 @@
 
       write(iuo+30, 910) 'solarc   =', solarc
       write(iuo+30, 900) 'iradcloud=', iradcloud
-      write(iuo+30, 900) 'ghg =',      ghg
-      write(iuo+30, 900) 'tsi =',      tsi
+      write(iuo+30, 920) 'ghg =',      ghg
+      write(iuo+30, 910) 'tsi =',      tsi
       write(iuo+30, 910) 'bup      =', bup
 
-      write(iuo+30, 900) 'isatfor  =', isatfor
       write(iuo+30, 900) 'nbsatfor =', nbsatfor
       write(iuo+30, 900) 'nafyear  =', nafyear
-      write(iuo+30, 900) 'iclimflux=', iclimflux
 
       call flush(iuo+30)
       emisn(noc)=emisoc
@@ -507,6 +500,7 @@
 
 900   format(a12,1x,i6)
 910   format(a12,1x,e12.5)
+920   format(a12,1x,20e12.5)
 
       return
       end
@@ -524,7 +518,6 @@
       include 'comunit.h'
 
       character*60 part1
-      integer      totvar(80,20)
       integer      i,l
 
 

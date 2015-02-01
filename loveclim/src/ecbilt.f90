@@ -75,7 +75,7 @@
       integer istep
 
       call mdldate(istep)
-      call solar(istep)
+      call solar
       call atmstate
       call vortfor
 
@@ -92,10 +92,10 @@
       include 'comatm.h'
       include 'comemic.h'
 
-      integer i,j,istep
+      integer istep
 
       if ( mod(istep,iatm) .eq. 0) then
-        call testecbilt(istep)
+        call testecbilt
       endif
 
 !      call moischeck(istep)
@@ -106,7 +106,7 @@
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine testecbilt(istep)
+      subroutine testecbilt
 !-----------------------------------------------------------------------
 ! *** testing if model variables are inside prescribed ranges
 !-----------------------------------------------------------------------
@@ -119,15 +119,11 @@
       include 'comemic.h'
       include 'comunit.h'
 
-      integer i,j,istep
-      real*8  tsurfmean,globalmean,dum1,dum2
+      integer i,j
+      real*8  tsurfmean,globalmean
       character*12 chts
       real*8  moc,tmc,tmc0,cland,thex
       common/IPCC_out2/moc,tmc,tmc0,tsurfmean,cland,thex
-
-!      dum1=globalmean(ulrads)
-!      dum2=globalmean(dlrads)
-!      write(*,*) istep,dum1,dum2
 
       do j=1,nlon
         do i=1,nlat
@@ -163,7 +159,6 @@
       endif
 
   110 format(i8,i8,f7.2)
-  100 format(f7.2)
 
       return
       end
