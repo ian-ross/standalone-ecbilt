@@ -1,0 +1,69 @@
+#!/bin/bash
+
+BASE=/home/iross/projects/genie/code/standalone-ecbilt/loveclim
+UTLDIR=$BASE/utils
+export FIXDIR=$BASE/fixed-data
+export SRCDIR=$1
+export DSTDIR=$2
+export TMPDIR=$DSTDIR/tmp
+
+# Set up destination.
+echo "******  SETTING UP DESTINATION  ******"
+/bin/rm -fr $DSTDIR
+mkdir -p $DSTDIR
+mkdir -p $DSTDIR/inputdata
+mkdir -p $TMPDIR
+
+# Copy fixed gauss.asc, coef.dat, darea.dat, SUL.nc, labas.dat.
+echo "******  COPYING FIXED FILES  ******"
+cp $FIXDIR/gauss.asc $DSTDIR/inputdata
+cp $FIXDIR/coef.dat $DSTDIR/inputdata
+cp $FIXDIR/darea.dat $DSTDIR/inputdata
+cp $FIXDIR/sea_albedo.dat $DSTDIR/inputdata
+cp $FIXDIR/albsnow.dat $DSTDIR/inputdata
+cp $SRCDIR/SUL.nc $DSTDIR/inputdata
+cp $SRCDIR/labas.dat $DSTDIR/inputdata
+
+# Generate fractoc.dat and berg.nc from UM land/sea mask and
+# orography.
+echo "******  LAND/SEA MASK  ******"
+ncl $UTLDIR/convert-land-mask.ncl
+echo "******  OROGRAPHY  ******"
+ncl $UTLDIR/convert-orog.ncl
+
+# Generate seaice.dat and sst_daily.dat from UM data (NCL scripts and
+# code derived from "original" inputfiles).
+echo "******  SST  ******"
+ncl $UTLDIR/convert-sst.ncl
+pushd $TMPDIR
+$UTLDIR/convert-sst-from-nc
+popd
+mv $TMPDIR/sst_daily.dat $DSTDIR/inputdata
+echo "******  SEA ICE  ******"
+ncl $UTLDIR/convert-sea-ice.ncl
+
+# Generate land_albedo.dat by regridding original land_albedo.dat.
+echo "******  LAND ALBEDO  ******"
+ncl $UTLDIR/convert-albedo.ncl
+
+# Generate forfr.dat from UM vegetation data.
+echo "******  FOREST FRACTION  ******"
+ncl $UTLDIR/convert-forest-fraction.ncl
+
+# Generate swrcoef.dat and swrref.dat (write-swr).
+echo "******  SW RADIATION COEFFICIENTS  ******"
+pushd $FIXDIR/sw-radiation
+$UTLDIR/write-swr
+popd
+cp $FIXDIR/sw-radiation/swrcoef.dat $DSTDIR/inputdata
+cp $FIXDIR/sw-radiation/swrref.dat $DSTDIR/inputdata
+
+# Generate lwrcoef.dat and lwrref.dat (write-lwr).
+echo "******  LW RADIATION COEFFICIENTS  ******"
+pushd $TMPDIR
+ln -s $FIXDIR/lw-radiation
+$UTLDIR/convert-orog-ascii-to-dat
+$UTLDIR/write-lwr
+popd
+mv $TMPDIR/lwrref.dat $DSTDIR/inputdata
+mv $TMPDIR/lwrcoef.dat $DSTDIR/inputdata

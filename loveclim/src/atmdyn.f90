@@ -1299,9 +1299,7 @@
       real*8  fmu(nlat,2)
       real*8  wsx(nsh2)
 
-      INTEGER :: idd_time, idf_berg, idv_time, idv_h, idv_sfric, istatus
-      INTEGER :: ntime_berg, itime_berg
-      INTEGER, DIMENSION(:)  , ALLOCATABLE :: nvtime_berg
+      INTEGER :: idf_berg, idv_h, idv_sfric, istatus
 
 !-pour changer topo (dyn+thermo), mettre le nouveau champ dans
 !-rmount_ism(verifier les flgism):
@@ -1392,33 +1390,15 @@
 
       ! LOAD netcdf forcing file
       istatus=NF90_OPEN("inputdata/berg.nc", NF90_NOWRITE, idf_berg)
-      istatus=NF90_INQ_DIMID(idf_berg, 'time', idd_time)
-      istatus=NF90_INQUIRE_DIMENSION(idf_berg, idd_time, len = ntime_berg)
-      istatus=nf90_inq_varid(idf_berg, 'time', idv_time)
       istatus=nf90_inq_varid(idf_berg, "h", idv_h)
       istatus=nf90_inq_varid(idf_berg, "sfric", idv_sfric)
 
       ! ALLOCATE variable
-      ALLOCATE(nvtime_berg(ntime_berg), zagg1(nlon, nlat))
-
-      ! READ time variable
-      istatus=nf90_get_var(idf_berg, idv_time, nvtime_berg)
-
-      ! SELECT the right time
-      itime_berg=0
-      DO i=1,ntime_berg
-         IF (INT(ABS((nvtime_berg(i)-(irunlabelf+iyear)))) == &
-              & INT(MINVAL(ABS(nvtime_berg(:)-(irunlabelf+iyear))))) &
-              & itime_berg = i
-      END DO
-      IF (itime_berg==0) THEN
-         PRINT *, "topo = error in detection time slide : ", itime_berg
-         STOP
-      END IF
+      ALLOCATE(zagg1(nlon, nlat))
 
       ! READ variable agg1
       istatus=nf90_get_var(idf_berg, idv_h, zagg1, &
-           & start = (/1,1,itime_berg/), count = (/nlon,nlat,1/))
+           & start = (/1,1/), count = (/nlon,nlat/))
       agg1=TRANSPOSE(zagg1)
 
       ! UPDATE rmount
@@ -1432,15 +1412,7 @@
          enddo
        enddo
 
-      WRITE(iuo+99,*) "===================== topo ==========================="
-      WRITE(iuo+99,*) "Read berg in file ",TRIM('inputdata/berg.nc')
-      WRITE(iuo+99,*) "For year (AD) = ",irunlabelf+iyear
-      WRITE(iuo+99,*) "selected time is ", nvtime_berg(itime_berg), &
-           & " index is ",itime_berg,"/",ntime_berg
-      WRITE(iuo+99,*) "======================================================"
-      CALL FLUSH(iuo+99)
-
-      DEALLOCATE(zagg1, nvtime_berg)
+      DEALLOCATE(zagg1)
 
 ! *** surface dependent friction
       lgdiss=((addisl.gt.0.0).or.(addish.gt.0.0))
@@ -1454,7 +1426,7 @@
         ! READ friction variable
         ALLOCATE(zagg2(nlon, nlat))
         istatus=nf90_get_var(idf_berg, idv_sfric, zagg2, &
-             & start = (/1,1,itime_berg/), count = (/nlon,nlat,1/))
+             & start = (/1,1/), count = (/nlon,nlat/))
         agg2=TRANSPOSE(zagg2)
         DEALLOCATE(zagg2)
 
