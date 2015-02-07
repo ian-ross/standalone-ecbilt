@@ -38,3 +38,5 @@
 /experiments/doc/ecbilt-experiments.aux
 /experiments/doc/ecbilt-experiments.log
 /loveclim/src/ecbilt
+/loveclim/utils/restart-to-nc
+/orig/ecbilt

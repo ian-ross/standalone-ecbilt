@@ -128,18 +128,18 @@
       read(iuo+17) lwrt,lwrts,lwrqts,lwrqa,lwrghg
 
 !**   amplifcation of freshwater feedback
-      lwrqa(:,:,:,:)=lwrqa(:,:,:,:)*AMPWIR
+      lwrqa(:,:,:,:)=lwrqa(:,:,:,:)*REAL(AMPWIR)
 !**   amplifcation of feedback at the equator
-      lwrqa(:,9,:,:)=lwrqa(:,9,:,:)*(1.+(AMPEQIR-1.0)/2.0)
-      lwrqa(:,10,:,:)=lwrqa(:,10,:,:)*(1.+(AMPEQIR-1.0)/2.0)
-      lwrqa(:,11,:,:)=lwrqa(:,11,:,:)*AMPEQIR
-      lwrqa(:,12,:,:)=lwrqa(:,12,:,:)*AMPEQIR
-      lwrqa(:,13,:,:)=lwrqa(:,13,:,:)*(1.+(AMPEQIR-1.0)/2.0)
-      lwrqa(:,14,:,:)=lwrqa(:,14,:,:)*(1.+(AMPEQIR-1.0)/2.0)
-      lwrqa(:,23,:,:)=lwrqa(:,23,:,:)*AMPANIR
-      lwrqa(:,1,:,:)=lwrqa(:,1,:,:)*AMPANIR2
-      lwrqa(:,2,:,:)=lwrqa(:,2,:,:)*AMPANIR2
-      lwrqa(:,3,:,:)=lwrqa(:,3,:,:)*AMPANIR2
+      lwrqa(:,9,:,:)=lwrqa(:,9,:,:)*REAL(1.+(AMPEQIR-1.0)/2.0)
+      lwrqa(:,10,:,:)=lwrqa(:,10,:,:)*REAL(1.+(AMPEQIR-1.0)/2.0)
+      lwrqa(:,11,:,:)=lwrqa(:,11,:,:)*REAL(AMPEQIR)
+      lwrqa(:,12,:,:)=lwrqa(:,12,:,:)*REAL(AMPEQIR)
+      lwrqa(:,13,:,:)=lwrqa(:,13,:,:)*REAL(1.+(AMPEQIR-1.0)/2.0)
+      lwrqa(:,14,:,:)=lwrqa(:,14,:,:)*REAL(1.+(AMPEQIR-1.0)/2.0)
+      lwrqa(:,23,:,:)=lwrqa(:,23,:,:)*REAL(AMPANIR)
+      lwrqa(:,1,:,:)=lwrqa(:,1,:,:)*REAL(AMPANIR2)
+      lwrqa(:,2,:,:)=lwrqa(:,2,:,:)*REAL(AMPANIR2)
+      lwrqa(:,3,:,:)=lwrqa(:,3,:,:)*REAL(AMPANIR2)
 
 !     write(iuo+99,*) "Modif IR scheme"
 !     write(iuo+99,*) AMPWIR,AMPEQIR,expIR
@@ -149,35 +149,35 @@
 !***  radiative scheme in the tropics:easy surrogate to a change
 !***  mean IR flux in the model without affecting sensitivity
       do ism=1,12
-        qancep(1,ism)=qancep(1,ism)*HPROFAN2
-        qancep(2,ism)=qancep(2,ism)*HPROFAN2
-        qancep(3,ism)=qancep(3,ism)*HPROFAN2
-        qancep(4,ism)=qancep(4,ism)*HPROFW
-        qancep(5,ism)=qancep(5,ism)*(1.0+(HPROFTROP-1.0)/2.0)
-        qancep(6,ism)=qancep(6,ism)*(1.0+(HPROFTROP-1.0)/2.0)
-        qancep(7,ism)=qancep(7,ism)*HPROFTROP
-        qancep(8,ism)=qancep(8,ism)*HPROFTROP
-        qancep(9,ism)=qancep(9,ism)*HPROFTROP
-        qancep(10,ism)=qancep(10,ism)*HPROFTROP
+        qancep(1,ism)=qancep(1,ism)*REAL(HPROFAN2)
+        qancep(2,ism)=qancep(2,ism)*REAL(HPROFAN2)
+        qancep(3,ism)=qancep(3,ism)*REAL(HPROFAN2)
+        qancep(4,ism)=qancep(4,ism)*REAL(HPROFW)
+        qancep(5,ism)=qancep(5,ism)*REAL(1.0+(HPROFTROP-1.0)/2.0)
+        qancep(6,ism)=qancep(6,ism)*REAL(1.0+(HPROFTROP-1.0)/2.0)
+        qancep(7,ism)=qancep(7,ism)*REAL(HPROFTROP)
+        qancep(8,ism)=qancep(8,ism)*REAL(HPROFTROP)
+        qancep(9,ism)=qancep(9,ism)*REAL(HPROFTROP)
+        qancep(10,ism)=qancep(10,ism)*REAL(HPROFTROP)
 
-        qancep(11,ism)=qancep(11,ism)*HPROFEQ
-        qancep(12,ism)=qancep(12,ism)*HPROFEQ
+        qancep(11,ism)=qancep(11,ism)*REAL(HPROFEQ)
+        qancep(12,ism)=qancep(12,ism)*REAL(HPROFEQ)
 
-        qancep(13,ism)=qancep(13,ism)*HPROFTROP
-        qancep(14,ism)=qancep(14,ism)*HPROFTROP
-        qancep(15,ism)=qancep(15,ism)*HPROFTROP
-        qancep(16,ism)=qancep(16,ism)*HPROFTROP
-        qancep(17,ism)=qancep(17,ism)*(1.0+(HPROFTROP-1.0)/2.0)
-        qancep(18,ism)=qancep(18,ism)*(1.0+(HPROFTROP-1.0)/2.0)
-        qancep(19,ism)=qancep(19,ism)*HPROFW
-        qancep(20,ism)=qancep(20,ism)*HPROFW
-        qancep(21,ism)=qancep(21,ism)*HPROFW
-        qancep(22,ism)=qancep(22,ism)*HPROFW
-        qancep(23,ism)=qancep(23,ism)*HPROFAN
-        qancep(24,ism)=qancep(24,ism)*HPROFW
-        qancep(25,ism)=qancep(25,ism)*HPROFW
-        qancep(26,ism)=qancep(26,ism)*HPROFW
-        qancep(27,ism)=qancep(27,ism)*HPROFW
+        qancep(13,ism)=qancep(13,ism)*REAL(HPROFTROP)
+        qancep(14,ism)=qancep(14,ism)*REAL(HPROFTROP)
+        qancep(15,ism)=qancep(15,ism)*REAL(HPROFTROP)
+        qancep(16,ism)=qancep(16,ism)*REAL(HPROFTROP)
+        qancep(17,ism)=qancep(17,ism)*REAL(1.0+(HPROFTROP-1.0)/2.0)
+        qancep(18,ism)=qancep(18,ism)*REAL(1.0+(HPROFTROP-1.0)/2.0)
+        qancep(19,ism)=qancep(19,ism)*REAL(HPROFW)
+        qancep(20,ism)=qancep(20,ism)*REAL(HPROFW)
+        qancep(21,ism)=qancep(21,ism)*REAL(HPROFW)
+        qancep(22,ism)=qancep(22,ism)*REAL(HPROFW)
+        qancep(23,ism)=qancep(23,ism)*REAL(HPROFAN)
+        qancep(24,ism)=qancep(24,ism)*REAL(HPROFW)
+        qancep(25,ism)=qancep(25,ism)*REAL(HPROFW)
+        qancep(26,ism)=qancep(26,ism)*REAL(HPROFW)
+        qancep(27,ism)=qancep(27,ism)*REAL(HPROFW)
       enddo
 
 
@@ -232,7 +232,6 @@
       enddo
 
 ! *** evaporation factor
-
       evfac=1d0
       ksw=0.042
 
@@ -313,7 +312,7 @@
 
       do j=1,nlon
         do i=1,nlat
-          cormois(i,j)=0.d0
+          cormois(i,j) = 0.d0
           torain(i,j)=0.d0
           tosnow(i,j)=0.d0
           dyrain(i,j)=0.d0
@@ -521,7 +520,7 @@
        write(iuo+99,12) 'vol forcing ',iyear,imonth, &
             & solarcl(15), solarvol(imonth,:)
       endif
-12      format(A12,3i6,5f12.3)
+12      format(A12,2i6,5f12.3)
       do i=1,nlat
 ! zonneconstante is 1370 in sw parameterisatie
        solarcf(i)=solarcl(i)/1370.d0
@@ -551,78 +550,65 @@
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine fluxes(nn)
 !-----------------------------------------------------------------------
 ! *** computes energy fluxes above ocean surface
 ! *** short wave radiation, long wave radiation, sensible heat flux
 ! *** latent heat flux, evaporation
 !-----------------------------------------------------------------------
-      implicit none
+      SUBROUTINE fluxes(nn)
 
-      include 'comatm.h'
-      include 'comsurf.h'
-      include 'comrunlabel.h'
-      include 'comdiag.h'
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comsurf.h'
+      INCLUDE 'comrunlabel.h'
+      INCLUDE 'comdiag.h'
 
-      integer nn
+      INTEGER nn
 
+      IF (irad == 1) CALL swaverad2(nn)
+      CALL swaverad(nn)
+      CALL lwaverad(nn)
+      IF (irad == 1) CALL lwaverad2(nn)
+      CALL dragcoef(nn)
+      CALL surfmois(nn)
+      CALL sensibheat(nn)
+      CALL latentheat(nn)
+      IF (nn == noc) CALL momentflux
 
-      if (irad.eq.1) call swaverad2(nn)
-      call swaverad(nn)
-      call lwaverad(nn)
-      if (irad.eq.1) call lwaverad2(nn)
-      call dragcoef(nn)
-      call surfmois(nn)
-      call sensibheat(nn)
-      call latentheat(nn)
-      if (nn.eq.noc) call momentflux
-
-      return
-      end
-
-
+      RETURN
+      END SUBROUTINE fluxes
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine swaverad(nn)
 !-----------------------------------------------------------------------
 ! *** computes short wave radiation
 ! *** linearization of RCM with ISCCP D2 1990 clouds
 !-----------------------------------------------------------------------
+      SUBROUTINE swaverad(nn)
 
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comemic.h'
+      INCLUDE 'comsurf.h'
+      INCLUDE 'comunit.h'
+      INCLUDE 'comrunlabel.h'
+      INCLUDE 'comdiag.h'
 
-
-      implicit none
-
-
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comemic.h'
-      include 'comsurf.h'
-      include 'comunit.h'
-      include 'comrunlabel.h'
-      include 'comdiag.h'
-
-
-      integer i,j,k,l,ireg
-      integer nn , nol
-
-
-      real*8 f0,f1,ftot(8),fn(8,0:1)
-      real*8 drs, drs2, drs3
-      real*8 dcost, df,sk,sr,x,y,dfs,smsc
-      real*8 fswutoa2(nlat,nlon),fswutoa0(nlat,nlon)
-      real*8 fswdtoa0(nlat,nlon)
-      real*8 globalmean
-      real*8 fswutoaG0,fswutoaGA,fswdtoa2,fswdtoaG0,fswdtoaGA
-      real*8 fswutoa_diff,fswutoaG,df_test,fswdtoa_diff,fswdtoaG
-
-
-      integer nreg(2)
-      real*8 zac(2),asup
-!     real*8 zac(2),asup,bup
-      common /rad_sul0 /fswutoaG,df_test,fswdtoaG
-      common /rad_sul1 /fswutoa0,fswutoaGA,fswdtoa0,fswdtoaGA
+      INTEGER i,j,k,l,ireg
+      INTEGER nn, nol
+      REAL*8 f0,f1,ftot(8),fn(8,0:1)
+      REAL*8 drs, drs2, drs3
+      REAL*8 dcost, df,sk,sr,x,y,dfs,smsc
+      REAL*8 fswutoa2(nlat,nlon),fswutoa0(nlat,nlon)
+      REAL*8 fswdtoa0(nlat,nlon)
+      REAL*8 globalmean
+      REAL*8 fswutoaG0,fswutoaGA,fswdtoa2,fswdtoaG0,fswdtoaGA
+      REAL*8 fswutoa_diff,fswutoaG,df_test,fswdtoa_diff,fswdtoaG
+      INTEGER nreg(2)
+      REAL*8 zac(2),asup
+      COMMON /rad_sul0/ fswutoaG,df_test,fswdtoaG
+      COMMON /rad_sul1/ fswutoa0,fswutoaGA,fswdtoa0,fswdtoaGA
 
 ! *** aerosol scattering included as a correction on the upward
 ! *** clear sky fluxes
@@ -631,12 +617,9 @@
 ! *** smsc: mass scattering coefficient [m2/g]
 ! *** dso4: change in sulfate aerosol column integrated concentration since
 ! *** pre-industrial times [g/m2]
-
-
       sk=0.058d0*1370d0
       sr=0.05d0
       smsc=8.0
-!     write(iuo+99,*) 'bup=',bup
 
       if (nn.eq.noc.or.nn.eq.nse) nol=1
       if (nn.eq.nld) nol=2
@@ -697,14 +680,11 @@
             ftot(l) = (1.-tcc(i,j))*f0 + tcc(i,j)*f1
           enddo
 
-
 ! alternative calculation of upward flux at ground:
 ! in parameterisation no cross terms are accounted for, which are important for
 ! upward shortwave radiation at surface and therefore also for net flux
 ! heswsn(i,j)
-
           ftot(4)=-alb2esn(i,j,nn)*ftot(8)
-
           hesw0n(i,j,nn)=(-ftot(1)-ftot(5)+ftot(2)+ftot(6))*df
           hesw1n(i,j,nn)=(-ftot(2)-ftot(6)+ftot(3)+ftot(7))*df
           hesw2n(i,j,nn)=(-ftot(3)-ftot(7)+ftot(4)+ftot(8))*df
@@ -724,7 +704,6 @@
 !            fswdsfc(i,j)=-ftot(8)*df
 ! (4) upward shortwave radiation at SURFACE
 !            fswusfc=(heswsn(i,j)+ftot(8)*df)
-
          endif
         enddo
       enddo
@@ -747,12 +726,8 @@
        fswdtoaGA=0.
       endif
 
-
-
       return
       end
-
-
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine lwaverad(nn)
@@ -794,7 +769,6 @@
       include 'comrunlabel.h'
       include 'comdiag.h'
 
-
       integer i,j,l,k,m,is,ism,nol,nn,ireg,h
       real*8  lwr(7,0:1),dumts
       real*8  dqa,dqreg(27)
@@ -804,8 +778,6 @@
       real*8  ulrad1nUz(nlat,nlon)
       common / radO3 / ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
       common / radO32 / ulrad0nUz,ulrad1nUz
-
-
 
       is=imonth/3+1
       if (is.gt.4) is=1
@@ -819,11 +791,9 @@
       if (nn.eq.noc.or.nn.eq.nse) nol=1
       if (nn.eq.nld) nol=2
 
-
       do j=1,nlon
         do i=1,nlat
           ireg=irn(i,j,nol)
-
 !-hemispheric dependence of tropospheric ozone forcing
           if (i.le.16) then
            h=1
@@ -857,8 +827,6 @@
                    & (lwrts(7,m,ireg,is,l)+lwrqts(7,m,ireg,is,l)*dqa)*dumts
               dumts=dumts*(tsurfn(i,j,nn)-tncep(19,ireg,ism))
             enddo
-
-
           enddo
 
           ulrad0n(i,j,nn)=(lwr(1,0)*(1-tcc(i,j))+lwr(1,1)*tcc(i,j))
@@ -870,7 +838,6 @@
           ulradsn(i,j,nn)=emisn(nn)*sboltz*tsurfn(i,j,nn)**4
           dlradsn(i,j,nn)=-lwr(7,0)*(1-tcc(i,j))-lwr(7,1)*tcc(i,j)
 
-
          if (irad.eq.1) then
           if(nn.eq.1) then
             ulrad0nUz(i,j)=0.
@@ -879,7 +846,6 @@
 
           ulrad0nUz(i,j)=ulrad0nUz(i,j)+(ulrad0n(i,j,nn)*fractn(i,j,nn))
           ulrad1nUz(i,j)=ulrad1nUz(i,j)+(ulrad1n(i,j,nn)*fractn(i,j,nn))
-
          endif
        enddo
       enddo
@@ -888,17 +854,6 @@
        ulrad0nU=globalmean(ulrad0nUz)
        ulrad1nU=globalmean(ulrad1nUz)
       endif
-
-!     ulrad0nm=globalmean(ulrad0n)
-!     ulrad1nm=globalmean(ulrad1n)
-!     ulrad2nm=globalmean(ulrad2n)
-!     ulradsnm=globalmean(ulradsn)
-!     dlradsnm=globalmean(dlradsn)
-
-!     write(iuo+37,*)ulrad0nm,ulrad1nm,ulrad2nm,ulradsnm,dlradsnm
-
-! *** that's all folks
-
 
       return
       end
@@ -1284,8 +1239,6 @@
 
 !dqa      lwrmois(i,j)=rmoisg(i,j)**0.3333
           lwrmois(i,j)=rmoisg(i,j)
-
-
         enddo
       enddo
 
@@ -1444,164 +1397,109 @@
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      function detqmaxexact(tmount,i,j)
+      FUNCTION detqmaxexact(tmount, i, j)
 !-----------------------------------------------------------------------
 ! *** determines the maximum water content in latlon point
 ! *** i,j for given ground- and 650 and 350 hPa temperature
 ! *** by linear interpolation in qmtabel
 !-----------------------------------------------------------------------
-      implicit none
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comunit.h'
 
+      INTEGER i,j
+      REAL*8 tmount,alpha,t500,z1,z2,bz1,bz2,b,hulpx
+      REAL*8 qmax,detqmaxexact,expint
 
-      include 'comatm.h'
-      include 'comphys.h'
-      include 'comunit.h'
+      b = cc2 * cc3 - cc2 * tzero
+      alpha = (temp2g(i,j) - temp4g(i,j)) * rlogtl12
+      t500 = temp4g(i,j) + alpha * LOG(500d0 / 650d0)
+      z1 = 1 / (tmount - cc3)
+      z2 = 1 / (t500 - cc3)
+      bz1 = b * z1
+      bz2 = b * z2
+      hulpx = cc1 * EXP(cc2) / (rowat * grav * alpha)
 
+      qmax = hulpx * (EXP(bz1) + expint(1,-bz1) * bz1) / z1 - &
+           & hulpx * (EXP(bz2) + expint(1,-bz2) * bz2) / z2
 
-      integer i,j
-      real*8  tmount,alpha,t500,z1,z2,bz1,bz2,b,hulpx
-      real*8  qmax,detqmaxexact,expint
+      IF (qmax < 0d0) qmax = 0d0
+      IF (qmax > 0.2) THEN
+        WRITE (iuo+29,*) 'in latlon ',i,j,' qmax ',qmax
+        CALL error(121)
+      END IF
 
+      detqmaxexact = qmax
 
-      b=cc2*cc3-cc2*tzero
-
-
-      alpha=(temp2g(i,j)-temp4g(i,j))*rlogtl12
-
-
-      t500=temp4g(i,j)+alpha*log(500d0/650d0)
-
-
-      z1=1/(tmount-cc3)
-      z2=1/(t500-cc3)
-
-
-      bz1=b*z1
-      bz2=b*z2
-
-
-      hulpx=cc1*exp(cc2)/(rowat*grav*alpha)
-
-
-      qmax=hulpx*(exp(bz1)+expint(1,-bz1)*bz1)/z1 - &
-           & hulpx*(exp(bz2)+expint(1,-bz2)*bz2)/z2
-
-
-      if (qmax.lt.0d0) qmax=0d0
-
-
-      if (qmax.gt.0.2) then
-        write(iuo+29,*) 'in latlon ',i,j,' qmax ',qmax
-        call error(121)
-      endif
-
-
-      detqmaxexact=qmax
-
-
-      end
+      END FUNCTION detqmaxexact
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      function detqmax(tmount,i,j,dqmdt)
+      FUNCTION detqmax(tmount,i,j,dqmdt)
 !-----------------------------------------------------------------------
 ! *** determines the maximum water content in latlon point
 ! *** i,j for given ground- and 650 and 350 hPa temperature
 ! *** by linear interpolation in qmtabel
 !-----------------------------------------------------------------------
-      implicit none
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comunit.h'
 
+      INTEGER i,j,ii,jj,kk
+      REAL*8 tmount,ti,tj,tk
+      REAL*8 qmax,detqmax,dqmdi,dqmdj,dqmdk
+      REAL*8 dqmdt,hmount,z500,t500,alpha,dtgdt
 
-      include 'comatm.h'
-      include 'comphys.h'
-      include 'comdyn.h'
-      include 'comunit.h'
+      ti = temp4g(i,j)
+      tj = tmount - temp4g(i,j)
+      tk = temp4g(i,j) - temp2g(i,j)
 
+      IF (ti < tqmi(0)) ti = tqmi(0)
+      IF (ti > tqmi(iqmtab)) ti = tqmi(iqmtab)
+      IF (tj < tqmj(0)) tj = tqmj(0)
+      IF (tj > tqmj(jqmtab)) tj = tqmj(jqmtab)
+      IF (tk < tqmk(0)) tk = tqmk(0)
+      IF (tk > tqmk(kqmtab)) tk = tqmk(kqmtab)
 
-      integer i,j,ii,jj,kk
-      real*8  tmount,ti,tj,tk
-      real*8  qmax,detqmax,dqmdi,dqmdj,dqmdk
-      real*8  dqmdt,hmount,z500,t500,alpha,dtgdt
-
-      ti=temp4g(i,j)
-      tj=tmount-temp4g(i,j)
-      tk=temp4g(i,j)-temp2g(i,j)
-
-
-      if (ti.lt.tqmi(0)) then
-        ti=tqmi(0)
-!        write(29,*) 'in latlon ',i,j,' t500 ',t500,' tmount ',tmount
-!        call error(121)
-      endif
-      if (ti.gt.tqmi(iqmtab)) then
-        ti=tqmi(iqmtab)
-!        write(29,*) 'in latlon ',i,j,' t500 ',t500,' tmount ',tmount
-!        call error(121)
-      endif
-
-      if (tj.lt.tqmj(0)) then
-        tj=tqmj(0)
-!        write(29,*) 'in latlon ',i,j,' t500 ',t500,' tmount ',tmount
-!        call error(121)
-      endif
-      if (tj.gt.tqmj(jqmtab)) then
-        tj=tqmj(jqmtab)
-!        write(29,*) 'in latlon ',i,j,' t500 ',t500,' tmount ',tmount
-!        call error(121)
-      endif
-
-      if (tk.lt.tqmk(0)) then
-        tk=tqmk(0)
-!        write(29,*) 'in latlon ',i,j,' t500 ',t500,' tmount ',tmount
-!        call error(121)
-      endif
-      if (tk.gt.tqmk(kqmtab)) then
-        tk=tqmk(kqmtab)
-!        write(29,*) 'in latlon ',i,j,' t500 ',t500,' tmount ',tmount
-!        call error(121)
-      endif
-
-      ii=min(iqmtab-1,int((ti-tqmimin)*rdtqmi))
-      jj=min(jqmtab-1,int((tj-tqmjmin)*rdtqmj))
-      kk=min(kqmtab-1,int((tk-tqmkmin)*rdtqmk))
+      ii = MIN(iqmtab - 1, INT((ti - tqmimin) * rdtqmi))
+      jj = MIN(jqmtab - 1, INT((tj - tqmjmin) * rdtqmj))
+      kk = MIN(kqmtab - 1, INT((tk - tqmkmin) * rdtqmk))
 !       if( ii.lt.0) then
 !         PRINT *,ii, jj, kk
 !         PRINT *,"min(",iqmtab,"-1,int((",ti,"-",tqmimin,")*",rdtqmi,"))"
 !         write(*,*) temp4g
 !       endif
 
-      dqmdi=(qmtabel(ii+1,jj,kk)-qmtabel(ii,jj,kk))*rdtqmi
-      dqmdj=(qmtabel(ii,jj+1,kk)-qmtabel(ii,jj,kk))*rdtqmj
-      dqmdk=(qmtabel(ii,jj,kk+1)-qmtabel(ii,jj,kk))*rdtqmk
+      dqmdi = (qmtabel(ii+1,jj,kk) - qmtabel(ii,jj,kk)) * rdtqmi
+      dqmdj = (qmtabel(ii,jj+1,kk) - qmtabel(ii,jj,kk)) * rdtqmj
+      dqmdk = (qmtabel(ii,jj,kk+1) - qmtabel(ii,jj,kk)) * rdtqmk
 
-      qmax = qmtabel(ii,jj,kk) + (ti-tqmi(ii))*dqmdi + &
-           & (tj-tqmj(jj))*dqmdj + (tk-tqmk(kk))*dqmdk
-      if (qmax.lt.0d0) qmax=0d0
+      qmax = qmtabel(ii,jj,kk) + (ti - tqmi(ii)) * dqmdi + &
+           & (tj - tqmj(jj)) * dqmdj + (tk - tqmk(kk)) * dqmdk
+      IF (qmax < 0d0) qmax = 0d0
+      IF (qmax > 0.2) THEN
+         WRITE (iuo+29,*) 'in latlon ',i,j,' qmax ',qmax
+         WRITE (iuo+29,*) temp4g(i,j), ti, tqmi(0), tqmi(iqmtab), ii, dqmdi
+         WRITE (iuo+29,*) tmount - temp4g(i,j), tj, tqmj(0), tqmj(jqmtab), jj, dqmdj
+         WRITE (iuo+29,*) temp4g(i,j) - temp2g(i,j), tk, tqmk(0), tqmk(kqmtab), kk, dqmdk
+         CALL error(121)
+      END IF
 
-      if (qmax.gt.0.2) then
-        write(iuo+29,*) 'in latlon ',i,j,' qmax ',qmax
-        call error(121)
-      endif
+      alpha = (temp2g(i,j) - temp4g(i,j)) * rlogtl12
+      t500 = temp4g(i,j) + alpha * alogpl2tl2
+      z500 = gpm500 * grav
+      hmount = qmount(i,j) * hmoisr * grav
 
+      dtgdt = (rgas * t500 * alogtl1pl2 + (hmount - geopg(i,j,2) - z500)) / &
+           & (rgas * tmount * alogtl12)
+      dqmdt = dqmdi + dqmdj * (dtgdt - 1d0) + dqmdk
 
-      alpha=(temp2g(i,j)-temp4g(i,j))*rlogtl12
-      t500=temp4g(i,j)+alpha*alogpl2tl2
-      z500=gpm500*grav
-      hmount=qmount(i,j)*hmoisr*grav
+      detqmax = 0.9 * qmax
 
-
-      dtgdt=(rgas*t500*alogtl1pl2 + (hmount-geopg(i,j,2)-z500))/ &
-           & (rgas*tmount*alogtl12)
-
-
-      dqmdt=dqmdi + dqmdj * (dtgdt - 1d0) + dqmdk
-
-
-      detqmax=0.9*qmax
-!     detqmax=0.85*qmax
-
-
-      end
+      END FUNCTION detqmax
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
@@ -1612,6 +1510,7 @@
       parameter (maxit=100,eps=1.e-10,fpmin=1.e-30,euler=.5772156649)
       integer i,ii,nm1
       real*8 a,b,c,d,del,fact,h,psi
+      expint = 0.0
       nm1=n-1
       if(n.lt.0.or.x.lt.0..or.(x.eq.0..and.(n.eq.0.or.n.eq.1)))then
 !        pause 'bad arguments in expint'
@@ -1691,29 +1590,24 @@
       factemv=rlatvap*grav*rowat/cpair
       factems=rlatsub*grav*rowat/cpair
 
+      call rggtosp(rmoisg, rmoiss)
+      call sptogg(rmoiss, rmoisg, pp)
 
-      call rggtosp(rmoisg,rmoiss)
-      call sptogg(rmoiss,rmoisg,pp)
-
-      do j=1,nlon
-        do i=1,nlat
-          cormois(i,j)=0d0
-          if (rmoisg(i,j).lt.0d0) then
-            cormois(i,j)=cormois(i,j)-rmoisg(i,j)
-            rmoisg(i,j)= 0d0
-          endif
-        enddo
-      enddo
+      DO j = 1, nlon
+         DO i = 1, nlat
+            cormois(i,j) = 0d0
+            IF (rmoisg(i,j) < 0d0) THEN
+               cormois(i,j) = cormois(i,j) - rmoisg(i,j)
+               rmoisg(i,j) =  0d0
+            END IF
+         END DO
+      END DO
 
 
 ! *** horizontal divergence of moisture
-
-
       call trafluxdiv(hdivmg,rmoiss,rmoisg)
 
 ! *** vertical advection of moisture
-
-
       do j=1,nlon
         do i=1,nlat
           omegg500=(omegg(i,j,1)+omegg(i,j,2))/2.d0
@@ -1747,45 +1641,23 @@
         enddo
       enddo
 
-
 ! *** horizontal diffusion of moisture
-
-
       call hdiff(hdmoisg)
 
-
-!
 ! *** time stepping forward time stepping
-!
-
-
       do j=1,nlon
-        do i=1,nlat
-          rmoisg(i,j)=rmoisg(i,j)+dtime*(-ihavm*hdivmg(i,j) &
-               & -ivavm*vemoisg(i,j) + hdmoisg(i,j) + imsink*evap(i,j))
-          if (rmoisg(i,j).lt.0d0) then
-            cormois(i,j)=cormois(i,j)-rmoisg(i,j)
-            rmoisg(i,j)= 0d0
-          endif
+         do i=1,nlat
+           rmoisg(i,j) = rmoisg(i,j) + &
+                & dtime * ((-ihavm) * hdivmg(i,j) + (-ivavm) * vemoisg(i,j) + &
+                &          hdmoisg(i,j) + imsink * evap(i,j))
+           IF (rmoisg(i,j) < 0d0) THEN
+              cormois(i,j) = cormois(i,j) - rmoisg(i,j)
+              rmoisg(i,j) = 0d0
+           END IF
         enddo
       enddo
 
-!      if (iyear.eq.7.and.imonth.eq.1) then
-!        write(350) ((real(rmoisg(i,j)),j=1,nlon),i=1,nlat)
-!        write(350) ((real(hdivmg(i,j)),j=1,nlon),i=1,nlat)
-!        write(350) ((real(vemoisg(i,j)),j=1,nlon),i=1,nlat)
-!        write(350) ((real(hdmoisg(i,j)),j=1,nlon),i=1,nlat)
-!        write(350) ((real(cormois(i,j)),j=1,nlon),i=1,nlat)
-!        write(350) ((real(d1(i,j)),j=1,nlon),i=1,nlat)
-!        write(350) ((real(d2(i,j)),j=1,nlon),i=1,nlat)
-!        write(350) ((real(d3(i,j)),j=1,nlon),i=1,nlat)
-!      endif
-      call moisbalance()
-!      if (iyear.eq.7.and.imonth.eq.1) then
-!        write(350) ((real(rmoisg(i,j)),j=1,nlon),i=1,nlat)
-!        write(350) ((real(cormois(i,j)),j=1,nlon),i=1,nlat)
-!      endif
-
+      CALL moisbalance
 
       return
       end
@@ -1793,60 +1665,47 @@
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine trafluxdiv(tfdiv,ctrasp,ctra)
 !-----------------------------------------------------------------------
 ! *** computes horizontal divergence of tracer flux
 !-----------------------------------------------------------------------
+      SUBROUTINE trafluxdiv(tfdiv, ctrasp, ctra)
 
-      implicit none
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comrunlabel.h'
 
-
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comrunlabel.h'
-
-
-      integer i,j
-      real*8  ctrasp(nsh2),vv(nsh2)
-      real*8  dcdl(nlat,nlon),dcdm(nlat,nlon)
-      real*8  tfdiv(nlat,nlon),ctra(nlat,nlon)
-
+      INTEGER i,j
+      REAL*8 ctrasp(nsh2),vv(nsh2)
+      REAL*8 dcdl(nlat,nlon),dcdm(nlat,nlon)
+      REAL*8 tfdiv(nlat,nlon),ctra(nlat,nlon)
 
 ! *** 800 hPa winds are reduced with umoisr in the advection of the
 ! *** tracer field
 
 ! *** spatial derivatives of tracer
-
-
-      call ddl (ctrasp,vv)
-      call sptogg (vv,dcdl,pp)
-      call sptogg (ctrasp,dcdm,pd)
-
+      CALL ddl(ctrasp, vv)
+      CALL sptogg(vv, dcdl, pp)
+      CALL sptogg(ctrasp, dcdm, pd)
 
 ! *** advection of tracer by total wind + convergence of tracer
+      DO j = 1, nlon
+         DO i = 1, nlat
+            tfdiv(i,j) = dcdl(i,j) * (u800(i,j) + udivg(i,j,3)) / &
+                 & (radius * cosfi(i)) + &
+                 &  dcdm(i,j) * (v800(i,j) + vdivg(i,j,3)) / &
+                 & (radius / cosfi(i)) + ctra(i,j) * divg(i,j,3)
+            tfdiv(i,j) = tfdiv(i,j) * umoisr
+         END DO
+      END DO
 
+      CALL rggtosp(tfdiv, vv)
+      vv(1) = 0d0
+      CALL sptogg(vv, tfdiv, pp)
 
-      do j=1,nlon
-        do i=1,nlat
-          tfdiv(i,j)=dcdl(i,j)*(u800(i,j) + udivg(i,j,3))/ &
-               & (radius*cosfi(i)) + dcdm(i,j)*(v800(i,j) + vdivg(i,j,3))/ &
-               & (radius/cosfi(i)) + ctra(i,j)*divg(i,j,3)
-          tfdiv(i,j)=tfdiv(i,j)*umoisr
-
-
-        enddo
-      enddo
-
-
-      call rggtosp(tfdiv,vv)
-      vv(1)=0d0
-      call sptogg (vv,tfdiv,pp)
-
-      return
-      end
-
-
+      RETURN
+      END SUBROUTINE trafluxdiv
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine hdivspec(hduvg,ug,vg)
@@ -1895,42 +1754,28 @@
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine hdiff(hdmg)
+      SUBROUTINE hdiff(hdmg)
 !-----------------------------------------------------------------------
 ! *** horizontal diffusion of moisture
 !-----------------------------------------------------------------------
-      implicit none
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comrunlabel.h'
 
+      REAL*8 hdmoiss(nsh2), hdmg(nlat,nlon)
+      REAL*8 difq, rll
 
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comrunlabel.h'
+      rll = DBLE(ll(nsh))
+      difq = MAX(0.d0, 1.d0 / (rll * (rll+1) * tdifq * 24d0 * 3600d0))
+      CALL lap(rmoiss, hdmoiss)
+      hdmoiss(1) = 0d0
+      hdmoiss(2:nsh2) = difq * hdmoiss(2:nsh2)
+      CALL sptogg(hdmoiss, hdmg, pp)
 
-
-      integer k
-      real*8  hdmoiss(nsh2),hdmg(nlat,nlon)
-      real*8  difq
-
-      difq=max(0.d0,1.d0/(tdifq*24d0*3600d0))
-
-
-      call lap(rmoiss,hdmoiss)
-
-
-      hdmoiss(1)=0d0
-
-
-      do k=2,nsh2
-        hdmoiss(k)=difq*hdmoiss(k)
-      enddo
-
-
-      call sptogg(hdmoiss,hdmg,pp)
-
-
-      return
-      end
+      RETURN
+      END SUBROUTINE hdiff
 
 
 
@@ -1940,9 +1785,6 @@
 ! *** moist convective adjustment
 !-----------------------------------------------------------------------
       implicit none
-
-
-
       include 'comatm.h'
       include 'comdyn.h'
       include 'comphys.h'
@@ -1951,14 +1793,12 @@
       include 'comunit.h'
       include 'comrunlabel.h'
 
-
       integer ncmax,iconvn,i,j
       real*8  t500,qsat500,pot2g,pot4g,dcmoisg
       real*8  fachulp,facteta,factemv,factems,tmount
       real*8  qmax,qsat,hulp,redrain
       real*8  temp2go,temp4go
       real*8  drainm,crainm,dqmdt
-
 
       fachulp=0.622d0*(rlatvap**2)/(cpair*rgas)
       facteta=0.6d0*rgas*(2.d0**rkappa)/grav
@@ -2037,7 +1877,6 @@
 
 
 ! ***         moisture changes due to dynamic and convective rain
-
 
               rmoisg(i,j)=rmoisg(i,j)-ivavm*dcmoisg*dtime
 
@@ -2131,7 +1970,6 @@
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine moisbalance
 !-----------------------------------------------------------------------
 ! *** fix moisture balance in the atmosphere: due to advection and
 ! *** spectral truncation, the moisture at a specific point can become
@@ -2144,93 +1982,74 @@
 ! *** the neighbouring equatorward latitude. The weights pw(nlat,1) are
 ! *** used to correct for changes in the gridsize with latitude.
 !-----------------------------------------------------------------------
-      implicit none
+      SUBROUTINE moisbalance
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comrunlabel.h'
 
+      INTEGER i,j
+      REAL*8 gmc,gmm,gfac
 
-      include 'comatm.h'
-      include 'comphys.h'
-      include 'comdyn.h'
-      include 'comrunlabel.h'
+      DO i = 1, nlat/2
+        gmc = SUM(cormois(i,:))
+        gmm = SUM(rmoisg(i,:))
+        IF (gmm > 0d0 .AND. gmc > 0d0) THEN
+          IF (gmm > gmc) THEN
+            gfac = gmc / gmm
+            rmoisg(i,:) = rmoisg(i,:) - gfac * rmoisg(i,:)
+          ELSE
+            gfac = gmm / gmc
+            gmc = (gmc - gmm) * pw(i,1) / (pw(i+1,1) * DBLE(nlon))
+            DO j = 1, nlon
+              rmoisg(i,j) = 0d0
+              cormois(i,j) = gfac * cormois(i,j)
+              cormois(i+1,j) = cormois(i+1,j) + gmc
+            END DO
+          END IF
+        END IF
+      END DO
 
+      DO i = nlat, 1+nlat/2, -1
+        gmc = SUM(cormois(i,:))
+        gmm = SUM(rmoisg(i,:))
+        IF (gmm > 0d0 .AND. gmc > 0d0) THEN
+          IF (gmm > gmc) THEN
+            gfac = 1d0 - gmc / gmm
+            rmoisg(i,:) = rmoisg(i,:) * gfac
+          ELSE
+            gfac = gmm / gmc
+            gmc = (gmc - gmm) * pw(i,1) / (pw(i-1,1) * DBLE(nlon))
+            DO j = 1, nlon
+              rmoisg(i,j) = 0d0
+              cormois(i,j) = gfac * cormois(i,j)
+              cormois(i-1,j) = cormois(i-1,j) + gmc
+            END DO
+          END IF
+        END IF
+      END DO
 
-      integer i,j
-      real*8  gmc,gmm,gfac
-
-
-      do i=1,nlat/2
-        gmc=0d0
-        gmm=0d0
-        do j=1,nlon
-          gmc=gmc+cormois(i,j)
-          gmm=gmm+rmoisg(i,j)
-        enddo
-        if (gmm.gt.0d0.and.gmc.gt.0d0) then
-          if (gmm.gt.gmc) then
-            gfac=gmc/gmm
-            do j=1,nlon
-              rmoisg(i,j)=rmoisg(i,j)-gfac*rmoisg(i,j)
-            enddo
-          else
-            gfac=gmm/gmc
-            gmc=(gmc-gmm)*pw(i,1)/(pw(i+1,1)*dble(nlon))
-            do j=1,nlon
-              rmoisg(i,j)=0d0
-              cormois(i,j)=gfac*cormois(i,j)
-              cormois(i+1,j)=cormois(i+1,j)+gmc
-            enddo
-          endif
-        endif
-      enddo
-
-      do i=nlat,1+nlat/2,-1
-        gmc=0d0
-        gmm=0d0
-        do j=1,nlon
-          gmc=gmc+cormois(i,j)
-          gmm=gmm+rmoisg(i,j)
-        enddo
-        if (gmm.gt.0d0.and.gmc.gt.0d0) then
-          if (gmm.gt.gmc) then
-            gfac=1d0-gmc/gmm
-            do j=1,nlon
-              rmoisg(i,j)=rmoisg(i,j)*gfac
-            enddo
-          else
-            gfac=gmm/gmc
-            gmc=(gmc-gmm)*pw(i,1)/(pw(i-1,1)*dble(nlon))
-            do j=1,nlon
-              rmoisg(i,j)=0d0
-              cormois(i,j)=gfac*cormois(i,j)
-              cormois(i-1,j)=cormois(i-1,j)+gmc
-            enddo
-          endif
-        endif
-      enddo
-
-      return
-      end
+      RETURN
+      END SUBROUTINE moisbalance
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      function qsat(press,temp)
 !-----------------------------------------------------------------------
 ! *** saturation mixing ratio
 ! *** input press in [Pa], temp in K
 ! *** output qsat: saturation mixing ratio
 !-----------------------------------------------------------------------
-      implicit none
-      include 'comatm.h'
-      include 'comphys.h'
+      FUNCTION qsat(press, temp)
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comphys.h'
 
+      REAL*8 press, temp, qsat
 
-      real*8  press,temp,qsat
+      qsat = cc1 * EXP(cc2 * (temp - tzero) / (temp - cc3)) / press
 
-
-      qsat=cc1*exp(cc2*(temp-tzero)/(temp-cc3))/press
-
-      end
-
-
+      END FUNCTION qsat
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
        subroutine levtemp(tlev,plev)
@@ -2348,7 +2167,6 @@
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-       subroutine tempprofile
 !-----------------------------------------------------------------------
 ! *** computation of vertical temperature profile
 ! *** based on reference profiles from NCEP reanalysis data
@@ -2356,18 +2174,17 @@
 ! *** assuming temperature anomalies wrt these temperature profiles
 ! *** vary linearly with log of the pressure
 !-----------------------------------------------------------------------
-      implicit none
+      SUBROUTINE tempprofile
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comsurf.h'
+      INCLUDE 'comemic.h'
+      INCLUDE 'comrunlabel.h'
 
-
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comsurf.h'
-      include 'comemic.h'
-      include 'comrunlabel.h'
-
-      integer i,j,k,l,ireg(2),is,ism,nn,k1,k2
-      real*8 ro,ro1,ro2,z,z0,dt350,dt650(2),beta(2),tsref,dt100,z1,z2
+      INTEGER i, j, k, l, ireg(2), is, ism, nn, k1, k2
+      REAL*8 ro, ro1, ro2, z, z0, dt350, dt650(2), beta(2), tsref, dt100, z1, z2
 
 ! *** Example reference profile for
 ! *** zonal band between 15s and 15n
@@ -2394,201 +2211,168 @@
 ! *** 18 1011.99  300.156
 ! *** Ps 1013.00  301.265 Ts
 
-
-      is=imonth/3+1
-      if (is.gt.4) is=1
-      ism=(is-1)*3+1
-      do j=1,nlon
-        do i=1,nlat
-          ireg(1)=irn(i,j,1)
-          ireg(2)=irn(i,j,2)
+      is = imonth / 3 + 1
+      IF (is > 4) is = 1
+      ism = (is - 1) * 3 + 1
+      DO j = 1, nlon
+         DO i = 1, nlat
+            ireg(1) = irn(i,j,1)
+            ireg(2) = irn(i,j,2)
 
 ! *** logarithmic interpolation of temperature anomalies; 200 hPa or
 ! *** higher the anomalies approach T100 temperature within 3
 ! *** pressure levels
+            DO nn = 1, 2
+               dt100 = temp0g(i,j) - tncep(6,ireg(nn),imonth)
+               dt350 = temp2g(i,j) - tncep12(1,ireg(nn),imonth)
+               dt650(nn) = temp4g(i,j) - tncep12(2,ireg(nn),imonth)
+               beta(nn) = (dt350 - dt650(nn)) * rlogtl12
+               dtemp(1:6,i,j,nn) = dt100
+               DO k = 7, 9
+                  dtemp(k,i,j,nn) = ((10 - k) * dt100 + &
+                       & (k - 6) * (dt650(nn) + beta(nn) * rlogtl(k))) * 0.25
+               END DO
+               dtemp(10:17,i,j,nn) = dt650(nn) + beta(nn) * rlogtl(10:17)
+            END DO
 
-
-          do nn=1,2
-            dt100=temp0g(i,j)-tncep(6,ireg(nn),imonth)
-            dt350=temp2g(i,j)-tncep12(1,ireg(nn),imonth)
-            dt650(nn)=temp4g(i,j)-tncep12(2,ireg(nn),imonth)
-            beta(nn)=(dt350-dt650(nn))*rlogtl12
-            do k=1,6
-              dtemp(k,i,j,nn)=dt100
-            enddo
-            do k=7,9
-              dtemp(k,i,j,nn)=((10-k)*dt100+(k-6)*(dt650(nn) &
-                   & + beta(nn)*rlogtl(k)))*0.25
-            enddo
-            do k=10,17
-              dtemp(k,i,j,nn)=dt650(nn) + beta(nn)*rlogtl(k)
-            enddo
-          enddo
 ! *** from a mean height of 500 hPa from NCEP reanalysis data, the
 ! *** surface pressure is found using hydrostatic equilibrium
 ! *** and ideal gas law.
-
-
-          z=z500ncep(ireg(1),imonth)
-          k1=12
-          DO WHILE (z.GT.rmountn(i,j,noc).AND.k1.LT.17)
-            z0=z
-            ro1=pncep(k1)/(rgas*(dtemp(k1,i,j,1)+tncep(k1,ireg(1),imonth)))
-            ro2=pncep(k1+1)/(rgas*(dtemp(k1+1,i,j,1)+ &
-                 & tncep(k1+1,ireg(1),imonth)))
-            ro=(ro1+ro2)*0.5
-            z=z-(pncep(k1+1)-pncep(k1))/(grav*ro)
-            k1=k1+1
-          END DO
-          z1=z
-          pgroundn(i,j,noc)=ro*grav*(z0-rmountn(i,j,noc))+pncep(k1-1)
-          pgroundn(i,j,nse)=pgroundn(i,j,noc)
-
-
-          z=z500ncep(ireg(2),imonth)
-          k2=12
-
-          DO WHILE ((z.GT.rmountn(i,j,nld)).AND.(k2.LT.17))
-            z0=z
-            ro1=pncep(k2)/(rgas*(dtemp(k2,i,j,2)+tncep(k2,ireg(2),imonth)))
-            ro2=pncep(k2+1)/(rgas*(dtemp(k2+1,i,j,2)+ &
-                 & tncep(k2+1,ireg(2),imonth)))
-            ro=(ro1+ro2)*0.5
-            z=z-(pncep(k2+1)-pncep(k2))/(grav*ro)
-            k2=k2+1
-          END DO
-
-          z2=z
-          pgroundn(i,j,nld)=ro*grav*(z0-rmountn(i,j,nld))+pncep(k2-1)
-          pground(i,j)=0.0
-          do nn=1,ntyps
-            pground(i,j)=pground(i,j)+fractn(i,j,nn)*pgroundn(i,j,nn)
-          enddo
-
-
+            ro = 0.0
+            z = z500ncep(ireg(1), imonth)
+            z0 = z
+            k1 = 12
+            DO WHILE (z > rmountn(i,j,noc) .AND. k1 < 17)
+               z0 = z
+               ro1 = pncep(k1) / (rgas * (dtemp(k1,i,j,1) + &
+                    & tncep(k1,ireg(1),imonth)))
+               ro2 = pncep(k1+1) / (rgas * (dtemp(k1+1,i,j,1) + &
+                    & tncep(k1+1,ireg(1),imonth)))
+               ro = (ro1+ro2) * 0.5
+               z = z - (pncep(k1+1) - pncep(k1)) / (grav * ro)
+               k1 = k1 + 1
+            END DO
+            z1 = z
+            pgroundn(i,j,noc) = ro * grav * &
+                 & (z0 - rmountn(i,j,noc)) + pncep(k1-1)
+            pgroundn(i,j,nse) = pgroundn(i,j,noc)
+            z = z500ncep(ireg(2),imonth)
+            k2 = 12
+            DO WHILE (z > rmountn(i,j,nld) .AND. k2 < 17)
+               z0 = z
+               ro1 = pncep(k2) / (rgas * (dtemp(k2,i,j,2) + &
+                    & tncep(k2,ireg(2),imonth)))
+               ro2 = pncep(k2+1) / (rgas * (dtemp(k2+1,i,j,2) + &
+                    & tncep(k2+1,ireg(2),imonth)))
+               ro = (ro1 + ro2) * 0.5
+               z = z - (pncep(k2+1) - pncep(k2)) / (grav * ro)
+               k2 = k2 + 1
+            END DO
+            z2 = z
+            pgroundn(i,j,nld) = ro * grav * &
+                 & (z0 - rmountn(i,j,nld)) + pncep(k2-1)
+            pground(i,j) = 0.0
+            DO nn = 1, ntyps
+               pground(i,j) = pground(i,j) + fractn(i,j,nn) * pgroundn(i,j,nn)
+            END DO
 
 ! *** Temperature of air near surface is then found by
 ! *** interpolating for this pressure level the temperature profile calculated
 ! *** above.
-
-          dtemp(18,i,j,1)=dt650(1)+beta(1)*log(pgroundn(i,j,noc)/65000.)
-          beta(1)=(tncep(k1,ireg(1),imonth)-tncep((k1-1),ireg(1),imonth))/ &
-               & log(pncep(k1)/pncep(k1-1))
-          tsref=tncep((k1-1),ireg(1),imonth)+ &
-               & beta(1)*log(pgroundn(i,j,noc)/pncep(k1-1))
-          tempsgn(i,j,noc)=tsref+dtemp(18,i,j,1)
-          tempsgn(i,j,nse)=tempsgn(i,j,noc)
-          dtemp(18,i,j,2)=dt650(2)+beta(2)*log(pgroundn(i,j,nld)/65000.)
-          beta(2)=(tncep(k2,ireg(2),imonth)-tncep((k2-1),ireg(2),imonth))/ &
-               & log(pncep(k2)/pncep(k2-1))
-          tsref=tncep((k2-1),ireg(2),imonth)+ &
-               & beta(2)*log(pgroundn(i,j,nld)/pncep(k2-1))
-          tempsgn(i,j,nld)=tsref+dtemp(18,i,j,2)
-          tempsg(i,j)=0.0
-          do nn=1,ntyps
-            tempsg(i,j)=tempsg(i,j)+fractn(i,j,nn)*tempsgn(i,j,nn)
-          enddo
+            dtemp(18,i,j,1) = dt650(1) + &
+                 & beta(1) * LOG(pgroundn(i,j,noc) / 65000.)
+            beta(1) = (tncep(k1,ireg(1),imonth) - &
+                 & tncep((k1-1),ireg(1),imonth)) / LOG(pncep(k1) / pncep(k1-1))
+            tsref = tncep((k1-1),ireg(1),imonth) + &
+                 & beta(1) * LOG(pgroundn(i,j,noc) / pncep(k1-1))
+            tempsgn(i,j,noc) = tsref + dtemp(18,i,j,1)
+            tempsgn(i,j,nse) = tempsgn(i,j,noc)
+            dtemp(18,i,j,2) = dt650(2) + &
+                 & beta(2) * LOG(pgroundn(i,j,nld) / 65000.)
+            beta(2) = (tncep(k2,ireg(2),imonth) - &
+                 & tncep((k2-1),ireg(2),imonth)) / LOG(pncep(k2) / pncep(k2-1))
+            tsref = tncep((k2-1),ireg(2),imonth) + &
+                 & beta(2) * LOG(pgroundn(i,j,nld) / pncep(k2-1))
+            tempsgn(i,j,nld) = tsref + dtemp(18,i,j,2)
+            tempsg(i,j) = SUM(fractn(i,j,:) * tempsgn(i,j,:))
 
 ! *** Temperature of pressure levels between diagnosed surface pressure and
 ! *** reference surface pressure are set equal to surface air temp.
-
-
-          IF(z1.LE.rmountn(i,j,noc))THEN
-            DO l=ipl(ireg(1)),k1,-1
-               dtemp(l,i,j,1)=tempsgn(i,j,noc)-tncep(l,ireg(1),imonth)
-            ENDDO
-          ENDIF
-
-          IF(z2.LE.rmountn(i,j,nld))THEN
-            DO l=ipl(ireg(2)),k2,-1
-               dtemp(l,i,j,2)=tempsgn(i,j,nld)-tncep(l,ireg(2),imonth)
-            ENDDO
-          ENDIF
+            IF (z1 <= rmountn(i,j,noc)) THEN
+               DO l = ipl(ireg(1)), k1, -1
+                  dtemp(l,i,j,1) = tempsgn(i,j,noc) - tncep(l,ireg(1),imonth)
+               END DO
+            END IF
+            IF (z2 <= rmountn(i,j,nld)) THEN
+               DO l = ipl(ireg(2)), k2, -1
+                  dtemp(l,i,j,2) = tempsgn(i,j,nld) - tncep(l,ireg(2),imonth)
+               END DO
+            END IF
 
 ! *** for LWR parameterisation temperature anomalies wrt seasonal mean are
 ! *** required:
-          do nn=1,2
-            DO k=1,18
-              dtemp(k,i,j,nn)=tncep(k,ireg(nn),imonth) + &
-                   & dtemp(k,i,j,nn)-tncep(k,ireg(nn),ism)
-            ENDDO
-          enddo
+            DO nn = 1, 2
+               DO k = 1, 18
+                  dtemp(k,i,j,nn) = tncep(k,ireg(nn),imonth) + &
+                       & dtemp(k,i,j,nn) - tncep(k,ireg(nn),ism)
+               END DO
+            END DO
+         END DO
+      END DO
 
-
-         enddo
-       enddo
-
-      return
-      end
+      RETURN
+      END SUBROUTINE tempprofile
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-       subroutine ptmoisgp(tmount,qmax,i,j,dqmdt)
+       SUBROUTINE ptmoisgp(tmount,qmax,i,j,dqmdt)
 !-----------------------------------------------------------------------
 ! *** computation of ground pressure and temperature in order to
 ! *** to calculate the maximum precipitable water content in latlon i,j
 ! *** qmount contains the topography for this purpose
 ! *** assuming temperature varies linearly with log of the pressure
 !-----------------------------------------------------------------------
-      implicit none
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comunit.h'
+      INCLUDE 'comrunlabel.h'
 
+      INTEGER i,j
+      REAL*8 t500,hmount,hred,z500,dqmdt
+      REAL*8 alpha,pfac,hfac,tmount,qmax,detqmax
 
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comunit.h'
-      include 'comrunlabel.h'
-
-
-      integer i,j
-      real*8  t500,hmount,hred,z500,dqmdt
-      real*8  alpha,pfac,hfac,tmount,qmax,detqmax
-
-
-      z500=gpm500*grav
-      hfac=2/rgas
-      hred=hmoisr*grav
-      pfac=log(plevel(2)/tlevel(2))
-
+      z500 = gpm500 * grav
+      hfac = 2 / rgas
+      hred = hmoisr * grav
+      pfac = LOG(plevel(2) / tlevel(2))
 
 ! *** calculate temperature at t500 assuming the temperature varies
 ! *** linearly with log(p) : T = Tref + alpha * log (p/pref)
-
-
-      alpha=(temp2g(i,j) - temp4g(i,j))*rlogtl12
-      t500 =temp4g(i,j) + alpha*pfac
-
+      alpha = (temp2g(i,j) - temp4g(i,j)) * rlogtl12
+      t500 = temp4g(i,j) + alpha * pfac
 
 ! *** calculate reduced ground height in decameters
 ! *** reduction occurs in order to tune the amount of moisture which
 ! *** is allowed to pass a topographic barier
-
-
-      hmount=qmount(i,j)*hred
-      if (hmount.lt.0d0) hmount=0d0
-
+      hmount = qmount(i,j) * hred
+      IF (hmount < 0d0) hmount = 0d0
 
 ! *** calculate the groundpressure assuming that the mean geopotential
 ! *** height at 500 hPa is gpm500 decameter
 ! *** calculate 10 mtr temperature in K
+      tmount = t500**2 - hfac * alpha * (hmount - geopg(i,j,2) - z500)
+      IF (tmount < 0) THEN
+         WRITE (iuo+29,*) 'in latlon ',i,j
+         WRITE (iuo+29,*) tmount,hmount,t500,geopg(i,j,2)
+         CALL error(18)
+      ELSE
+         tmount = SQRT(tmount)
+      END IF
+      qmax = detqmax(tmount,i,j,dqmdt)
 
-
-      tmount=t500**2 - hfac*alpha*(hmount-geopg(i,j,2)-z500)
-      if (tmount.lt.0) then
-        write(iuo+29,*) 'in latlon ',i,j
-        write(iuo+29,*) tmount,hmount,t500,geopg(i,j,2)
-        call error(18)
-      else
-        tmount=sqrt(tmount)
-      endif
-
-
-!      pmount=plevel(2)*exp((tmount-t500)/alpha)
-
-      qmax=detqmax(tmount,i,j,dqmdt)
-
-
-      return
-      end
+      RETURN
+      END SUBROUTINE ptmoisgp
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
@@ -2662,64 +2446,39 @@
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine dyntemp
+      SUBROUTINE dyntemp
 !-----------------------------------------------------------------------
 ! *** computes temperature distribution in K from geopotential
 ! *** the mean level is given by tempm
 ! *** input:  geopg,tempm
 ! *** output: temp2g,temp4g
 !-----------------------------------------------------------------------
-      implicit none
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comrunlabel.h'
 
-
-
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comrunlabel.h'
-
-
-      integer i,j,l
-      real*8  tempfac(ntl)
-      real*8  geogt(nlat,nlon,ntl),tempgt(nlat,nlon,ntl)
-
+      INTEGER l
+      REAL*8 tempfac(ntl)
+      REAL*8 geogt(nlat,nlon,ntl),tempgt(nlat,nlon,ntl)
 
       tempfac(1)=350.d0/(rgas*300.d0)
       tempfac(2)=650.d0/(rgas*300.d0)
 
+      geogt(:,:,1) = geopg(:,:,1) - geopg(:,:,2)
+      geogt(:,:,2) = geopg(:,:,2) - geopg(:,:,3)
 
-      do j=1,nlon
-        do i=1,nlat
-          geogt(i,j,1)=geopg(i,j,1)-geopg(i,j,2)
-          geogt(i,j,2)=geopg(i,j,2)-geopg(i,j,3)
-        enddo
-      enddo
-
-      do l=1,ntl
-
-
+      DO l = 1, ntl
 ! ***  calculate temperatures and add mean temperature level
+        tempgt(:,:,l) = tempfac(l) * geogt(:,:,l) + tempm(l)
+     END DO
 
+     temp2g = tempgt(:,:,1)
+     temp4g = tempgt(:,:,2)
 
-        do j=1,nlon
-          do i=1,nlat
-            tempgt(i,j,l)=tempfac(l)*geogt(i,j,l)+tempm(l)
-          enddo
-        enddo
-
-
-      enddo
-
-      do j=1,nlon
-        do i=1,nlat
-          temp2g(i,j)=tempgt(i,j,1)
-          temp4g(i,j)=tempgt(i,j,2)
-        enddo
-      enddo
-
-
-      return
-      end
+     RETURN
+     END SUBROUTINE dyntemp
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
@@ -3077,7 +2836,6 @@
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine lwaverad2(nn)
 !-----------------------------------------------------------------------
 ! *** computes long wave radiation according to the parameterization of
 ! *** Chao Chou and Neelin and substantially adapted and extended
@@ -3105,146 +2863,136 @@
 ! ***          ulrads(nlat,nlon): upward longwave radiation [Wm-2] at
 ! ***                             the surface
 !-----------------------------------------------------------------------
-           implicit none
+      SUBROUTINE lwaverad2(nn)
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comemic.h'
+      INCLUDE 'comsurf.h'
+      INCLUDE 'comunit.h'
 
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comemic.h'
-      include 'comsurf.h'
-      include 'comunit.h'
+      INTEGER i,j,l,k,m,is,ism,nol,nn,ireg,h,r,s,igas
+      REAL*8  lwrz(7,0:1),dumts
+      REAL*8  dqa,dqreg(27)
+      REAL*8  ulrad1nm
+      REAL*8  ulrad1nmm
+      REAL*8  ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
+      REAL*8  ulrad0nz(nlat,nlon),ulrad1nz(nlat,nlon)
+      REAL*8  ulrad1nzz(nlat,nlon,3)
+      REAL*8  ulrad0nT,ulrad1nT
+      REAL*8  globalmean
+      REAL*8  logco2T,sqrch4T,sqrn2oT,ghgz(19),o3z
+      REAL*8  alpho3lw(2)
+      REAL*8  lwrfluxz(7,27,4,0:1,2)
+      REAL*8  moc,tmc,tmc0,tsurfmean,cland,thex
+      COMMON /radO3/ ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
+      COMMON /rad031/ ulrad0nz,ulrad1nz,ulrad0nT,ulrad1nT
+      COMMON /IPCC_out2/ moc,tmc,tmc0,tsurfmean,cland,thex
 
+      ghgz(1) = 280.0
+      DO igas = 2, 19
+         ghgz(igas) = ghg(igas)
+      END DO
+      o3z = o3
+      logco2T = LOG(ghgz(1) / ghgipcc(1))
+      sqrch4T = SQRT(ghgz(2)) - SQRT(ghgipcc(2))
+      sqrn2oT = SQRT(ghgz(3)) - SQRT(ghgipcc(3))
+      alpho3lw(1) = 153.6
+      alpho3lw(2) = 201.2
+      DO h = 1, 2
+         DO l = 0, 1
+            DO s = 1, 4
+               DO r = 1, 27
+                  DO k = 1, 7
+                     lwrfluxz(k,r,s,l,h) = lwrref(k,r,s,l) + &
+                          & lwrghg(k,1,r,s,l) * logco2T + &
+                          & lwrghg(k,2,r,s,l) * sqrch4T + &
+                          & lwrghg(k,3,r,s,l) * sqrn2oT
+                     DO m = 4, 19
+                        lwrfluxz(k,r,s,l,h) = lwrfluxz(k,r,s,l,h) + &
+                             & lwrghg(k,m,r,s,l) * (ghgz(m) - ghgipcc(m))
+                     END DO
+                     lwrfluxz(k,r,s,l,h) = lwrfluxz(k,r,s,l,h) + &
+                          & lwrghg(k,4,r,s,l) * alpho3lw(h) * (o3z - 25.0)
+                  END DO
+               END DO
+            END DO
+         END DO
+      END DO
 
-      integer i,j,l,k,m,is,ism,nol,nn,ireg,h,r,s,igas
-      real*8  lwrz(7,0:1),dumts
-      real*8  dqa,dqreg(27)
-      real*8  ulrad1nm
-      real*8  ulrad1nmm
-      real*8  ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
-      real*8  ulrad0nz(nlat,nlon),ulrad1nz(nlat,nlon)
-      real*8  ulrad1nzz(nlat,nlon,3)
-      real*8  ulrad0nT,ulrad1nT
-      real*8  globalmean
-      real*8  logco2T,sqrch4T,sqrn2oT,ghgz(20)
-      real*8  alpho3lw(2)
-      real*8  lwrfluxz(7,27,4,0:1,2)
-      real*8  moc,tmc,tmc0,tsurfmean,cland,thex
-      common / radO3 / ulrad0nU,ulrad1nU,ulrad2nU,ulradsnU,dlradsnU
-      common /rad031/ulrad0nz,ulrad1nz,ulrad0nT,ulrad1nT
-      common/IPCC_out2/moc,tmc,tmc0,tsurfmean,cland,thex
+      is = imonth / 3 + 1
+      IF (is > 4) is = 1
+      ism = (is - 1) * 3 + 1
 
-
-
-        ghgz(1)=280.
-        do igas=2,20
-         ghgz(igas)=ghg(igas)
-        enddo
-        logco2T=log(ghgz(1)/ghgipcc(1))
-        sqrch4T=sqrt(ghgz(2))-sqrt(ghgipcc(2))
-        sqrn2oT=sqrt(ghgz(3))-sqrt(ghgipcc(3))
-        alpho3lw(1)=153.6
-        alpho3lw(2)=201.2
-        do h=1,2
-        do l=0,1
-         do s=1,4
-          do r=1,27
-           do k=1,7
-            lwrfluxz(k,r,s,l,h)=lwrref(k,r,s,l)+lwrghg(k,1,r,s,l)*logco2T+ &
-                 & lwrghg(k,2,r,s,l)*sqrch4T+lwrghg(k,3,r,s,l)*sqrn2oT
-            do m=4,19
-             lwrfluxz(k,r,s,l,h)=lwrfluxz(k,r,s,l,h)+ &
-                  & lwrghg(k,m,r,s,l)*(ghgz(m)-ghgipcc(m))
-            enddo
-              lwrfluxz(k,r,s,l,h)=lwrfluxz(k,r,s,l,h)+ &
-                   & lwrghg(k,4,r,s,l)*alpho3lw(h)*(ghgz(20)-25.)
-           enddo
-          enddo
-         enddo
-        enddo
-        enddo
-
-       is=imonth/3+1
-       if (is.gt.4) is=1
-       ism=(is-1)*3+1
-
-      do i=1,27
+      DO i = 1, 27
 !dqa    dqreg(i)=qancep(i,ism)**0.3333
-        dqreg(i)=qancep(i,ism)
-      enddo
+         dqreg(i) = qancep(i, ism)
+      END DO
 
-      if (nn.eq.noc.or.nn.eq.nse) nol=1
-      if (nn.eq.nld) nol=2
+      IF (nn == noc .OR. nn == nse) nol = 1
+      IF (nn == nld) nol = 2
 
-
-      do j=1,nlon
-        do i=1,nlat
-          ireg=irn(i,j,nol)
+      DO j = 1, nlon
+         DO i = 1, nlat
+            ireg = irn(i,j,nol)
 
 !-Hemispheric dependence of tropospheric ozone forcing
-          if (i.le.16) then
-           h=1
-          else
-           h=2
-          endif
+            IF (i <= 16) THEN
+               h = 1
+            ELSE
+               h = 2
+            END IF
 
 !dqa      dqa=lwrmois(i,j)-dqreg(ireg)
 !dqa      q**1/3-qm**1/3=qm**(1/3-n)*(q**n-qm**n)
-          dqa=dqreg(ireg)**(0.3333-EXPIR)* &
-               & (lwrmois(i,j)**EXPIR-dqreg(ireg)**EXPIR)
+            dqa = dqreg(ireg)**(0.3333 - EXPIR) * &
+                 & (lwrmois(i,j)**EXPIR - dqreg(ireg)**EXPIR)
 
-          do l=0,1
-            do k=1,7
-              lwrz(k,l)=lwrfluxz(k,ireg,is,l,h)+lwrqa(k,ireg,is,l)*dqa
-              do m=1,ipl(ireg)-1
-                lwrz(k,l)=lwrz(k,l)+lwrt(k,m,ireg,is,l)*dtemp(m,i,j,nol)
-              enddo
-              lwrz(k,l)=lwrz(k,l)+lwrt(k,18,ireg,is,l)*dtemp(18,i,j,nol)
-            enddo
+            DO l = 0, 1
+               DO k = 1, 7
+                  lwrz(k,l) = lwrfluxz(k,ireg,is,l,h) + lwrqa(k,ireg,is,l) * dqa
+                  DO m = 1, ipl(ireg)-1
+                     lwrz(k,l) = lwrz(k,l) + &
+                          & lwrt(k,m,ireg,is,l) * dtemp(m,i,j,nol)
+                  END DO
+                  lwrz(k,l) = lwrz(k,l) + &
+                       & lwrt(k,18,ireg,is,l) * dtemp(18,i,j,nol)
+               END DO
 
-            dumts=tsurfn(i,j,nn)-tncep(19,ireg,ism)
-            do m=1,4
-              do k=1,3
-                lwrz(k,l)=lwrz(k,l)+ &
-                     & (lwrts(k,m,ireg,is,l)+lwrqts(k,m,ireg,is,l)*dqa)*dumts
-              enddo
+               dumts = tsurfn(i,j,nn) - tncep(19,ireg,ism)
+               DO m = 1, 4
+                  DO k = 1, 3
+                     lwrz(k,l) = lwrz(k,l) + &
+                          & (lwrts(k,m,ireg,is,l) + &
+                          &  lwrqts(k,m,ireg,is,l) * dqa) * dumts
+                  END DO
 !             lwrz(7,l)=lwrz(7,l)+
 !    *        (lwrts(7,m,ireg,is,l)+lwrqts(7,m,ireg,is,l)*dqa)
 !    *        *dumts
-              dumts=dumts*(tsurfn(i,j,nn)-tncep(19,ireg,ism))
-            enddo
+                  dumts = dumts * (tsurfn(i,j,nn) - tncep(19,ireg,ism))
+               END DO
+            END DO
 
+            IF (nn == 1) THEN
+               ulrad1nz(i,j) = 0.0
+               IF (initialization .EQV. .TRUE.) ulrad1nT = 0.0
+            END IF
 
-          enddo
+            ulrad1nzz(i,j,nn) = (lwrz(2,0) + lwrz(5,0)) * (1-tcc(i,j)) + &
+                 & (lwrz(2,1) + lwrz(5,1)) * tcc(i,j)
+            ulrad1nz(i,j) = ulrad1nz(i,j) + (ulrad1nzz(i,j,nn) * fractn(i,j,nn))
+         END DO
+      END DO
 
-          if (nn.eq.1) then
-            ulrad1nz(i,j)=0.
-            if(initialization.eqv..true.) then
-            !if (iyear.eq.0) then
-             ulrad1nT=0.
-            endif
-          endif
+      IF (nn == 3) THEN
+         ulrad1nm = globalmean(ulrad1nz)
+         ulrad1nmm = ulrad1nm - ulrad1nU
+         ulrad1nT = ulrad1nT + (ulrad1nmm / (360.0 * 6.0))
+      END IF
 
-
-          ulrad1nzz(i,j,nn)=(lwrz(2,0)+lwrz(5,0))*(1-tcc(i,j)) + &
-               & (lwrz(2,1)+lwrz(5,1))*tcc(i,j)
-         ulrad1nz(i,j)=ulrad1nz(i,j)+(ulrad1nzz(i,j,nn)*fractn(i,j,nn))
-
-        enddo
-      enddo
-
-
-      if (nn.eq.3) then
-      ulrad1nm=globalmean(ulrad1nz)
-
-      ulrad1nmm=ulrad1nm-ulrad1nU
-
-      ulrad1nT=ulrad1nT+(ulrad1nmm/(360.*6.))
-
-      endif
-
-! *** that's all folks
-      return
-      end
+      RETURN
+      END SUBROUTINE lwaverad2
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine swaverad2(nn)

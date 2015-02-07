@@ -414,6 +414,18 @@
       read(iuo+46, NML = fluxcorw)
 
       solarvol = 0
+      volc1 = 0
+      volc2 = 0
+      volc3 = 0
+      volc4 = 0
+      volc5 = 0
+      volc6 = 0
+      volc7 = 0
+      volc8 = 0
+      volc9 = 0
+      volc10 = 0
+      volc11 = 0
+      volc12 = 0
       READ(iuo+46, NML=volcfor)
       solarvol(1,:) = volc1
       solarvol(2,:) = volc2

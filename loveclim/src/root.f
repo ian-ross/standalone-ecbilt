@@ -1,35 +1,35 @@
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine zbrac(func,x1,x2,iter)
 c-----------------------------------------------------------------------
 c *** this routine from numerical recipes determines an interval with
 c *** bounds x1 and x2 that contains the root of the function func
 c-----------------------------------------------------------------------
+      SUBROUTINE zbrac(func, x1, x2, iter)
+      IMPLICIT NONE
 
-      implicit none
+      INTEGER j, iter
+      REAL*8 f1, f2, x1, x2, func
+      EXTERNAL func
+      INTEGER, PARAMETER :: ntry = 100
+      REAL*8, PARAMETER :: factor = 1.6
 
-      integer   j,ntry,iter
-      real*8    factor
-      parameter (factor=1.6,ntry=100)
-      real*8    f1,f2,x1,x2,func
-      external  func
-
-      f1=func(x1)
-      f2=func(x2)
-      do j=1,ntry
-        if ((f1.le.0..and.f2.ge.0.).or.(f1.ge.0..and.f2.le.0.)) then
-          iter=j
-          return
-        endif
-        if (abs(f1).lt.abs(f2)) then
-          x1=x1+factor*(x1-x2)
-          f1=func(x1)
-        else
-          x2=x2+factor*(x2-x1)
-          f2=func(x2)
-        endif
-      enddo
-      return
-      end
+      f1 = func(x1)
+      f2 = func(x2)
+      DO j = 1, ntry
+         IF (f1 <= 0.0 .AND. f2 >= 0.0 .OR.
+     $       f1 >= 0.0 .AND. f2 <= 0.0) THEN
+            iter = j
+            RETURN
+         END IF
+         IF (ABS(f1) < ABS(f2)) THEN
+            x1 = x1 + factor * (x1 - x2)
+            f1 = func(x1)
+         ELSE
+            x2 = x2 + factor * (x2 - x1)
+            f2 = func(x2)
+         END IF
+      END DO
+      RETURN
+      END
 
 c23456789012345678901234567890123456789012345678901234567890123456789012
       function zbrent(func,x1,x2,tol,iter)
@@ -40,6 +40,7 @@ c *** x1 and x2
 c-----------------------------------------------------------------------
 
       implicit none
+      include 'comunit.h'
 
       integer   iter,itmax
       real*8    eps
@@ -52,6 +53,8 @@ c-----------------------------------------------------------------------
       b=x2
       fa=func(a)
       fb=func(b)
+      d=0
+      e=0
       if ((fa.gt.0.and.fb.gt.0.).or.(fa.lt.0.and.fb.lt.0.)) then
          call error(13)
       endif
@@ -76,7 +79,7 @@ c-----------------------------------------------------------------------
         xm=0.5*(c-b)
         if (abs(xm).le.tol1.or.fb.eq.0.) then
           zbrent=b
-          if (iter.gt.8) write(100,*) 'zbrent ',iter,b
+          if (iter.gt.8) write(iuo+29,*) 'zbrent ',iter,b
           return
         endif
         if (abs(e).ge.tol1.and.abs(fa).gt.abs(fb)) then
@@ -111,7 +114,7 @@ c-----------------------------------------------------------------------
           b=b+sign(tol1,xm)
         endif
         fb=func(b)
-        if (iter.gt.8) write(100,*) 'zbrent ',iter,b
+        if (iter.gt.8) write(iuo+29,*) 'zbrent ',iter,b
       enddo
       zbrent=b
       return

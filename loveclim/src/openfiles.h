@@ -19,7 +19,3 @@
       open(unit=iuo+43,file='inputdata/seaice.dat')
 
       open(iuo+30,file='startdata/parlist'//fini,form='formatted')
-      open(iuo+20,file='book'//fini,form='formatted')
-      open(iuo+99,file='info'//fini,form='formatted')
-      open(iuo+29,file='error'//fini,form='formatted')
-      open(iuo+74,file='ipcc'//fini,form='formatted')

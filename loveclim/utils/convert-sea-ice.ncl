@@ -113,4 +113,4 @@ do i = 0, nlat - 1
   out(i + nlat) = str_concat((/ "  ", row, " ", death(nlat - 1 - i) /))
 end do
 
-asciiwrite("$DSTDIR/inputdata/icemask.dat", out)
+asciiwrite("$DSTDIR/inputdata/seaice.dat", out)

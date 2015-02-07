@@ -1,5 +1,4 @@
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      program emic
 !-----------------------------------------------------------------------
 ! *** coupled coupled atmosphere-ocean-seaice-land-carbon model
 ! *** atmosphere      : ecbilt
@@ -24,181 +23,174 @@
 ! ...... Vecode takes patmCO2
 !
 !-----------------------------------------------------------------------
+      PROGRAM emic
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comsurf.h'
+      INCLUDE 'comemic.h'
+      DOUBLE PRECISION patmCO2
+      INTEGER istep
 
+      PCO2ref = 277.4D0
+      PGACO2 = PCO2ref
 
-      implicit none
+      CALL initdriver
+      CALL initecbilt
+      CALL initlbm
+      CALL inioceanfixed
+      CALL initcoup
 
-      include 'comatm.h'
-      include 'comsurf.h'
-      include 'comemic.h'
-      double precision patmCO2
-      integer istep
+      initialization = .FALSE.
+      patmCO2 = PGACO2
 
+      DO istep = 1, ntstep
+         IF (MOD(istep - 1, iatm) == 0) THEN
+            WRITE (*,100) iyear, imonth, iday
+         END IF
+100      FORMAT (I6.6, '/', I2.2, '/', I2.2)
 
-      PCO2ref=277.4D0
-      PGACO2=PCO2ref
-
-      call initdriver
-      call initecbilt
-      call inioceanfixed
-      call initlbm
-      call initcoup
-
-      initialization=.false.
-      patmCO2=PGACO2
-
-      do istep = 1, ntstep
-         call update(istep)
-         call co2at
-         call at2co
-         call fluxes(noc)
-         call fluxes(nse)
+         CALL update(istep)
+         CALL co2at
+         CALL at2co
+         CALL fluxes(noc)
+         CALL fluxes(nse)
          ! *** integrate atmosphere
-         call ecbilt(istep)
+         CALL ecbilt(istep)
 
-         call la2co
-         call fluxes(nld)
-         call co2la
-         call lbm(istep)
-         call lae2co
-         call sumfluxland
+         CALL la2co
+         CALL fluxes(nld)
+         CALL co2la
+         CALL lbm(istep)
+         CALL lae2co
+         CALL sumfluxland
 
-         call sumfluxocean(istep)
+         CALL sumfluxocean(istep)
 
-         call oceanfixed(int((day+0.5*dt)/(iatm*dt)) + 1)
+         CALL oceanfixed(INT((day + 0.5 * dt) / (iatm * dt)) + 1)
 
-         !!! CHECK!
-         call writestate(iday)
-      enddo
+         CALL atmout(istep)
+         CALL writestate(istep)
+      END DO
 
-      call writestate(ntotday)
-      call error(999)
-!-AM
+      CALL writestate(ntotday)
+      CALL error(999)
 
-      close(57)
-      end
+      END PROGRAM emic
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine initdriver
 !-----------------------------------------------------------------------
 ! *** initialisation of climate model
 !-----------------------------------------------------------------------
-      implicit none
+      SUBROUTINE initdriver
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comemic.h'
+      INCLUDE 'comunit.h'
 
-      include 'comatm.h'
-      include 'comemic.h'
-      include 'comunit.h'
+      INTEGER, PARAMETER :: ijatm = nlat * nlon
+      INTEGER, PARAMETER :: ismfile = 400
+      INTEGER ija, i, j
+      REAL*8 fractocn(ijatm)
+      CHARACTER*3 num_startday
 
-      integer   ijatm,ija,i,j,ismfile
-      parameter (ijatm=nlat*nlon)
-      real*8    fractocn(ijatm)
-      parameter (ismfile = 400)
-      character*3 num_startday
-
-      NAMELIST /tstepctl/nyears,ndays,irunlabel,irunlabeld,iatm, &
+      NAMELIST /tstepctl/ nyears,ndays,irunlabel,irunlabeld,iatm, &
            & nwrskip,nwrskip_days
 
-      include 'openfiles.h'
-
-      write(iuo+99,*) 'Initialize'
+      INCLUDE 'openfiles.h'
 
 ! *** open emic.param
-
       lradCO2 = .TRUE.
       lferCO2 = .TRUE.
 
 ! *** open namelist
+      nyears = 10
+      ndays = 0
+      irunlabel = 000000
+      irunlabeld = 0
+      iatm = 6
+      nwrskip = 50
+      nwrskip_days =0
+      READ(iuo+46, NML=tstepctl)
 
-      nyears=10
-      ndays=0
-      irunlabel=000000
-      irunlabeld=0
-      iatm=6
-      nwrskip=50
-      nwrskip_days=0
+      IF (irunlabeld < 360) THEN
+         WRITE(num_startyear,'(i6.6)') irunlabel
+         WRITE(num_startday,'(i3.3)') irunlabeld + 1
+      ELSE
+         WRITE(num_startyear,'(i6.6)') irunlabel + 1
+         WRITE(num_startday,'(i3.3)') 1
+      END IF
 
-      read(iuo+46, NML = tstepctl)
+      fini = num_startyear // '_' // num_startday
+      OPEN(iuo+20, FILE='book'//fini, FORM='formatted')
+      OPEN(iuo+99, FILE='info'//fini, FORM='formatted')
+      OPEN(iuo+29, FILE='error'//fini, FORM='formatted')
 
-      if(irunlabeld.lt.360) then
-        write(num_startyear,'(i6.6)')irunlabel
-        write(num_startday,'(i3.3)')irunlabeld+1
-      else
-        write(num_startyear,'(i6.6)')irunlabel+1
-        write(num_startday,'(i3.3)')1
-      endif
+      kism = 1
+      if_ism = 15
+      is_ism = 15
 
-      fini=num_startyear//'_'//num_startday
-
-      kism=1
-      if_ism=15
-      is_ism=15
-
-      write(iuo+30, 900) 'nyears       =', nyears
-      write(iuo+30, 900) 'ndays        =', ndays
-      write(iuo+30, 900) 'irunlabel    =', irunlabel
-      write(iuo+30, 900) 'irunlabeld   =', irunlabeld
-      write(iuo+30, 900) 'iatm         =', iatm
-      write(iuo+30, 900) 'nwrskip      =', nwrskip
-      write(iuo+30, 900) 'nwrskip_days =', nwrskip_days
+      WRITE(iuo+30,900) 'nyears       =', nyears
+      WRITE(iuo+30,900) 'ndays        =', ndays
+      WRITE(iuo+30,900) 'irunlabel    =', irunlabel
+      WRITE(iuo+30,900) 'irunlabeld   =', irunlabeld
+      WRITE(iuo+30,900) 'iatm         =', iatm
+      WRITE(iuo+30,900) 'nwrskip      =', nwrskip
+      WRITE(iuo+30,900) 'nwrskip_days =', nwrskip_days
 
       undef = 9.99E10
 
 ! *** nstpyear is number of atmospheric timesteps per year
 ! *** ntstep is total number of timesteps
+      nstpyear = iatm * 360
+      ntstep = nstpyear * nyears
+      ntotday = nyears * 360 + ndays
 
-      nstpyear   = iatm*360
-      ntstep     = nstpyear*nyears
-      ntotday    = nyears*360+ndays
+      READ(iuo+48,*)
+      READ(iuo+48,*) (fractocn(ija), ija=1, ijatm)
+      REWIND(iuo+48)
+      DO ija = 1, ijatm
+         j = INT((ija - 1) / nlon) + 1
+         i = ija - (j - 1) * nlon
+         fracto(j,i) = fractocn(ija)
+         IF (fracto(j,i) > 0.990) fracto(j,i) = 1.0d0
+      END DO
 
-      read(iuo+48,*)
-      read(iuo+48,*) (fractocn(ija),ija=1,ijatm)
-      rewind(iuo+48)
-      do ija=1,ijatm
-        j=int((ija-1)/nlon)+1
-        i=ija-(j-1)*nlon
-        fracto(j,i)=fractocn(ija)
-        if (fracto(j,i).gt.0.990) fracto(j,i)=1.0d0
-      enddo
+      DO i = 1, nlat
+         READ(iuo+50,*) dareafac(i)
+      END DO
 
+900   FORMAT(a14,1x,i6)
 
-      do i=1,nlat
-        read(iuo+50,*) dareafac(i)
-      enddo
-
-900   format(a14,1x,i6)
-
-      return
-      end
+      RETURN
+      END SUBROUTINE initdriver
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine inimdldate
 !-----------------------------------------------------------------------------
 ! ***
 ! *** This routine initialises the day, month, year of the model run
 ! ***
 !-----------------------------------------------------------------------------
-      implicit none
-
-      include 'comatm.h'
-      include 'comemic.h'
-      include 'comunit.h'
-      include 'comrunlabel.h'
+      SUBROUTINE inimdldate
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comemic.h'
+      INCLUDE 'comunit.h'
+      INCLUDE 'comrunlabel.h'
 
       day     = 0
       iyear   = 0
-      imonth  = int(((irunlabeld - 1) - mod(irunlabeld - 1, 30)) / 30) + 1
-      iday    = mod(irunlabeld - 1, 30) + 1
-      iseason = mod(irunlabeld, 90)
-      initialization = .true.
+      imonth  = INT(((irunlabeld - 1) - MOD(irunlabeld - 1, 30)) / 30) + 1
+      iday    = MOD(irunlabeld - 1, 30) + 1
+      iseason = MOD(irunlabeld, 90)
+      initialization = .TRUE.
 
-      write (iuo+99,*) 'Init Date', irunlabelf + iyear, imonth, iday
+      WRITE (iuo+99,*) 'Init Date', irunlabelf + iyear, imonth, iday
 
-      return
-      end
+      RETURN
+      END SUBROUTINE inimdldate
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine mdldate(istep)
 !-----------------------------------------------------------------------------
 ! ***
 ! *** This routine calculates the day, month, year of the model run from
@@ -206,118 +198,80 @@
 ! *** Written by xueli wang April 1995.
 ! ***
 !-----------------------------------------------------------------------------
-      implicit none
+      SUBROUTINE mdldate(istep)
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comemic.h'
+      INCLUDE 'comunit.h'
+      INCLUDE 'comrunlabel.h'
 
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comemic.h'
-      include 'comunit.h'
-      include 'comrunlabel.h'
+      INTEGER iy, im, idate, istep
 
-      integer iy,im,idate,istep
+      day = (MOD(irunlabeld * iatm + istep - 1, nstpyear)) * dt
 
-      day = (mod(irunlabeld*iatm+istep-1,nstpyear)) * dt
-
-      if (mod(istep-1,iatm).eq.0) then
-        iday = iday + 1
-        if (iday .gt. 30) then
-          iday = 1
-          imonth = imonth + 1
-          if (imonth.gt.12) then
-            imonth = 1
-            iyear = iyear + 1
-          endif
-          call progress(irunlabelf+iyear,imonth-1,12-1)
-        endif
-!        write(iuo+99,'(A,I,A1,I2,A1,I2)') '>>>Update Date', irunlabelf+iyear,"/",imonth,"/", iday
-      endif
+      IF (MOD(istep - 1, iatm) == 0) THEN
+         iday = iday + 1
+         IF (iday > 30) THEN
+            iday = 1
+            imonth = imonth + 1
+            IF (imonth > 12) THEN
+               imonth = 1
+               iyear = iyear + 1
+            END IF
+         END IF
+      END IF
 
       iy = iyear * 10000
       im = imonth * 100
-
       idate = 20000000 + iy + im +iday
 
-      return
-      end
-
+      RETURN
+      END SUBROUTINE mdldate
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-
-       subroutine writestate(ist)
 !-----------------------------------------------------------------------
 !*** this routine writes the current state of ecbilt
 !    to datafiles for each day
 !-----------------------------------------------------------------------
-       implicit none
+       SUBROUTINE writestate(istep)
+       IMPLICIT NONE
+       INCLUDE 'comatm.h'
+       INCLUDE 'comemic.h'
+       INCLUDE 'comunit.h'
 
-       include 'comatm.h'
-       include 'comemic.h'
-       include 'comunit.h'
+       INTEGER kday, kyear, kInDays, istep, nwrskip_totdays
+       CHARACTER*6 numyear
+       CHARACTER*3 numday
 
-       integer kday
-       integer kyear
-       integer kInDays
-       integer ist
-       integer nwrskip_totdays
-       character*6 numyear
-       character*3 numday
+       IF (MOD(istep,nstpyear) == 0) THEN
+          IF (MOD(iyear,nwrskip) == 0 .OR. iyear == nyears) THEN
+             nwrskip_totdays = nwrskip * 360 + nwrskip_days
 
-       nwrskip_totdays = nwrskip*360+nwrskip_days
+             kInDays = irunlabeld + istep + irunlabel * 360
+             kday = MOD(kInDays - 1, 360) + 1
+             kyear = (kInDays - kday) / 360
 
+             WRITE(numyear,'(i6.6)') kyear
+             WRITE(numday,'(i3.3)') kday
+             OPEN(iuo+95, FILE='startdata/inatdyn'//numyear//'_'// &
+                  & numday//'.dat', FORM='unformatted')
+             CALL wrenddyn
+             CLOSE(iuo+95)
+             OPEN(iuo+95, FILE='startdata/inatphy'//numyear//'_'// &
+                  & numday//'.dat', FORM='unformatted')
+             CALL wrendphy
+             CLOSE(iuo+95)
+             OPEN(iuo+95, FILE='startdata/inland'//numyear//'_'// &
+                  & numday//'.dat', FORM='unformatted')
+             CALL wrendland
+             CLOSE(iuo+95)
+             OPEN(iuo+95, FILE='startdata/incoup'//numyear//'_'// &
+                  & numday//'.dat', FORM='unformatted')
+             CALL wrendcoup
+             CLOSE(iuo+95)
+          END IF
+       END IF
 
-       if (mod(ist,nwrskip_totdays).eq.0.or.ist.eq.ntotday) then
-          write(*,*) " "
-          kInDays=irunlabeld+ist+irunlabel*360
-          kday=mod(kInDays-1,360)+1
-          kyear=(kInDays-kday)/360
-!           kday=mod(irunlabeld+ist,360)
-!           kyear=irunlabel+int((irunlabeld+ist)/360)
-
-          write(numyear,'(i6.6)') kyear
-          write(numday,'(i3.3)') kday
-          open(iuo+95,file='startdata/inatdyn'//numyear//'_'//numday//'.dat' &
-     &           ,form='unformatted')
-          call wrenddyn
-          close(iuo+95)
-          open(iuo+95,file='startdata/inatphy'//numyear//'_'//numday//'.dat' &
-     &           ,form='unformatted')
-          call wrendphy
-          close(iuo+95)
-          open(iuo+95,file='startdata/inland'//numyear//'_'//numday//'.dat' &
-     &           ,form='unformatted')
-          call wrendland
-          close(iuo+95)
-          open(iuo+95,file='startdata/incoup'//numyear//'_'//numday//'.dat' &
-     &           ,form='unformatted')
-          call wrendcoup
-          close(iuo+95)
-
-       endif
-
-       return
-
-       end
-
-      subroutine progress(date,ndone,ntotal)
-        implicit none
-        integer :: date
-        character*255 prog,oldprog
-        integer ndone,ntotal,i
-        save oldprog
-
-        write(prog,'(I6,''['')') date
-        do i=1,40
-          prog(7+i:7+i)=' '
-        enddo
-        write(prog(23:31),'(f7.1,''%'')') 100.0*ndone/ntotal
-        do i=1,40
-          if ((1.0*ndone/ntotal).gt.(1.0*i/40)) then
-            if (prog(7+i:7+i).eq.' ') prog(7+i:7+i)='#'
-          endif
-        enddo
-        prog(47:47)=']'
-        if (prog.ne.oldprog) write(0,'(a,a,$)') prog(1:77),char(13)
-        oldprog=prog
-        if (ndone.eq.ntotal) write(0,*)
-        return
-      end
+       RETURN
+       END SUBROUTINE writestate

@@ -26,7 +26,10 @@
             if (fractl(i, j) .lt. epsl) then
               if (sstday(i, j, id) .ge. 310.or. &
                    & sstday(i, j, id) .lt. tzero - 1.) then
-                write(100,*) 'sst out of range ',i,j,sstday(i,j,id)
+                 write(iuo+29,*) 'sst out of range ',i,j,sstday(i,j,id)
+                 if (sstday(i, j, id) >= 310) sstday(i, j, id) = 310
+                 if (sstday(i, j, id) < tzero - 1.0) &
+                      & sstday(i, j, id) = tzero - 1.0
               endif
             endif
           enddo
@@ -46,11 +49,11 @@
          do j=1,nlon
             lsicebirth(i,j)=ichar(ch(j))
             if (lsicebirth(i,j) .eq. iap .and. fractl(i, j) .le. epsl) then
-               write(29,*) 'birth icemask latlon ',i,j
+               write(iuo+29,*) 'birth icemask latlon ',i,j,ch(j), fractl(i,j)
                call error(17)
             endif
             if (lsicebirth(i,j) .ne. iap .and. fractl(i, j) .gt. epsl) then
-               write(29,*) 'birth icemask latlon ',i,j
+               write(iuo+29,*) 'birth icemask latlon ',i,j,ch(j), fractl(i,j)
                call error(17)
             endif
             if (lsicebirth(i, j) .ge. ia1 .and. lsicebirth(i, j) .le. ia9) then
@@ -70,11 +73,11 @@
         do j=1,nlon
           lsicedeath(i,j)=ichar(ch(j))
           if (lsicedeath(i,j).eq.iap.and. fractl(i, j) .le. epsl) then
-            write(29,*) 'death icemask latlon ',i,j
+            write(iuo+29,*) 'death icemask latlon ',i,j
             call error(17)
           endif
           if (lsicedeath(i,j).ne.iap.and. fractl(i, j) .gt. epsl) then
-            write(29,*) 'death icemask latlon ',i,j
+            write(iuo+29,*) 'death icemask latlon ',i,j
             call error(17)
           endif
           if (lsicedeath(i,j).ge.ia1.and.lsicedeath(i,j).le.ia9) then
@@ -89,14 +92,14 @@
           if (lsicedeath(i,j).gt.0) then
             if (lsicebirth(i,j).eq.0.or. &
                  & lsicebirth(i,j).eq.lsicedeath(i,j)) then
-              write(29,*) 'icemask latlon ',i,j
+              write(iuo+29,*) 'icemask latlon ',i,j
               call error(17)
             endif
           endif
           if (lsicebirth(i,j).gt.0) then
             if (lsicedeath(i,j).eq.0.or. &
                  & lsicebirth(i,j).eq.lsicedeath(i,j)) then
-              write(29,*) 'icemask latlon ',i,j
+              write(iuo+29,*) 'icemask latlon ',i,j
               call error(17)
             endif
           endif
@@ -130,8 +133,6 @@
       real*8 facwin, facsum
       real*8 seaalb(nlat, nlon)
       real*8 zalb,zalbp
-
-!      write(100,*) 'index in oceanfixed ',index
 
 ! *** prescription of seaice cover
 
@@ -182,74 +183,63 @@
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine seaicetemp
 !-----------------------------------------------------------------------
 ! *** calculates seaice temperatures assuming that all surface fluxes
 ! *** balance
 !-----------------------------------------------------------------------
-      implicit none
+      SUBROUTINE seaicetemp
+      IMPLICIT NONE
+      INCLUDE 'comunit.h'
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comsurf.h'
+      INCLUDE 'comice.h'
+      INCLUDE 'comocfix.h'
+      INCLUDE 'comemic.h'
 
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comsurf.h'
-      include 'comice.h'
-      include 'comocfix.h'
-
-      integer  i,j,itetel,mxtetel,il,jl
-      real*8   stice,stice1,stice2,tol,fluxsumice,zbrent
-
-      external fluxsumice
-
+      INTEGER i, j, itetel, mxtetel, il, jl
+      REAL*8 stice, stice1, stice2, fluxsumice, zbrent
 ! *** tol is the wanted accuracy of the seaice temperature in degrees
-
-      parameter (tol=0.1)
-
-      common /landpoint/il,jl
+      REAL*8, PARAMETER :: tol = 0.1
+      EXTERNAL fluxsumice
+      COMMON /landpoint/ il, jl
 
       mxtetel = 0
-
-      do j=1,nlon
-        do i=1,nlat
-
-          if (lseaice(i,j).eq.1) then
-
-            il=i
-            jl=j
-            stice=tzero
-            stice1=stice - 1.
-            stice2=stice
-
-            call zbrac(fluxsumice,stice1,stice2,itetel)
-            if (itetel.eq.100) call error(7)
-            tijs(i,j)=zbrent(fluxsumice,stice1,stice2,tol,itetel)
-            if (itetel.eq.100) call error(8)
-            if (itetel.gt.mxtetel) mxtetel=itetel
+      DO j = 1, nlon
+         DO i = 1, nlat
+            IF (lseaice(i,j) == 1) THEN
+               il = i
+               jl = j
+               stice = tzero
+               stice1 = stice - 1.0
+               stice2 = stice
+               CALL zbrac(fluxsumice, stice1, stice2, itetel)
+               IF (itetel == 100) CALL error(7)
+               tijs(i,j) = zbrent(fluxsumice, stice1, stice2, tol, itetel)
+               IF (itetel == 100) CALL error(8)
+               IF (itetel > mxtetel) mxtetel = itetel
 
 ! *** in case of temperatures above zero, set
 ! *** surface temperature to meltpoint
+               IF (tijs(i,j) > 330 .OR. tijs(i,j) < 200) THEN
+                  WRITE(iuo+29,*) 'ice temperature out of range ', &
+                       & iyear,imonth,iday,i,j,tijs(i,j)
+                  WRITE(iuo+29,*) lsicebirth(i,j),lsicedeath(i,j),lseaice(i,j)
+                  WRITE(iuo+29,*) uv10(i,j),tempsg(i,j),q10(i,j)
+                  WRITE(iuo+29,*) dlrads(i,j),hesws(i,j)
+               END IF
 
-            if (tijs(i,j).gt.330.or.tijs(i,j).lt.200) then
-              write(100,*) 'ice temperature out of range ',i,j
-              write(100,*) lsicebirth(i,j),lsicedeath(i,j),lseaice(i,j)
-              write(100,*) uv10(i,j),tempsg(i,j),q10(i,j)
-              write(100,*) dlrads(i,j),hesws(i,j)
-            endif
+               IF (tijs(i,j) < 200.0) tijs(i,j) = 200.0
+               IF (tijs(i,j) > tzero) tijs(i,j) = tzero
+            END IF
+         END DO
+      END DO
 
-            if (tijs(i,j).gt.tzero) then
-               tijs(i,j)=tzero
-            endif
+      CALL flush(iuo+29)
 
-          endif
-        enddo
-      enddo
-
-
-!      write(100,*) 'in oceanfixed over ice ',mxtetel
-      call flush(100)
-
-      return
-      end
+      RETURN
+      END SUBROUTINE seaicetemp
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine detseaalb(seaalb)
@@ -317,46 +307,38 @@
     END SUBROUTINE initseaalb
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      function fluxsumice(stice)
 !-----------------------------------------------------------------------
 ! *** computes sum of fluxes between the seaice and the atmosphere
 !-----------------------------------------------------------------------
-      implicit none
+      FUNCTION fluxsumice(stice)
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comsurf.h'
 
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comsurf.h'
-
-      integer il,jl
-      real*8  fluxsumice,stice,qsatss,qsat,efluxgp,hfluxgp
-
-      common /landpoint/il,jl
+      INTEGER il, jl
+      REAL*8 fluxsumice, stice, qsatss, qsat, efluxgp, hfluxgp
+      COMMON /landpoint/ il, jl
 
 ! *** sensible heatflux
-
-      hfluxgp=alphad*cdragv(il,jl)*uv10(il,jl)*(stice-tempsg(il,jl))
+      hfluxgp = alphad * cdragv(il,jl) * uv10(il,jl) * (stice - tempsg(il,jl))
 
 ! *** latent heat flux
-
-      qsatss=qsat(1.d+5,stice)
-
-      if (stice.gt.tzero) then
-        efluxgp=alphav*cdragv(il,jl)*uv10(il,jl)*(qsatss-q10(il,jl))
-      else
-        efluxgp=alphas*cdragv(il,jl)*uv10(il,jl)*(qsatss-q10(il,jl))
-      endif
-
-      if (efluxgp.lt.0) efluxgp=0.
+      qsatss = qsat(1.0D+5, stice)
+      IF (stice > tzero) THEN
+         efluxgp = alphav * cdragv(il,jl) * uv10(il,jl) * (qsatss - q10(il,jl))
+      ELSE
+         efluxgp = alphas * cdragv(il,jl) * uv10(il,jl) * (qsatss - q10(il,jl))
+      END IF
+      IF (efluxgp < 0.0) efluxgp = 0.0
 
 ! *** sum of all fluxes
+      fluxsumice = hesws(il,jl) - hfluxgp + dlrads(il,jl) - &
+           & sboltz * stice**4 - efluxgp
 
-      fluxsumice=hesws(il,jl) - hfluxgp + dlrads(il,jl) - &
-     &            sboltz*stice**4 - efluxgp
-
-
-      return
-      end
+      RETURN
+      END FUNCTION fluxsumice
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine shine(tfsn,tfsg,ts,hgbq,hnbq,zalb,zalbp)
@@ -416,21 +398,23 @@
 
 ! ***    Freezing snow.
 
-          if (hnbq.gt.0.05) then
+          IF (hnbq > 0.05) THEN
             zalbp = alphd
-          else
-            if (hgbq.gt.1.5) then
-              zalbp = alphdi+(hnbq*(alphd-alphdi)/0.05)
-            else if (hgbq.gt.1.0.and.hgbq.le.1.5) then
-                   al = 0.472+2.0*(alphdi-0.472)*(hgbq-1.0)
-            else if (hgbq.gt.0.05.and.hgbq.le.1.0) then
-                   al = 0.2467+(0.7049*hgbq)-(0.8608*(hgbq*hgbq))+ &
-     &                 (0.3812*(hgbq*hgbq*hgbq))
-            else
-              al = 0.1+3.6*hgbq
-            endif
-            if (hgbq.le.1.5) zalbp=al+(hnbq*(alphd-al)/0.05)
-          endif
+          ELSE
+            IF (hgbq > 1.5) THEN
+               zalbp = alphdi + (hnbq * (alphd - alphdi) / 0.05)
+            ELSE
+               IF (hgbq > 1.0 .AND. hgbq <= 1.5) THEN
+                  al = 0.472 + 2.0 * (alphdi - 0.472) * (hgbq - 1.0)
+               ELSE IF (hgbq > 0.05 .AND. hgbq <= 1.0) THEN
+                  al = 0.2467 + (0.7049 * hgbq) - (0.8608 * (hgbq * hgbq)) + &
+                       & (0.3812 * (hgbq * hgbq * hgbq))
+               ELSE
+                  al = 0.1 + 3.6 * hgbq
+               END IF
+               IF (hgbq <= 1.5) zalbp = al + (hnbq * (alphd - al) / 0.05)
+            END IF
+          ENDIF
         else
 !
 ! ***    Melting snow.

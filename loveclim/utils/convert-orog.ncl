@@ -37,6 +37,7 @@ ecorog = area_hi2lores_Wrap(umlon, umlat, orogin, False, 1, eclon, eclat, False)
 ;; Calculate land fraction and mask by ECBILT land/sea mask.
 landfrac = area_hi2lores_Wrap(topolon, topolat, topomask, False, 1, \
                               eclon, eclat, False)
+landfrac = where(ecmask, landfrac, 0.0)
 oceanfrac = 1.0 - landfrac
 
 ;; Write NetCDF output.
@@ -58,6 +59,12 @@ do ilon = 0, nlon - 1
    do ilat = 0, nlat - 1
       ooberg(iout) = sprintf("%24.16f", bergorog(ilat, ilon))
       ofberg(iout) = sprintf("%24.16f", berglfrac(ilat, ilon))
+      iout = iout + 1
+   end do
+end do
+iout = 0
+do ilat = 0, nlat-1
+  do ilon = 0, nlon - 1
       of(iout) = sprintf("%24.16f", oceanfrac(ilat, ilon))
       iout = iout + 1
    end do

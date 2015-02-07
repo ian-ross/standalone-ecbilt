@@ -12,6 +12,8 @@ echo "******  SETTING UP DESTINATION  ******"
 /bin/rm -fr $DSTDIR
 mkdir -p $DSTDIR
 mkdir -p $DSTDIR/inputdata
+mkdir -p $DSTDIR/startdata
+mkdir -p $DSTDIR/outputdata/atmos
 mkdir -p $TMPDIR
 
 # Copy fixed gauss.asc, coef.dat, darea.dat, SUL.nc, labas.dat.
@@ -23,6 +25,8 @@ cp $FIXDIR/sea_albedo.dat $DSTDIR/inputdata
 cp $FIXDIR/albsnow.dat $DSTDIR/inputdata
 cp $SRCDIR/SUL.nc $DSTDIR/inputdata
 cp $SRCDIR/labas.dat $DSTDIR/inputdata
+cp $SRCDIR/namelist $DSTDIR
+cp $SRCDIR/outp_atmos.param $DSTDIR
 
 # Generate fractoc.dat and berg.nc from UM land/sea mask and
 # orography.

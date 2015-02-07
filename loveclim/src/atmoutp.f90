@@ -792,21 +792,21 @@
 
       FUNCTION computeTime() RESULT(result)
       INTEGER :: result
-      INTEGER :: realyear,realmonth
+      INTEGER :: realyear, realmonth
 
-      realyear=iyear
-      realmonth=0
-      if ( irunlabeld == 360 ) realyear=iyear-1
-      if ( irunlabeld /= 360 ) realmonth=(irunlabeld/30)
+      realyear = iyear
+      realmonth = 0
+      IF (irunlabeld == 360) realyear = iyear - 1
+      IF (irunlabeld /= 360) realmonth = (irunlabeld / 30)
 
       SELECT CASE (how_to_compute_time)
       CASE (Compute_Time_in_Days)
-         result = NINT(realyear*360.0 + (imonth-1)*30.0 + iday)
+         result = NINT(realyear * 360.0 + (imonth - 1) * 30.0 + iday)
       CASE (Compute_Time_in_Months_Only)
-         result = NINT(realyear*12.0 + imonth - realmonth)
+         result = NINT(realyear * 12.0 + imonth - realmonth)
       CASE (Compute_Time_in_Years_Months)
          result = imonth
-      CASE (Compute_Time_in_Years_Only)
+      CASE DEFAULT
          result = iyear
       END SELECT
 

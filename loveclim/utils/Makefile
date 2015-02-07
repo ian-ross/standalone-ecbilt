@@ -3,7 +3,8 @@ FFLAGS=-cpp -ffixed-line-length-none -fno-align-commons -g
 NCINC=-I/usr/include
 NCLIBS=-lnetcdff -lnetcdf
 PROGS=gen-coef convert-sst-from-nc write-swr convert-albedo-ascii-to-nc \
-      convert-forest-fraction-ascii-to-nc convert-orog-ascii-to-dat
+      convert-forest-fraction-ascii-to-nc convert-orog-ascii-to-dat \
+      restart-to-nc
 
 all: $(PROGS)
 
@@ -23,6 +24,9 @@ convert-forest-fraction-ascii-to-nc: convert-forest-fraction-ascii-to-nc.f90
 	$(FC) $(FFLAGS) $(NCINC) -I../src -o $@ $^ $(NCLIBS)
 
 convert-orog-ascii-to-dat: convert-orog-ascii-to-dat.f90
+	$(FC) $(FFLAGS) $(NCINC) -I../src -o $@ $^ $(NCLIBS)
+
+restart-to-nc: restart-to-nc.f90
 	$(FC) $(FFLAGS) $(NCINC) -I../src -o $@ $^ $(NCLIBS)
 
 clean:

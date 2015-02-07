@@ -1,0 +1,30 @@
+#!/usr/bin/perl -w
+
+my $bf = $ARGV[0];
+open FH, $bf;
+my (@ds, @ts);
+while (<FH>) {
+    chomp;
+    s/^ +//;
+    my ($y, $d, $t) = split / +/;
+    my $od = 360.0 * $y + $d;
+    push @ds, $od;
+    push @ts, $t;
+}
+close FH;
+my @sts;
+for (my $idx = 0; $idx < @ts; ++$idx) {
+    if ($idx < 180 || $idx > @ts - 180) {
+        $sts[$idx] = 0.0;
+    } else {
+        my $tot = 0.0;
+        for (my $jdx = $idx - 180; $jdx < $idx + 180; ++$jdx) {
+            $tot += $ts[$jdx];
+        }
+        $sts[$idx] = $tot / 360.0;
+    }
+}
+
+for (my $idx = 0; $idx < @ts; ++$idx) {
+    print $ds[$idx], " ", $ts[$idx], " ", $sts[$idx], "\n";
+}

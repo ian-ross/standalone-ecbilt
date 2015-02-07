@@ -17,35 +17,27 @@
       include 'comunit.h'
       INCLUDE 'comrunlabel.h'
 
-      integer i,j,k,l
-      real*8  sqn,rsqn
+      real*8 sqn
       character*6 numyear
       character*3 numday
 
-      read (iuo+1) nshm, ll
+      READ (iuo+1) nshm, ll
 
 ! *** legendre associated functions and derivatives
-
-      read (iuo+1) pp
-      read (iuo+1) pd
-      read (iuo+1) pw
+      READ (iuo+1) pp
+      READ (iuo+1) pd
+      READ (iuo+1) pw
 
 ! *** compensation for normalization in nag fft routines
-
-      sqn=sqrt(dble(nlon))
-      rsqn=1d0/sqn
-      do k=1,nsh
-        do i=1,nlat
-          pp(i,k)=pp(i,k)*sqn
-          pd(i,k)=pd(i,k)*sqn
-          pw(i,k)=pw(i,k)*rsqn
-        enddo
-      enddo
+      sqn = SQRT(DBLE(nlon))
+      pp = pp * sqn
+      pd = pd * sqn
+      pw = pw / sqn
 
 !       write(numyear,'(i6.6)') irunlabel+int((irunlabeld)/360)
 !       write(numday,'(i3.3)') mod(irunlabeld,360)
-      write(numyear,'(i6.6)') irunlabel
-      write(numday,'(i3.3)') irunlabeld
+      WRITE (numyear,'(i6.6)') irunlabel
+      WRITE (numday,'(i3.3)') irunlabeld
 
 ! *** real parameter
 ! *** zonal derivative operator
@@ -57,42 +49,28 @@
       CALL topo
 
 ! *** input initial qprime and for
+      IF (irunlabel == 0) THEN
+         qprime = 0d0
+         psi = 0d0
+         for = 0d0
+         psit = 0d0
+         u800 = 0d0
+         u500 = 0d0
+         u200 = 0d0
+         uv10 = 0d0
+         uvw10 = 0d0
+         utot = 0d0
+         udivg = 0d0
+         divg = 0d0
+      ELSE
+         OPEN(iuo+95, FILE='startdata/inatdyn'//numyear//'_'//numday//'.dat', &
+              & FORM='unformatted')
+         READ (iuo+95) qprime, for
+         CLOSE(iuo+95)
+      END IF
 
-      if (irunlabel .eq. 0) then
-        do k=1,nsh2
-          do l=1,nvl
-            qprime(k,l)=0d0
-            psi(k,l)=0d0
-            for(k,l)=0d0
-          enddo
-          do l=1,ntl
-            psit(k,l)=0d0
-          enddo
-        enddo
-        do j=1,nlon
-          do i=1,nlat
-            u800(i,j)=0d0
-            u500(i,j)=0d0
-            u200(i,j)=0d0
-            uv10(i,j)=0d0
-            uvw10(i,j)=0d0
-            do l=1,nvl
-              utot(i,j,l)=0d0
-              udivg(i,j,l)=0d0
-              divg(i,j,l)=0d0
-            enddo
-          enddo
-        enddo
-      else
-
-      open(iuo+95,file='startdata/inatdyn'//numyear//'_'//numday//'.dat', &
-           & form='unformatted')
-        read(iuo+95) qprime,for
-        close(iuo+95)
-      endif
-
-      return
-      end
+      RETURN
+      END SUBROUTINE iatmdyn
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine ddt
@@ -382,8 +360,6 @@
       end
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine sptogg (as,agg,pploc)
-
 !-----------------------------------------------------------------------
 ! *** conversion from spectral coefficients to gaussian grid
 ! *** input  spectral field as, legendre polynomials pploc (pp or pd)
@@ -391,171 +367,123 @@
 ! ***        respect to sin(fi)
 ! *** output gaussian grid agg
 !-----------------------------------------------------------------------
+      SUBROUTINE sptogg(as, agg, pploc)
 
-      implicit none
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
 
-      include 'comatm.h'
-      include 'comdyn.h'
-
-      integer i,ifail,j,k,k1,k2,m,mi,mr,nlon1
-      real*8  as(nsh,2), agg(nlat,nlon), pploc(nlat,nsh)
+      INTEGER ifail,k,k1,k2,m,mi,mr,nlon1
+      REAL*8 as(nsh,2), agg(nlat,nlon), pploc(nlat,nsh)
 
 ! *** inverse legendre transform
-
-      do j=1,nlon
-        do i=1,nlat
-          agg(i,j)=0.0d0
-        enddo
-      enddo
-
-      nlon1=nlon+1
-      k2=nshm(0)
-
-      do k=1,k2
-        do i=1,nlat
-          agg(i,1)=agg(i,1)+as(k,1)*pploc(i,k)
-        enddo
-      enddo
-
-      do m=1,nm
-        mr=m+1
-        mi=nlon1-m
-        k1=k2+1
-        k2=k2+nshm(m)
-        do k=k1,k2
-          do i=1,nlat
-            agg(i,mr)=agg(i,mr)+as(k,1)*pploc(i,k)
-          enddo
-          do i=1,nlat
-            agg(i,mi)=agg(i,mi)-as(k,2)*pploc(i,k)
-          enddo
-        enddo
-      enddo
+      agg = 0.0d0
+      nlon1 = nlon + 1
+      k2 = nshm(0)
+      DO k = 1, k2
+         agg(:,1) = agg(:,1) + as(k,1) * pploc(:,k)
+      END DO
+      DO m = 1, nm
+         mr = m + 1
+         mi = nlon1 - m
+         k1 = k2 + 1
+         k2 = k2 + nshm(m)
+         DO k = k1, k2
+            agg(:,mr) = agg(:,mr) + as(k,1) * pploc(:,k)
+            agg(:,mi) = agg(:,mi) - as(k,2) * pploc(:,k)
+         END DO
+      END DO
 
 ! *** inverse fourier transform
+      ifail = 0
+      CALL c06fqf(nlat, nlon, agg, 'r', trigi, wgg, ifail)
 
-      ifail=0
-      call c06fqf (nlat,nlon,agg,'r',trigi,wgg,ifail)
-
-      return
-      end
+      RETURN
+      END SUBROUTINE sptogg
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine ggtosp (agg,as)
 !-----------------------------------------------------------------------
 ! *** conversion from gaussian grid (agg) to spectral coefficients (as)
 ! *** input array agg is destroyed
 ! *** output as contains spectral coefficients
 !-----------------------------------------------------------------------
+      SUBROUTINE ggtosp(agg, as)
 
-      implicit none
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
 
-      include 'comatm.h'
-      include 'comdyn.h'
+      INTEGER ifail,k,k1,k2,m,mi,mr,nlon1
+      REAL*8 as(nsh,2), agg(nlat,nlon)
 
-      integer ir,ifail,k,k1,k2,m,mi,mr,nlon1,i
-      real*8  as(nsh,2), agg(nlat,nlon)
-!
 ! *** fourier transform
-!
-      ifail=0
-      call c06fpf (nlat,nlon,agg,'r',trigd,wgg,ifail)
-!
+      ifail = 0
+      CALL c06fpf(nlat, nlon, agg, 'r', trigd, wgg, ifail)
+
 ! *** legendre transform
-!
-      do ir=1,2
-        do k=1,nsh
-          as(k,ir)=0.0d0
-        enddo
-      enddo
+      as = 0.0d0
+      nlon1 = nlon + 1
+      k2 = nshm(0)
+      DO k = 1, k2
+         as(k,1) = SUM(agg(:,1) * pw(:,k))
+      END DO
 
-      nlon1=nlon+1
+      DO m = 1, nm
+        mr = m + 1
+        mi = nlon1 - m
+        k1 = k2 + 1
+        k2 = k2 + nshm(m)
+        DO k = k1, k2
+           as(k,1) = as(k,1) + SUM(agg(:,mr) * pw(:,k))
+           as(k,2) = as(k,2) + SUM(agg(:,mi) * pw(:,k))
+        END DO
+      END DO
 
-      k2=nshm(0)
-
-      do k=1,k2
-        do i=1,nlat
-          as(k,1)=as(k,1)+agg(i,1)*pw(i,k)
-        enddo
-      enddo
-
-      do m=1,nm
-        mr=m+1
-        mi=nlon1-m
-        k1=k2+1
-        k2=k2+nshm(m)
-        do k=k1,k2
-          do i=1,nlat
-            as(k,1)=as(k,1)+agg(i,mr)*pw(i,k)
-            as(k,2)=as(k,2)+agg(i,mi)*pw(i,k)
-          enddo
-        enddo
-      enddo
-
-      return
-      end
+      RETURN
+      END SUBROUTINE ggtosp
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine rggtosp (agg,as)
 !-----------------------------------------------------------------------
 ! *** conversion from gaussian grid (agg) to spectral coefficients (as)
 ! *** input array agg is conserved
 ! *** output as contains spectral coefficients
 !-----------------------------------------------------------------------
+      SUBROUTINE rggtosp(agg, as)
 
-      implicit none
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
 
-      include 'comatm.h'
-      include 'comdyn.h'
+      INTEGER ifail,k,k1,k2,m,mi,mr,nlon1
+      REAL*8 as(nsh,2), agg(nlat,nlon)
+      REAL*8 store(nlat,nlon)
 
-      integer i,ifail,ir,j,k,k1,k2,m,mi,mr,nlon1
-      real*8 as(nsh,2), agg(nlat,nlon)
-      real*8 store(nlat,nlon)
-
-      do j=1,nlon
-        do i=1,nlat
-          store(i,j)=agg(i,j)
-        enddo
-      enddo
+      store = agg
 
 ! *** fourier transform
-
-      ifail=0
-      call c06fpf (nlat,nlon,store,'r',trigd,wgg,ifail)
+      ifail = 0
+      CALL c06fpf(nlat, nlon, store, 'r', trigd, wgg, ifail)
 
 ! *** legendre transform
+      as = 0.0d0
+      nlon1 = nlon + 1
+      k2 = nshm(0)
+      DO k = 1, k2
+         as(k,1) = SUM(store(:,1) * pw(:,k))
+      END DO
 
-      do ir=1,2
-        do k=1,nsh
-          as(k,ir)=0.0d0
-        enddo
-      enddo
-
-      nlon1=nlon+1
-
-      k2=nshm(0)
-
-      do k=1,k2
-        do i=1,nlat
-          as(k,1)=as(k,1)+store(i,1)*pw(i,k)
-        enddo
-      enddo
-
-      do m=1,nm
-        mr=m+1
-        mi=nlon1-m
-        k1=k2+1
-        k2=k2+nshm(m)
-        do k=k1,k2
-          do i=1,nlat
-            as(k,1)=as(k,1)+store(i,mr)*pw(i,k)
-            as(k,2)=as(k,2)+store(i,mi)*pw(i,k)
-          enddo
-        enddo
-      enddo
-
-      return
-      end
+      DO m = 1, nm
+        mr = m + 1
+        mi = nlon1 - m
+        k1 = k2 + 1
+        k2 = k2 + nshm(m)
+        DO k = k1, k2
+           as(k,1) = as(k,1) + SUM(store(:,mr) * pw(:,k))
+           as(k,2) = as(k,2) + SUM(store(:,mi) * pw(:,k))
+        END DO
+      END DO
+      RETURN
+      END SUBROUTINE rggtosp
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
       subroutine qtopsi
@@ -885,11 +813,8 @@
       real*8  delgeos(nsh2),geos(nsh2)
 
 
-      do i=1,nlat
-        dmu(i)=1-sinfi(i)**2
-      enddo
-
-      cdim=(om**2)*(radius**2)
+      dmu = 1 - sinfi**2
+      cdim = (om**2) * (radius**2)
 
       do l=1,nvl
 
@@ -908,12 +833,7 @@
         call lapinv(delgeos,geos)
         geos(1)=0.d0
         call sptogg(geos,geopg(1,1,l),pp)
-        do j=1,nlon
-          do i=1,nlat
-            geopg(i,j,l)=cdim*geopg(i,j,l)
-          enddo
-        enddo
-
+        geopg(:,:,l) = cdim * geopg(:,:,l)
       enddo
 
       return
@@ -1225,25 +1145,22 @@
 
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine lap(xs,xsl)
+      SUBROUTINE lap(xs, xsl)
 !-----------------------------------------------------------------------
 ! *** computation of laplace operator in spectral domain
 ! *** input  xs  field in spectral form
 ! *** output xsl laplace of xs in spectral form
 !-----------------------------------------------------------------------
-      implicit none
-      include 'comatm.h'
-      include 'comdyn.h'
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
 
-      integer k
-      real*8  xs(nsh2),xsl(nsh2)
+      REAL*8 xs(nsh2), xsl(nsh2)
 
-      do k=1,nsh2
-        xsl(k)=xs(k)*rinhel(k,0)
-      enddo
+      xsl = xs * rinhel(:,0)
 
-      return
-      end
+      RETURN
+      END SUBROUTINE lap
 
 
 
@@ -1288,7 +1205,7 @@
       include'comunit.h'
       INCLUDE 'comrunlabel.h'
 
-      integer i,j
+      integer i
 
       integer k1,k2,k,m,ifail
       real*8  pigr4,dis,dif,rll,ininag(nlat,nlon)
@@ -1305,157 +1222,116 @@
 !-rmount_ism(verifier les flgism):
 
 ! *** real parameters
-      pigr4=4.d0*pi
-      rl1=1.0d0/rrdef1**2
-      rl2=1.0d0/rrdef2**2
-      relt1=max(0.0d0,rl1/(trel*pigr4))
-      relt2=max(0.0d0,rl2/(trel*pigr4))
-      dis=max(0.0d0,1.0d0/(tdis*pigr4))
-      rll=dble(ll(nsh))
-      dif=max(0.0d0,1.0d0/(tdif*pigr4*(rll*(rll+1))**idif))
+      pigr4 = 4.d0 * pi
+      rl1 = 1.0d0 / rrdef1**2
+      rl2 = 1.0d0 / rrdef2**2
+      relt1 = MAX(0.0d0, rl1 / (trel * pigr4))
+      relt2 = MAX(0.0d0, rl2 / (trel * pigr4))
+      dis = MAX(0.0d0, 1.0d0 / (tdis * pigr4))
+      rll = DBLE(ll(nsh))
+      dif = MAX(0.0d0, 1.0d0 / (tdif * pigr4 * (rll * (rll + 1))**idif))
 
 ! *** zonal derivative operator
-      k2=0
-      do m=0,nm
-        k1=k2+1
-        k2=k2+nshm(m)
-        do k=k1,k2
-          rm(k)=dble(m)
-        enddo
-      enddo
+      k2 = 0
+      DO m = 0, nm
+        k1 = k2 + 1
+        k2 = k2 + nshm(m)
+        rm(k1:k2) = DBLE(m)
+      END DO
 
 ! *** laplace/helmholtz direct and inverse operators
-      do j=0,5
-        rinhel(1,j)=0.0d0
-      enddo
-
-      diss(1,1)=0.0d0
-      diss(1,2)=0.0d0
-
-      do k=2,nsh
-        r1=dble(ll(k)*(ll(k)+1))
-        a=-r1-3.0d0*rl1
-        b=-r1-3.0d0*rl2
-        c=-r1-rl1
-        d=-r1-rl2
-        e=a*d+b*c
-        rinhel(k,0)=-r1
-        rinhel(k,1)=-1.0d0/r1
-        rinhel(k,2)= d/e
-        rinhel(k,3)= b/e
-        rinhel(k,4)=-c/e
-        rinhel(k,5)= a/e
-        diss(k,2)=dis*r1
-        diss(k,1)=-dif*r1**idif
-      enddo
-
-      do j=0,5
-        do k=1,nsh
-          rinhel(k+nsh,j)=rinhel(k,j)
-        enddo
-      enddo
-
-      do j=1,2
-        do k=1,nsh
-          diss(k+nsh,j)=diss(k,j)
-        enddo
-      enddo
+      rinhel(1,0:5) = 0.0d0
+      diss(1,1) = 0.0d0
+      diss(1,2) = 0.0d0
+      DO k = 2, nsh
+        r1 = DBLE(ll(k) * (ll(k) + 1))
+        a = -r1 - 3.0d0 * rl1
+        b = -r1 - 3.0d0 * rl2
+        c = -r1 - rl1
+        d = -r1 - rl2
+        e = a * d + b * c
+        rinhel(k,0) = -r1
+        rinhel(k,1) = -1.0d0 / r1
+        rinhel(k,2) = d / e
+        rinhel(k,3) = b / e
+        rinhel(k,4) = -c / e
+        rinhel(k,5) = a / e
+        diss(k,2) = dis * r1
+        diss(k,1) = -dif * r1**idif
+      END DO
+      rinhel((1+nsh):(2*nsh), 0:5) = rinhel(1:nsh, 0:5)
+      diss((1+nsh):(2*nsh), 1:2)=diss(1:nsh, 1:2)
 
 ! *** computation of the weight needed in OASIS
 !     include 'weight.h'
 
 ! *** initialization of coefficients for fft
-      do j=1,nlon
-        do i=1,nlat
-          ininag(i,j)=1.0d0
-        enddo
-      enddo
-
+      ininag = 1.0d0
       ifail=0
       call c06fpf (nlat,nlon,ininag,'i',trigd,wgg,ifail)
-
       ifail=0
       call c06fqf (nlat,nlon,ininag,'i',trigi,wgg,ifail)
 
 ! *** orography and dissipation terms
 ! *** fmu(i,1): sin(phi(i))
 ! *** fmu(i,2): 1-sin**2(phi(i))
-      rnorm=1.0d0/sqrt(3.0d0*nlon)
-      do i=1,nlat
-        fmu(i,1)=rnorm*pp(i,2)
-        fmu(i,2)=1.d0-fmu(i,1)**2
-      enddo
+      rnorm = 1.0d0 / SQRT(3.0d0 * nlon)
+      fmu(:,1) = rnorm * pp(:,2)
+      fmu(:,2) = 1.d0 - fmu(:,1)**2
 
 ! *** height of orography in meters
 
       ! LOAD netcdf forcing file
-      istatus=NF90_OPEN("inputdata/berg.nc", NF90_NOWRITE, idf_berg)
-      istatus=nf90_inq_varid(idf_berg, "h", idv_h)
-      istatus=nf90_inq_varid(idf_berg, "sfric", idv_sfric)
+      istatus = NF90_OPEN("inputdata/berg.nc", NF90_NOWRITE, idf_berg)
+      istatus = nf90_inq_varid(idf_berg, "h", idv_h)
+      istatus = nf90_inq_varid(idf_berg, "sfric", idv_sfric)
 
       ! ALLOCATE variable
       ALLOCATE(zagg1(nlon, nlat))
 
       ! READ variable agg1
-      istatus=nf90_get_var(idf_berg, idv_h, zagg1, &
+      istatus = nf90_get_var(idf_berg, idv_h, zagg1, &
            & start = (/1,1/), count = (/nlon,nlat/))
-      agg1=TRANSPOSE(zagg1)
+      agg1 = TRANSPOSE(zagg1)
 
       ! UPDATE rmount
-      rh0=max(0.0d0,0.001d0/h0)
-        do j=1,nlon
-          do i=1,nlat
-!          agg(i,j)=fmu(i,1)*agg1(i,j)*rh0
-          agg(i,j) = agg1(i,j)*rh0
-          rmount(i,j)=agg1(i,j)
-          if (rmount(i,j).lt.0d0) rmount(i,j)=0d0
-         enddo
-       enddo
-
+      rh0 = MAX(0.0d0, 0.001d0 / h0)
+      agg = agg1 * rh0
+      rmount = agg1
+      WHERE (rmount < 0d0) rmount = 0d0
       DEALLOCATE(zagg1)
 
 ! *** surface dependent friction
-      lgdiss=((addisl.gt.0.0).or.(addish.gt.0.0))
+      lgdiss = addisl > 0.0 .OR. addish > 0.0
 
-      call ggtosp (agg,orog)
-      call ddl (orog,ws)
-      call sptogg (ws,dorodl,pp)
-      call sptogg (orog,dorodm,pd)
+      CALL ggtosp(agg, orog)
+      CALL ddl(orog, ws)
+      CALL sptogg(ws, dorodl, pp)
+      CALL sptogg(orog, dorodm, pd)
 
-      if (lgdiss) then
+      IF (lgdiss) THEN
         ! READ friction variable
-        ALLOCATE(zagg2(nlon, nlat))
-        istatus=nf90_get_var(idf_berg, idv_sfric, zagg2, &
-             & start = (/1,1/), count = (/nlon,nlat/))
-        agg2=TRANSPOSE(zagg2)
-        DEALLOCATE(zagg2)
+         ALLOCATE(zagg2(nlon, nlat))
+         istatus = nf90_get_var(idf_berg, idv_sfric, zagg2, &
+              & start = (/1,1/), count = (/nlon,nlat/))
+         agg2 = TRANSPOSE(zagg2)
+         DEALLOCATE(zagg2)
 
-        do j=1,nlon
-          do i=1,nlat
-            agg(i,j)=1.0d0+addisl*agg2(i,j)+ &
-     &                addish*(1.0d0-exp(-0.001d0*agg1(i,j)))
-          enddo
-        enddo
+         agg = 1.0d0 + addisl * agg2 + addish * (1.0d0 - exp(-0.001d0 * agg1))
 
-        call ggtosp (agg,ws)
-        call ddl (ws,wsx)
+         CALL ggtosp(agg, ws)
+         CALL ddl(ws, wsx)
 
-        call sptogg (ws,rdiss,pp)
-        call sptogg (wsx,ddisdx,pp)
-        call sptogg (ws,ddisdy,pd)
+         CALL sptogg(ws, rdiss, pp)
+         CALL sptogg(wsx, ddisdx, pp)
+         CALL sptogg(ws, ddisdy, pd)
 
-        dd=0.5d0*diss(2,2)
-        do j=1,nlon
-          do i=1,nlat
-            ddisdx(i,j)=dd*ddisdx(i,j)/fmu(i,2)
-            ddisdy(i,j)=dd*ddisdy(i,j)*fmu(i,2)
-          enddo
-        enddo
+         dd = 0.5d0 * diss(2,2)
+         DO i = 1, nlat
+            ddisdx(i,:) = dd * ddisdx(i,:) / fmu(i,2)
+            ddisdy(i,:) = dd * ddisdy(i,:) * fmu(i,2)
+         END DO
+      END IF
 
-      endif
-
-       ! PRINT *, "topo rmount = ",SUM(rmount)
-       ! PRINT *, "topo agg    = ",SUM(agg)
-       ! Close the file
-       istatus=nf90_close(idf_berg)
-      end
+      istatus = nf90_close(idf_berg)
+      END SUBROUTINE topo

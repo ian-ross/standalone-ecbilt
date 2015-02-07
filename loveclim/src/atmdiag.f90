@@ -1,21 +1,17 @@
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine atmout(istep)
-      implicit none
+      SUBROUTINE atmout(istep)
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comemic.h'
 
-      include 'comatm.h'
-      include 'comemic.h'
+      INTEGER istep
 
-      integer istep
+      IF (MOD(istep,iatm) == 0) CALL selectout(istep)
 
-      if ( mod(istep,iatm) .eq. 0) then
-        call selectout(istep)
-      endif
-
-      return
-      end
+      RETURN
+      END SUBROUTINE atmout
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
-      subroutine selectout(istep)
 !-----------------------------------------------------------------------
 ! *** this routine selects which kind of outputs should be written to output
 ! *** itel counts the number of days in the output interval
@@ -28,19 +24,19 @@
 ! *** ixout: frequency for output instantanous fields in days.
 ! *** written by xueli wang.
 !-----------------------------------------------------------------------
+      SUBROUTINE selectout(istep)
       USE Atmosphere_Output
-      implicit none
+      IMPLICIT NONE
+      INCLUDE 'comatm.h'
+      INCLUDE 'comdyn.h'
+      INCLUDE 'comphys.h'
+      INCLUDE 'comemic.h'
+      INCLUDE 'comsurf.h'
+      INCLUDE 'comdiag.h'
+      INCLUDE 'comoutlocal.h'
 
-      include 'comatm.h'
-      include 'comdyn.h'
-      include 'comphys.h'
-      include 'comemic.h'
-      include 'comsurf.h'
-      include 'comdiag.h'
-      include 'comoutlocal.h'
-
-      integer i,j,k,istep
-      real*8  facstr,costt,sintt,pfac,psifac,qpfac
+      INTEGER i, j, k, istep
+      REAL*8 facstr, costt, sintt, pfac, psifac, qpfac
 
       ivlevel(1) = 200
       ivlevel(2) = 500
@@ -51,69 +47,67 @@
       itlevel(3) = 1000
 
 !** some computation and unit transformation
-
-      call sptogg(psi(1,1),psig(1,1,1),pp)
-      call sptogg(psi(1,2),psig(1,1,2),pp)
-      call sptogg(psi(1,3),psig(1,1,3),pp)
-      call sptogg(qprime(1,1),qgpv(1,1,1),pp)
-      call sptogg(qprime(1,2),qgpv(1,1,2),pp)
-      call sptogg(qprime(1,3),qgpv(1,1,3),pp)
+      CALL sptogg(psi(1,1), psig(1,1,1), pp)
+      CALL sptogg(psi(1,2), psig(1,1,2), pp)
+      CALL sptogg(psi(1,3), psig(1,1,3), pp)
+      CALL sptogg(qprime(1,1), qgpv(1,1,1), pp)
+      CALL sptogg(qprime(1,2), qgpv(1,1,2), pp)
+      CALL sptogg(qprime(1,3), qgpv(1,1,3), pp)
 
 !  *** compute the precipitation, evaporation and runoffs in cm/year
-      facstr = roair*uv10rws
-      pfac=100.*3600.*24.*360.
-      psifac=radius*radius*om
-      qpfac=om
-      do i=1,nlat
-        costt=cos(dragane(i))
-        sintt=sin(dragane(i))
-        do j=1,nlon
-          do k=1,3
-             qgpv(i,j,k) = qgpv(i,j,k)*qpfac
-             psig(i,j,k) = psig(i,j,k)*psifac
-          enddo
-          dyrain1(i,j) = (dyrain(i,j)+dysnow(i,j))*pfac
-          corain1(i,j) = (corain(i,j)+cosnow(i,j))*pfac
-          torain1(i,j) = (torain(i,j)+tosnow(i,j))*pfac
-          snow1(i,j)   = tosnow(i,j)*pfac
-          evap1(i,j)   = evap(i,j)*pfac
-          runofl1(i,j) = arunofl(i,j)*pfac
-          runofo1(i,j) = arunofo(i,j)*pfac
-          eminp1(i,j)  = evap1(i,j)-torain1(i,j)
-          hesw(i,j)    = hesw0(i,j)+hesw1(i,j)+hesw2(i,j)+hesws(i,j)
-          nlrads(i,j)  = ulrads(i,j)-dlrads(i,j)
-          if (q0(i).gt.0d0) then
-            albep(i,j)   = 1d0 - hesw(i,j)/q0(i)
-          else
-            albep(i,j)   = 1d0
-          endif
-          winstu1(i,j)= cdragw(i,j)*facstr*uvw10(i,j)* &
-               & (utot(i,j,3)*costt-vtot(i,j,3)*sintt)
-          winstv1(i,j)= cdragw(i,j)*facstr*uvw10(i,j)* &
-               & (utot(i,j,3)*sintt+vtot(i,j,3)*costt)
-        enddo
-      enddo
+      facstr = roair * uv10rws
+      pfac = 100.0 * 3600.0 * 24.0 * 360.0
+      psifac = radius * radius * om
+      qpfac = om
+      DO i = 1, nlat
+         costt = COS(dragane(i))
+         sintt = SIN(dragane(i))
+         DO j = 1, nlon
+            DO k = 1, 3
+               qgpv(i,j,k) = qgpv(i,j,k) * qpfac
+               psig(i,j,k) = psig(i,j,k) * psifac
+            END DO
+            dyrain1(i,j) = (dyrain(i,j) + dysnow(i,j)) * pfac
+            corain1(i,j) = (corain(i,j) + cosnow(i,j)) * pfac
+            torain1(i,j) = (torain(i,j) + tosnow(i,j)) * pfac
+            snow1(i,j)   = tosnow(i,j) * pfac
+            evap1(i,j)   = evap(i,j) * pfac
+            runofl1(i,j) = arunofl(i,j) * pfac
+            runofo1(i,j) = arunofo(i,j) * pfac
+            eminp1(i,j)  = evap1(i,j) - torain1(i,j)
+            hesw(i,j)    = hesw0(i,j) + hesw1(i,j) + hesw2(i,j) + hesws(i,j)
+            nlrads(i,j)  = ulrads(i,j) - dlrads(i,j)
+            IF (q0(i) > 0d0) THEN
+               albep(i,j)   = 1d0 - hesw(i,j)/q0(i)
+            ELSE
+               albep(i,j)   = 1d0
+            END IF
+            winstu1(i,j) = cdragw(i,j) * facstr * uvw10(i,j) * &
+                 & (utot(i,j,3) * costt - vtot(i,j,3) * sintt)
+            winstv1(i,j) = cdragw(i,j) * facstr * uvw10(i,j) * &
+                 & (utot(i,j,3) * sintt + vtot(i,j,3) * costt)
+         END DO
+      END DO
 !  *** change in compute temperature
-      do i=1,nlat
-        do j=1,nlon
-          tsurf1(i,j) = tsurf(i,j)+newtotvar(Surface_Temperature,6)
-          temp4g1(i,j)=temp4g(i,j)+newtotvar(Surface_Temperature,6)
-          temp2g1(i,j)=temp2g(i,j)+newtotvar(Surface_Temperature,6)
-          tempsg1(i,j)=tempsg(i,j)+newtotvar(Surface_Temperature,6)
-          temp0g1(i,j)=temp0g(i,j)+newtotvar(Surface_Temperature,6)
-        enddo
-      enddo
+      DO i = 1, nlat
+         DO j = 1, nlon
+            tsurf1(i,j) = tsurf(i,j) + newtotvar(Surface_Temperature,6)
+            temp4g1(i,j) = temp4g(i,j) + newtotvar(Surface_Temperature,6)
+            temp2g1(i,j) = temp2g(i,j) + newtotvar(Surface_Temperature,6)
+            tempsg1(i,j) = tempsg(i,j) + newtotvar(Surface_Temperature,6)
+            temp0g1(i,j) = temp0g(i,j) + newtotvar(Surface_Temperature,6)
+         END DO
+      END DO
 
-      if(meantype.eq.2) then
-        if(istep.gt.(11*30*iatm)) then
-          iseason = iseason + 1
-          if (iseason.gt.90) iseason = 1
-          itel = itel + 1
-        endif
-      else
-        itel = itel + 1
-      endif
-
+      IF (meantype == 2) THEN
+         IF (istep > 11 * 30 * iatm) THEN
+            iseason = iseason + 1
+            IF (iseason > 90) iseason = 1
+            itel = itel + 1
+         END IF
+      ELSE
+         itel = itel + 1
+      END IF
       instcount = instcount + 1
 
 !  *** write the instant data
@@ -121,15 +115,11 @@
 !        call outputinst
 !      endif
 
-      if (meantype .eq. 1) then
-        minterv=30
-        if (meantot .eq. 1) then
-          call outputmtl
-        endif
-        if (meanyl .eq. 1) then
-          call outputmyl
-        endif
-      endif
+      IF (meantype == 1) THEN
+         minterv = 30
+         IF (meantot == 1) CALL outputmtl
+         IF (meanyl == 1) CALL outputmyl
+      END IF
 
 !      if (meantype .eq. 2 .and. istep .gt. 11*30*iatm) then
 !        minterv=90
@@ -141,15 +131,13 @@
 !        endif
 !      endif
 
-      if (ioutyearly .eq. 1) then
-        call outputyrl
-      endif
+      IF (ioutyearly == 1) CALL outputyrl
 
-      if (itel.eq.minterv) itel = 0
-      if (instcount.eq.ixout) instcount = 0
+      IF (itel == minterv) itel = 0
+      IF (instcount == ixout) instcount = 0
 
-      return
-      end
+      RETURN
+      END SUBROUTINE selectout
 
 !23456789012345678901234567890123456789012345678901234567890123456789012
 !      SUBROUTINE outputinst

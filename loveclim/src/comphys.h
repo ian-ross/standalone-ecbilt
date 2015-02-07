@@ -350,15 +350,16 @@
 !***       temperature
 !***  pisccp: surface pressure anual mean, region averaged
 
-      real*8  tncep(19,27,12),qancep(27,12)
-      real*8  ghgipcc(19),tsi
+      REAL*4  pisccp(27),pncep(17),z500ncep(27,12)
+      REAL*4  tncep(19,27,12),qancep(27,12),ghgipcc(19),ccisccp(32,64,12)
+      REAL*4  lwrref(7,27,4,0:1)
+      real*8  tsi
       real*8  dtemp(18,nlat,nlon,2),ghg(19),o3, rlogtl(17),rlogts(27)
-      real*8  pisccp(27),pncep(17),z500ncep(27,12)
-      real*8  ccisccp(32,64,12),tncep12(2,27,12)
-      real*8  lwrref(7,27,4,0:1),lwrflux(7,27,4,0:1,2)
-      real*8  lwrt(7,18,27,4,0:1),lwrts(7,4,27,4,0:1)
-      real*8  lwrqa(7,27,4,0:1),lwrqts(7,4,27,4,0:1)
-      real*8  lwrghg(7,19,27,4,0:1)
+      real*8  tncep12(2,27,12)
+      real*8  lwrflux(7,27,4,0:1,2)
+      REAL*4  lwrt(7,18,27,4,0:1),lwrts(7,4,27,4,0:1)
+      REAL*4  lwrqa(7,27,4,0:1),lwrqts(7,4,27,4,0:1)
+      REAL*4  lwrghg(7,19,27,4,0:1)
       integer irn(nlat,nlon,2),ipl(27)
       real*8  AMPWIR,AMPEQIR,EXPIR,HPROFTROP,HPROFEQ,HPROFW
       real*8  HPROFAN,AMPANIR,HPROFAN2,AMPANIR2

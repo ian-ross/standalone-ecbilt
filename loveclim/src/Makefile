@@ -4,7 +4,10 @@ UDUNITSINCLUDE=-I/usr/include
 UDUNITSLIB=-L/usr/lib -ludunits
 
 FC=gfortran
-FFLAGS=-g -Wall -ffixed-line-length-none -fno-align-commons -Jobj ${NETCDFINCLUDE}
+FCOPTS=-Wall -Werror -ffixed-line-length-none -fno-align-commons
+#OPTOPTS=-g
+OPTOPTS=-O2
+FFLAGS=${OPTOPTS} ${FCOPTS} -Jobj ${NETCDFINCLUDE}
 LD=gfortran
 LIBS=${NETCDFLIB} ${UDUNITSLIB}
 

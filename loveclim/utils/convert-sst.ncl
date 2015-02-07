@@ -23,7 +23,7 @@ poisson_grid_fill(sstin, False, guess, nscan, eps, relc, 0)
 
 ;; Regrid SST and mask by ECBILT land/sea mask.
 ecsst = area_hi2lores_Wrap(umlon, umlat, sstin, False, 1, eclon, eclat, False)
-ecsst = mask(ecsst, ecmask, 0)
+;;ecsst = mask(ecsst, ecmask, 0)
 
 ;; Middle of month days, time points to interpolate to and values to
 ;; use for output days.
@@ -56,6 +56,8 @@ do i = 0, nlat - 1
     end if
   end do
 end do
+sstout = where(sstout .lt. 272.15, 272.20, sstout)
+sstout = where(sstout .ge. 310.00, 309.90, sstout)
 
 ;; Write NetCDF output.
 system("/bin/rm -f $TMPDIR/ecbilt-sst.nc")
