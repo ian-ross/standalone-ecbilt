@@ -1,0 +1,1 @@
+/big/project-storage/genie/standalone-ecbilt/expt-3/outputdata/atmos/atmmmyl000000_001.nc

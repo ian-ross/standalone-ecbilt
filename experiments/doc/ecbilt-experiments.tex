@@ -310,8 +310,8 @@ over the oceans.
   \begin{center}
     \includegraphics[width=\textwidth]{../expt-1/plots/stress-plots}
   \end{center}
-  \caption{Seasonal surface wind stress plots for ECBILT experiment
-    1.}
+  \caption{Seasonal surface wind stress plots for ECBILT Experiment
+    \#1.}
   \label{fig:stress-1}
 \end{figure}
 
@@ -456,7 +456,7 @@ GENIE land/sea masks and river routing information.
   \begin{center}
     \includegraphics[width=\textwidth]{../expt-2/plots/ts-plots}
   \end{center}
-  \caption{Seasonal surface temperature for ECBILT experiment 2.}
+  \caption{Seasonal surface temperature for ECBILT Experiment \#2.}
   \label{fig:ts-2}
 \end{figure}
 
@@ -464,7 +464,7 @@ GENIE land/sea masks and river routing information.
   \begin{center}
     \includegraphics[width=\textwidth]{../expt-2/plots/pp-plots}
   \end{center}
-  \caption{Seasonal precipitation for ECBILT experiment 2.}
+  \caption{Seasonal precipitation for ECBILT Experiment \#2.}
   \label{fig:pp-2}
 \end{figure}
 
@@ -472,7 +472,7 @@ GENIE land/sea masks and river routing information.
   \begin{center}
     \includegraphics[width=\textwidth]{../expt-2/plots/evap-plots}
   \end{center}
-  \caption{Seasonal evaporation for ECBILT experiment 2.}
+  \caption{Seasonal evaporation for ECBILT Experiment \#2.}
   \label{fig:evap-2}
 \end{figure}
 
@@ -481,7 +481,7 @@ GENIE land/sea masks and river routing information.
     \includegraphics[width=\textwidth]{../expt-2/plots/pmine-plots}
   \end{center}
   \caption{Seasonal precipitation minus evaporation for ECBILT
-    experiment 2.}
+    Experiment \#2.}
   \label{fig:pmine-2}
 \end{figure}
 
@@ -489,8 +489,8 @@ GENIE land/sea masks and river routing information.
   \begin{center}
     \includegraphics[width=\textwidth]{../expt-2/plots/wind-plots}
   \end{center}
-  \caption{Seasonal circulation plots for ECBILT experiment 2: arrows
-    show upper level and lower level winds, colours show middle
+  \caption{Seasonal circulation plots for ECBILT Experiment \#2:
+    arrows show upper level and lower level winds, colours show middle
     atmosphere vertical pressure velocity.}
   \label{fig:wind-2}
 \end{figure}
@@ -499,8 +499,8 @@ GENIE land/sea masks and river routing information.
   \begin{center}
     \includegraphics[width=\textwidth]{../expt-2/plots/stress-plots}
   \end{center}
-  \caption{Seasonal surface wind stress plots for ECBILT experiment
-    2.}
+  \caption{Seasonal surface wind stress plots for ECBILT Experiment
+    \#2.}
   \label{fig:stress-2}
 \end{figure}
 
@@ -513,7 +513,9 @@ GENIE land/sea masks and river routing information.
   \item{LOVECLIM ECBILT code adapted to run as standalone atmosphere
     model.}
   \item{Boundary conditions as for Experiment \#2.}
-  \item{Greenhouse gas concentrations: \emph{FILL THIS IN!}.}
+  \item{Greenhouse gas concentrations: fixed at 286.43 ppmv
+    ($\mathrm{CO_2}$), 796.60 ppbv (methane), 275.40 ppbv
+    ($\mathrm{N_2O}$); 25.0 DU (tropospheric ozone).}
   \item{Simulation length: 100 years; spin-up: 70 years; analysis: 30
     years.}
 \end{itemize}
@@ -521,25 +523,140 @@ GENIE land/sea masks and river routing information.
 %----------------------------------------------------------------------
 \subsection{Code changes}
 
-Need to build an ``eviscerated'' LOVECLIM with CLIO replaced by the
-fixed ocean from the standalone ECBILT code and the land
-surface/vegetation model replaced by the fixed land surface scheme
-from standalone ECBILT.
+Here, I took the ECBILT code as used in LOVECLIM and disentangled it
+from the LOVECLIM coupling code to make a standalone atmospheric
+model, replacing the CLIO ocean GCM from LOVECLIM with the fixed ocean
+model from the original ECBILT and replacing the VECODE dynamic
+vegetation model with a fixed land surface scheme.
 
-Steps:
+To do this, I vastly simplified the original LOVECLIM model
+configuration and build process to have a standalone ``Fortran +
+makefiles'' setup for building ECBILT.  I stubbed out all of the
+LOVECLIM-related coupling code, then added back the fixed ocean and
+land surface from the original ECBILT bit-by-bit.  After getting all
+this to build, I did a bit of tidying up then reorganised all the
+boundary condition file handling to make setting up experiments
+simpler.
+
+The standalone atmosphere model didn't work right away.  There were a
+couple of problems that meant I had to make some model changes, and
+they both required quite a bit of time to track down:
+
 \begin{enumerate}
-  \item{Make standalone ``Fortran + makefiles'' setup for LOVECLIM.}
-  \item{Reorganise LOVECLIM code: just want ECBILT plus stubs for the
-    things it connects to.}
-  \item{Convert fixed ocean code.}
-  \item{Convert fixed land code.}
-  \item{Tidy up.}
-  \item{Organise boundary condition files.}
+  \item{I had to fix the calculation of horizontal moisture diffusion,
+    which had changed from the original ECBILT code and led to all
+    sorts of numerical problems and completely unrealistic looking
+    moisture fields.  I have no idea at all how this ever worked in
+    LOVECLIM since the equation for the diffusion was missing some
+    essential scaling constant.  Perhaps the moisture field was
+    corrected somewhere else in the coupled model?  I could never
+    track down what was happening, but reverting to the moisture
+    diffusion calculation from the original ECBILT made the problems
+    go away.}
+  \item{I have to clamp sea ice temperature to a minimum value of
+    200K\,K.  The LOVECLIM ECBILT radiation and atmospheric
+    temperature profile calculations are based on interpolation from
+    reference atmospheric profiles.  Some of these reference profiles
+    have surface temperature inversions (i.e. the lowest level in the
+    atmospheric profile is colder than higher layers), which can mess
+    up the interpolation of temperature profiles down to the surface,
+    producing unrealistically cold conditions in some places.  The
+    best solution to this seems just to be to clamp the temperature
+    and prevent these cold excursions.}
 \end{enumerate}
 
 %----------------------------------------------------------------------
 \subsection{Boundary conditions}
 
+The boundary conditions used for this experiment are essentially
+identical to those for Experiment \#2.
+
+%----------------------------------------------------------------------
+\subsection{Model performance}
+
+The 100-year simulation performed here took about 58 minutes, equating
+to \textbf{about 35 seconds per year of simulation}.  I'm not sure why
+the timing here is so different from Experiment \#2.
+
+%----------------------------------------------------------------------
+\subsection{Model climatology}
+
+Figures~\ref{fig:ts-3}--\ref{fig:stress-3} show seasonal climatologies
+of surface temperature, precipitation, evaporation, $P-E$ and
+atmospheric circulation for the ECBILT Experiment \#3 simulation --
+these should be compared with the HadAM3 HadAM3 \texttt{tcszd}
+simulation results in
+Figures~\ref{fig:ts-hadam3}--\ref{fig:stress-hadam3} in
+Appendix~\ref{sec:hadam3} and the Experiment \#2 results in
+Figures~\ref{fig:ts-2}--\ref{fig:stress-2}.
+
+These initial results don't look all that great -- the following
+problems can be identified immediately:
+\begin{itemize}
+  \item{The polar regions seem to be very cold.  This may be related
+    to the problems with reference atmospheric profiles described
+    above.}
+  \item{There seems to be something wrong with the land surface
+    scheme, since there's no evaporation occurring over the land.}
+  \item{The winds are generally too weak, and wind stress in the
+    Southern Ocean is very weak indeed in the southern summer.}
+\end{itemize}
+
+That said, the $P-E$ pattern looks better than for the other ECBILT
+simulations, and the atmospheric circulation really isn't all that bad
+for a first set of simulations with a new model setup.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-3/plots/ts-plots}
+  \end{center}
+  \caption{Seasonal surface temperature for ECBILT Experiment \#3.}
+  \label{fig:ts-3}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-3/plots/pp-plots}
+  \end{center}
+  \caption{Seasonal precipitation for ECBILT Experiment \#3.}
+  \label{fig:pp-3}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-3/plots/evap-plots}
+  \end{center}
+  \caption{Seasonal evaporation for ECBILT Experiment \#3.}
+  \label{fig:evap-3}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-3/plots/pmine-plots}
+  \end{center}
+  \caption{Seasonal precipitation minus evaporation for ECBILT
+    Experiment \#3.}
+  \label{fig:pmine-3}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-3/plots/wind-plots}
+  \end{center}
+  \caption{Seasonal circulation plots for ECBILT Experiment \#3:
+    arrows show upper level and lower level winds, colours show middle
+    atmosphere vertical pressure velocity.}
+  \label{fig:wind-3}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{../expt-3/plots/stress-plots}
+  \end{center}
+  \caption{Seasonal surface wind stress plots for ECBILT Experiment
+    \#3.}
+  \label{fig:stress-3}
+\end{figure}
 
 \appendix
 %======================================================================
