@@ -54,7 +54,10 @@ the ECBILT 3-level atmosphere model to decide whether it's a suitable
 candidate for coupling into GENIE.  The two main things to consider
 here are the speed of the ECBILT model and how good its climatology
 is.  To investigate these things, I've done a quick first comparison
-with a HadAM3 simulation (BRIDGE simulation \texttt{tcszd}).
+with a HadAM3 simulation (BRIDGE simulation \texttt{tcszd}).  I've
+also done some investigational work to help think about how hard it
+would be to couple ECBILT to GENIE, and to look at potential problems
+with the ECBILT model parameterisations for likely GENIE applications.
 
 There are two versions of ECBILT that could be used for this
 comparison.  The first is already coupled into the LOVECLIM EMIC, so
@@ -658,27 +661,92 @@ for a first set of simulations with a new model setup.
   \label{fig:stress-3}
 \end{figure}
 
+%======================================================================
+\section{ECBILT/GENIE compatibility}
+
+%----------------------------------------------------------------------
+\subsection{Code compatibility}
+
+The notes here are based on a comparison between the ECBILT code and
+the existing EMBM atmosphere model within GENIE.
+
+\paragraph{Model initialisation}
+
+This should be straightforward.  Both EMBM and ECBILT read a range of
+model parameters from files during initialisation (as well as initial
+atmospheric state), and only a little reorganisation of the ECBILT
+code would be required.  One more significant change that it might be
+worth making is to reorganise the ECBILT input files to use NetCDF
+format files instead of the range of custom binary formats currently
+used.  This would make the initialisation files portable between
+machines of different endianness.
+
+\paragraph{Model timestepping}
+
+In principle, this also ought to be easy to do -- GENIE uses a single
+function call to step that atmosphere along one timestep, and it
+should be straightforward to wrap all of the ECBILT timestepping
+functionality up into a single routine in that way.  Mismatches
+between the GENIE timestep and the ECBILT timestep can be dealt with
+by performing multiple ECBILT steps for each GENIE step.  Any
+differences between EMBM and ECBILT in terms of the forcings required
+from the ocean model can be modified in the wrapper function that
+calls the atmosphere model (there shouldn't be any changes here:
+surface radiation and moisture fluxes should be all that's needed).
+
+\paragraph{Model coupling}
+
+The ECBILT atmosphere uses a $64 \times 32$ Gaussian grid, so there
+may need to be some regridding of fields to and from the regular
+GOLDSTEIN grid.  That shouldn't be a problem.
+
+%----------------------------------------------------------------------
+\subsection{Model parameterisation issues}
+
+At least one aspect of ECBILT that I've identified may cause trouble
+-- it uses an empirical fit to modern atmospheric profiles for its
+radiation and atmospheric energy balance (i.e. atmospheric temperature
+profile calculation) schemes.  This is true both for the ``original''
+ECBILT and the modified version incorporated in LOVECLIM.  At startup
+the model reads in atmospheric profiles and associated radiation
+coefficients based on (for the LOVECLIM model) the NCEP atmospheric
+reanalysis split by region of the globe (including special profiles
+for some mountain regions), or (for the ``original'' model)
+simulations using a version of the GFDL AGCM.  This dependence on
+parameterisations based on modern atmospheric profiles obviously isn't
+appropriate for deep paleo simulations where the distribution of land
+and ocean is different to modern conditions.
+
+As far as I can tell from a quick search in the literature, the
+LOVECLIM EMIC has been used for simulations only as far back as
+800\,ka (and that was only one paper -- most applications were more
+recent) so this wasn't really a problem before.
+
+Another quick literature survey indicates that there probably aren't
+any other EMICs that have been used for paleo simulations that contain
+a ``real'' atmospheric GCM: the UVic and McGill models and the CLIMBER
+models all use statistical dynamical ``2.5D'' atmosphere models.  The
+only ``3D'' GCM that's been coupled into an EMIC seems to be IGCM in
+GENIE...  IGCM does have a ``proper'' radiation scheme based on
+band absorption coefficients for a selection of absorbing gases,
+i.e. it's more or less a ``first principles'' radiation scheme, with
+no dependence on parameterisation based on atmospheric profiles.
+
+I don't know whether it would be practical to transplant the IGCM
+radiation scheme into ECBILT.  From a survey of the IGCM code, it
+certainly looks possible, but I have no idea whether it would work
+(IGCM has seven or eight levels in the vertical, ECBILT only three,
+which might screw things up), and I have no idea how much it would
+slow ECBILT down -- some of the radiation calculations look like they
+might be quite onerous.
+
+It's certainly possible that there may be other things like this
+hiding within the ECBILT code, but so far the radiation scheme seems
+like the biggest impediment.
+
+
+%======================================================================
 \appendix
-%======================================================================
-\section{ECBILT code changes}
-
-%----------------------------------------------------------------------
-\subsection*{All experiments}
-
-\begin{itemize}
-  \item{Wind stress calculation: incorporation of \texttt{cwdrag} drag
-    coefficient for wind stress.}
-\end{itemize}
-
-%----------------------------------------------------------------------
-\subsection*{Experiment 3}
-
-
-%----------------------------------------------------------------------
-\subsection*{Experiment 4}
-
-
-%======================================================================
 \section{HadAM3 \texttt{tcszd} comparison results}
 \label{sec:hadam3}
 
